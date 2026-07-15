@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>灵气 · 光点星图</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #050818; }
+    canvas#c { display: block; position: fixed; inset: 0; z-index: 1; }
+    #ui {
+      position: fixed; inset: 0; pointer-events: none; z-index: 10;
+      font-family: "Segoe UI", system-ui, sans-serif; color: rgba(255,255,255,0.9);
+    }
+    #spirit { position: absolute; top: 24px; left: 28px; font-size: 1.1rem; letter-spacing: 0.12em; text-shadow: 0 0 20px rgba(160,120,255,0.8); }
+    #spirit span { font-size: 1.6rem; font-weight: 300; color: #fff; }
+    #startStatus {
+      position: absolute; top: 58px; left: 28px; font-size: 0.82rem; letter-spacing: 0.08em;
+      color: rgba(255,220,160,0.95); animation: pulseHint 2s ease-in-out infinite;
+    }
+    #startStatus.ready { color: rgba(160,255,200,0.95); animation: none; }
+    @keyframes pulseHint { 0%,100%{opacity:.65} 50%{opacity:1} }
+    #phaseHint { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); font-size: 0.85rem; opacity: 0.85; letter-spacing: 0.12em; }
+    #unlockedList {
+      position: absolute; top: 24px; right: 28px; max-width: 260px;
+      font-size: 0.78rem; line-height: 1.55; text-align: right; opacity: 0.78; letter-spacing: 0.05em;
+    }
+    #unlockBar { position: absolute; top: 82px; left: 28px; font-size: 0.75rem; opacity: 0.75; line-height: 1.7; }
+    #nowPlaying {
+      position: absolute; bottom: 96px; right: 28px; font-size: 0.8rem; opacity: 0;
+      text-align: right; letter-spacing: 0.08em; color: #ffd4a8;
+      text-shadow: 0 0 12px rgba(255,180,100,0.4); transition: opacity 0.4s;
+      max-width: 240px;
+    }
+    #nowPlaying.show { opacity: 0.9; }
+    #playMelodyWrap {
+      position: absolute; bottom: 28px; right: 28px; pointer-events: auto;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 11;
+    }
+    #songNames { font-size: 0.7rem; opacity: 0.6; text-align: right; max-width: 220px; }
+    #playMelody {
+      cursor: pointer; padding: 14px 28px; border: 1px solid rgba(255,255,255,0.32);
+      background: rgba(90,65,180,0.72); backdrop-filter: blur(10px);
+      color: #fff; font-size: 0.92rem; letter-spacing: 0.1em; border-radius: 999px;
+      opacity: 0; transition: opacity 0.5s, transform 0.2s;
+      box-shadow: 0 4px 24px rgba(124,92,255,0.45); font-family: inherit;
+    }
+    #playMelody.show { opacity: 1; }
+    #playMelody:hover:not(:disabled) { transform: scale(1.05); background: rgba(110,80,200,0.85); }
+    #playMelody:disabled { opacity: 0.45; cursor: default; transform: none; }
+    #overlay {
+      position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(10,8,30,0.6) 0%, rgba(5,5,20,0.92) 100%);
+      transition: opacity 0.8s; cursor: pointer;
+    }
+    #overlay.hidden { opacity: 0; pointer-events: none; }
+    #overlay h1 {
+      font-weight: 200; font-size: 2rem; letter-spacing: 0.35em;
+      color: rgba(255,255,255,0.85); text-shadow: 0 0 40px rgba(140,100,255,0.6);
+      text-align: center; line-height: 2;
+    }
+    #overlay p { font-size: 0.85rem; opacity: 0.55; letter-spacing: 0.12em; margin-top: 1rem; text-align: center; line-height: 1.8; }
+    #victoryCenter {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -52%);
+      z-index: 5; text-align: center; pointer-events: none;
+      opacity: 0; transition: opacity 1.4s ease;
+    }
+    #victoryCenter.show { opacity: 1; }
+    #musicianHit {
+      pointer-events: auto; cursor: pointer; display: inline-block;
+      padding: 8px; border-radius: 12px; transition: transform 0.25s, box-shadow 0.25s;
+    }
+    #musicianHit:hover { transform: scale(1.04); box-shadow: 0 0 32px rgba(180,140,255,0.35); }
+    #musicianHit.playing { animation: glowPulse 1.2s ease-in-out infinite; }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 20px rgba(180,140,255,0.3); }
+      50%      { box-shadow: 0 0 40px rgba(255,200,140,0.5); }
+    }
+    #musicianArt {
+      display: block; max-width: min(220px, 36vw); max-height: min(360px, 48vh);
+      width: auto; height: auto; object-fit: contain;
+      filter: drop-shadow(0 0 16px rgba(140,100,255,0.4));
+    }
+    #victoryText {
+      margin-top: 16px; font-size: 0.95rem; font-weight: 300; letter-spacing: 0.08em;
+      line-height: 1.85; color: rgba(255,255,255,0.88);
+      text-shadow: 0 0 20px rgba(180,140,255,0.45); padding: 0 16px;
+    }
+    #meowaHint {
+      margin-top: 8px; font-size: 0.68rem; opacity: 0.45; letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="ui">
+    <div id="spirit">灵气 <span id="spiritCount">0</span> / 30</div>
+    <div id="startStatus">👆 点击屏幕任意处开始</div>
+    <div id="phaseHint">等待开始…</div>
+    <div id="unlockedList">已解锁：—</div>
+    <div id="unlockBar"></div>
+    <div id="nowPlaying"></div>
+    <div id="playMelodyWrap">
+      <div id="songNames"></div>
+      <button id="playMelody" type="button">♪ 播放旋律</button>
+    </div>
+  </div>
+  <div id="victoryCenter">
+    <div id="musicianHit" title="点击聆听完整旋律">
+      <img id="musicianArt" src="../../assets/goddess.png" alt="音乐家">
+    </div>
+    <p id="victoryText">你收集了 30 个灵气，星图已完整。<br>点击她，听一首歌。</p>
+    <p id="meowaHint">点击光点探索音阶 · 右下角可播放已解锁旋律</p>
+  </div>
+  <div id="overlay">
+    <div>
+      <h1>灵 气<br><span style="font-size:0.45em;letter-spacing:0.5em">点击任意处开始</span></h1>
+      <p>移动鼠标 · 吞噬光点 · 解锁经典旋律<br><span style="opacity:0.75">手机可触摸拖动</span></p>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    const spiritWrap = document.getElementById("spirit");
+    const phaseHint = document.getElementById("phaseHint");
+    const unlockBar = document.getElementById("unlockBar");
+    const unlockedList = document.getElementById("unlockedList");
+    const songNamesEl = document.getElementById("songNames");
+    const nowPlayingEl = document.getElementById("nowPlaying");
+    const playBtn = document.getElementById("playMelody");
+    const overlay = document.getElementById("overlay");
+    const startStatus = document.getElementById("startStatus");
+    const victoryCenter = document.getElementById("victoryCenter");
+    const musicianHit = document.getElementById("musicianHit");
+
+    const NOTES = ["C","D","E","F","G","A","B"];
+    const NOTE_COLORS = ["#3a5cc8","#4a62d8","#6a52cc","#8058d8","#b070dc","#e0a0c8","#ffd8a0"];
+    const SPIRIT_GOAL = 30;
+    const NPC_TARGET = 7;
+    const BASE_MIDI = 60;
+
+    const SONGS = [
+      {
+        id: 1, name: "卡农", unlockAt: 10,
+        notes: [
+          {semi:0,d:0.55,t:0},{semi:4,d:0.55,t:0.55},{semi:7,d:0.55,t:1.1},{semi:4,d:0.55,t:1.65},
+          {semi:5,d:0.55,t:2.2},{semi:0,d:0.55,t:2.75},{semi:5,d:0.55,t:3.3},{semi:7,d:0.55,t:3.85},
+          {semi:7,d:0.55,t:4.4},{semi:4,d:0.55,t:4.95},{semi:7,d:0.55,t:5.5},{semi:4,d:0.55,t:6.05},
+          {semi:0,d:0.55,t:6.6},{semi:7,d:0.55,t:7.15},{semi:0,d:0.55,t:7.7},{semi:4,d:0.9,t:8.25}
+        ]
+      },
+      {
+        id: 2, name: "月亮代表我的心", unlockAt: 20,
+        notes: [
+          {semi:0,d:0.6,t:0},{semi:4,d:0.6,t:0.6},{semi:7,d:0.6,t:1.2},{semi:4,d:0.6,t:1.8},
+          {semi:9,d:0.6,t:2.4},{semi:7,d:0.6,t:3.0},{semi:4,d:0.6,t:3.6},{semi:2,d:0.6,t:4.2},
+          {semi:4,d:0.6,t:4.8},{semi:7,d:0.6,t:5.4},{semi:9,d:0.6,t:6.0},{semi:7,d:0.6,t:6.6},
+          {semi:4,d:0.8,t:7.2},{semi:2,d:0.8,t:8.0},{semi:0,d:1.2,t:8.8}
+        ]
+      },
+      {
+        id: 3, name: "欢乐颂", unlockAt: 30,
+        notes: [
+          {semi:4,d:0.5,t:0},{semi:4,d:0.5,t:0.5},{semi:5,d:0.5,t:1.0},{semi:7,d:0.5,t:1.5},
+          {semi:7,d:0.5,t:2.0},{semi:5,d:0.5,t:2.5},{semi:4,d:0.5,t:3.0},{semi:2,d:0.5,t:3.5},
+          {semi:0,d:0.5,t:4.0},{semi:0,d:0.5,t:4.5},{semi:2,d:0.5,t:5.0},{semi:4,d:0.5,t:5.5},
+          {semi:4,d:0.75,t:6.0},{semi:2,d:0.35,t:6.75},{semi:2,d:0.6,t:7.1},
+          {semi:4,d:0.5,t:7.8},{semi:4,d:0.5,t:8.3},{semi:5,d:0.5,t:8.8},{semi:7,d:0.5,t:9.3},
+          {semi:7,d:0.5,t:9.8},{semi:5,d:0.5,t:10.3},{semi:4,d:0.5,t:10.8},{semi:2,d:0.5,t:11.3},
+          {semi:0,d:0.5,t:11.8},{semi:0,d:0.5,t:12.3},{semi:2,d:0.5,t:12.8},{semi:4,d:0.5,t:13.3},
+          {semi:2,d:0.75,t:13.8},{semi:0,d:0.35,t:14.55},{semi:0,d:1.0,t:14.9}
+        ]
+      }
+    ];
+
+    let W, H, mx, my, started = false;
+    let phase = "idle";
+    let transitionT = 0, layoutDone = false;
+    let spirit = 0, melodyPlaying = false, hoveredStar = -1;
+    let stars = [], npcs = [], ripples = [], particles = [];
+    let playTimers = [], playbackStarIdx = -1, playbackGlow = 0;
+    const player = { x: 0, y: 0, r: 12, brightness: 1 };
+
+    const Sfx = {
+      ctx: null, master: null, reverb: null,
+      async init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+          this.master = this.ctx.createGain();
+          this.master.gain.value = 0.85;
+          this.reverb = this.ctx.createConvolver();
+          this.reverb.buffer = this._makeReverb(1.8, 2.2);
+          const wet = this.ctx.createGain();
+          wet.gain.value = 0.22;
+          this.reverb.connect(wet);
+          wet.connect(this.master);
+          this.master.connect(this.ctx.destination);
+        }
+        if (this.ctx.state === "suspended") await this.ctx.resume();
+        return this.ctx.state === "running";
+      },
+      _makeReverb(seconds, decay) {
+        const sr = this.ctx.sampleRate;
+        const len = Math.floor(sr * seconds);
+        const buf = this.ctx.createBuffer(2, len, sr);
+        for (let ch = 0; ch < 2; ch++) {
+          const d = buf.getChannelData(ch);
+          for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+        }
+        return buf;
+      },
+      freqFromSemi(semi) { return 440 * Math.pow(2, (BASE_MIDI + semi - 69) / 12); },
+      pianoSemi(semi, dur, delay = 0, vol = 0.22, onStart = null) {
+        if (!this.ctx || this.ctx.state !== "running") return;
+        const f = this.freqFromSemi(semi);
+        const t = this.ctx.currentTime + delay;
+        const atk = 0.012, rel = Math.max(0.08, dur * 0.35);
+        const partials = [
+          ["sine", 1, f, 0],
+          ["triangle", 0.32, f * 2, 0.002],
+          ["sine", 0.12, f * 3, 0.004],
+          ["sine", 0.06, f * 4.02, 0.006]
+        ];
+        partials.forEach(([type, gain, freq, detune]) => {
+          const o = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          const lp = this.ctx.createBiquadFilter();
+          o.type = type;
+          o.frequency.value = freq;
+          o.detune.value = detune * 100;
+          lp.type = "lowpass";
+          lp.frequency.setValueAtTime(Math.min(4200, freq * 3.2), t);
+          lp.frequency.exponentialRampToValueAtTime(Math.max(800, freq * 0.9), t + dur);
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(vol * gain, t + atk);
+          g.gain.setValueAtTime(vol * gain * 0.72, t + dur * 0.55);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + dur + rel);
+          o.connect(g); g.connect(lp);
+          lp.connect(this.master);
+          lp.connect(this.reverb);
+          o.start(t); o.stop(t + dur + rel + 0.06);
+        });
+        if (onStart) {
+          const ms = Math.max(0, delay * 1000);
+          playTimers.push(setTimeout(onStart, ms));
+        }
+      },
+      bassSemi(semi, dur, delay = 0, vol = 0.09) {
+        if (!this.ctx || this.ctx.state !== "running") return;
+        const f = this.freqFromSemi(semi - 12);
+        const t = this.ctx.currentTime + delay;
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = "sine";
+        o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(vol, t + 0.04);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g); g.connect(this.master);
+        o.start(t); o.stop(t + dur + 0.05);
+      },
+      noteName(semi) { const map = {0:"C",2:"D",4:"E",5:"F",7:"G",9:"A",11:"B"}; return map[semi] || "C"; },
+      eat() { [0,4,7].forEach((s,i) => this.pianoSemi(s, 0.14, i * 0.05, 0.13)); }
+    };
+
+    function setCursor(mode) { canvas.style.cursor = mode; }
+
+    function setSpiritDisplay(n) {
+      spiritWrap.innerHTML = `灵气 <span id="spiritCount">${n}</span> / ${SPIRIT_GOAL}`;
+    }
+
+    function getUnlockedSongs() { return SONGS.filter(s => spirit >= s.unlockAt); }
+
+    function updateUnlockUI() {
+      const unlocked = getUnlockedSongs();
+      unlockBar.innerHTML = SONGS.map(s =>
+        `${s.name}（${s.unlockAt} 灵气）：${spirit >= s.unlockAt ? "✦ 已解锁" : "未解锁"}`
+      ).join("<br>");
+      if (unlocked.length) {
+        playBtn.classList.add("show");
+        unlockedList.textContent = `已解锁：${unlocked.map(s => s.name).join("、")}`;
+        songNamesEl.textContent = unlocked.map(s => `♪ ${s.name}`).join("  ");
+      } else {
+        unlockedList.textContent = "已解锁：—";
+        songNamesEl.textContent = "";
+      }
+    }
+
+    function clearPlayTimers() {
+      playTimers.forEach(t => clearTimeout(t));
+      playTimers = [];
+      playbackStarIdx = -1;
+      playbackGlow = 0;
+    }
+
+    function findStarForSemi(semi, preferIdx = -1) {
+      if (preferIdx >= 0 && stars[preferIdx]?.semi === semi) return preferIdx;
+      const matches = stars.map((s, i) => i).filter(i => stars[i].semi === semi);
+      if (!matches.length) return -1;
+      if (playbackStarIdx >= 0 && matches.includes(playbackStarIdx)) return playbackStarIdx;
+      return matches[Math.floor(Math.random() * matches.length)];
+    }
+
+    function highlightPlaybackStar(idx) {
+      playbackStarIdx = idx;
+      playbackGlow = 1;
+    }
+
+    function songDuration(song) {
+      return song.notes.reduce((m, n) => Math.max(m, n.t + n.d), 0);
+    }
+
+    function scheduleSong(song, offsetSec) {
+      let lastSemi = -1, lastStar = -1;
+      song.notes.forEach(n => {
+        const cb = () => {
+          const idx = findStarForSemi(n.semi, lastSemi === n.semi ? lastStar : -1);
+          if (idx >= 0) { highlightPlaybackStar(idx); lastStar = idx; }
+          lastSemi = n.semi;
+        };
+        Sfx.pianoSemi(n.semi, n.d, offsetSec + n.t, 0.2, cb);
+        if ([0, 5, 7].includes(n.semi))
+          Sfx.bassSemi(n.semi, Math.min(n.d, 0.75), offsetSec + n.t, 0.06);
+      });
+    }
+
+    function stopPlayback() {
+      clearPlayTimers();
+      setPlayingUI(false);
+      nowPlayingEl.textContent = "已停止";
+      nowPlayingEl.classList.add("show");
+      playTimers.push(setTimeout(() => nowPlayingEl.classList.remove("show"), 1500));
+    }
+
+    function setPlayingUI(active, label = "") {
+      melodyPlaying = active;
+      playBtn.disabled = false;
+      musicianHit.classList.toggle("playing", active);
+      nowPlayingEl.classList.toggle("show", active && !!label);
+      nowPlayingEl.textContent = label;
+      playBtn.textContent = active ? "■ 停止" : "♪ 播放旋律";
+      if (!active) {
+        playbackStarIdx = -1;
+        playbackGlow = 0;
+      }
+    }
+
+    function playSongList(songs, labelPrefix = "正在播放") {
+      if (melodyPlaying || !songs.length) return;
+      clearPlayTimers();
+      setPlayingUI(true, `${labelPrefix}：${songs[0].name}`);
+      let offset = 0;
+      songs.forEach((song, idx) => {
+        playTimers.push(setTimeout(() => {
+          setPlayingUI(true, `${labelPrefix}：${song.name}`);
+        }, offset * 1000));
+        scheduleSong(song, offset);
+        offset += songDuration(song) + 0.55;
+      });
+      playTimers.push(setTimeout(() => {
+        setPlayingUI(false);
+        nowPlayingEl.textContent = "播放完成";
+        playTimers.push(setTimeout(() => nowPlayingEl.classList.remove("show"), 2000));
+      }, offset * 1000 + 200));
+    }
+
+    function playMelody() { playSongList(getUnlockedSongs()); }
+
+    function playFullMedley() {
+      playSongList(SONGS, "完整演奏");
+    }
+
+    function toRgba(c, a) {
+      if (!c) return `rgba(255,255,255,${a})`;
+      if (c.startsWith("#")) {
+        const r = parseInt(c.slice(1,3),16), g = parseInt(c.slice(3,5),16), b = parseInt(c.slice(5,7),16);
+        return `rgba(${r},${g},${b},${a})`;
+      }
+      return c;
+    }
+
+    function drawGlow(x, y, r, color, alpha = 1) {
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
+      grd.addColorStop(0, toRgba(color, alpha));
+      grd.addColorStop(0.5, toRgba(color, alpha * 0.28));
+      grd.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = grd;
+      ctx.beginPath(); ctx.arc(x, y, r * 3.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = toRgba(color, Math.min(1, alpha + 0.1)); ctx.fill();
+    }
+
+    function sizeColor(r) {
+      const t = Math.min(1, (r - 12) / 24);
+      if (t < 0.33) return `rgb(${Math.round(90 + t * 100)},${Math.round(150 + t * 30)},255)`;
+      if (t < 0.66) return `rgb(${Math.round(170 + t * 50)},${Math.round(110 + t * 70)},245)`;
+      return `rgb(255,${Math.round(190 + t * 30)},${Math.round(140 + t * 60)})`;
+    }
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      if (!started) { mx = player.x = W / 2; my = player.y = H / 2; }
+    }
+
+    function spawnNpc() {
+      if (phase !== "phase1" || npcs.length >= NPC_TARGET) return;
+      const m = 60;
+      let x, y, t = 0;
+      do {
+        x = m + Math.random() * (W - m * 2);
+        y = m + Math.random() * (H - m * 2);
+        t++;
+      } while (Math.hypot(x - player.x, y - player.y) < 90 && t < 40);
+      npcs.push({
+        x, y, r: 3 + Math.random() * 2,
+        vx: (Math.random() - 0.5) * 0.45, vy: (Math.random() - 0.5) * 0.45,
+        pulse: Math.random() * Math.PI * 2
+      });
+    }
+
+    function initNpcs() {
+      npcs = [];
+      for (let i = 0; i < 5 + Math.floor(Math.random() * 4); i++) spawnNpc();
+    }
+
+    function addRipple(x, y, r) {
+      ripples.push({ x, y, r: r * 0.35, life: 1 });
+      for (let i = 0; i < 8; i++) {
+        const a = Math.random() * Math.PI * 2;
+        particles.push({ x, y, vx: Math.cos(a) * 2, vy: Math.sin(a) * 2, life: 1, r: 1.4 });
+      }
+    }
+
+    function startTransition() {
+      if (phase !== "phase1") return;
+      clearPlayTimers();
+      setPlayingUI(false);
+      phase = "transition";
+      transitionT = 0;
+      layoutDone = false;
+      npcs = [];
+      setCursor("default");
+      phaseHint.textContent = "灵气圆满 · 星图展开中…";
+      updateUnlockUI();
+      Sfx.pianoSemi(0, 0.35, 0, 0.18);
+      Sfx.pianoSemi(4, 0.35, 0.12, 0.16);
+      Sfx.pianoSemi(7, 0.55, 0.24, 0.2);
+    }
+
+    function eatNpc(i) {
+      if (phase !== "phase1") return;
+      const n = npcs[i];
+      const semi = [0,2,4,5,7,9,11][Math.floor(Math.random() * 7)];
+      const note = Sfx.noteName(semi);
+      stars.push({
+        ox: n.x, oy: n.y, x: n.x, y: n.y, tx: 0, ty: 0,
+        r: n.r + 2, semi, noteIdx: NOTES.indexOf(note), note,
+        pulse: Math.random() * Math.PI * 2, alpha: 1
+      });
+      addRipple(n.x, n.y, player.r);
+      Sfx.eat();
+      npcs.splice(i, 1);
+      spirit = Math.min(SPIRIT_GOAL, spirit + 1);
+      player.r = Math.min(34, player.r + 0.55);
+      player.brightness = Math.min(1.55, player.brightness + 0.02);
+      setSpiritDisplay(spirit);
+      updateUnlockUI();
+      if (spirit === 10 || spirit === 20) {
+        const song = SONGS.find(s => s.unlockAt === spirit);
+        if (song) {
+          phaseHint.textContent = `✦ 解锁「${song.name}」· 可点右下角试听`;
+          Sfx.pianoSemi(7, 0.2, 0, 0.15);
+          Sfx.pianoSemi(11, 0.35, 0.1, 0.17);
+        }
+      }
+      if (spirit >= SPIRIT_GOAL) { startTransition(); return; }
+      spawnNpc();
+    }
+
+    function layoutStars() {
+      const cx = W / 2, cy = H / 2 - 20;
+      const ringR = Math.min(W, H) * 0.32;
+      const byNote = {};
+      stars.forEach((s, i) => {
+        if (!byNote[s.noteIdx]) byNote[s.noteIdx] = [];
+        byNote[s.noteIdx].push(i);
+      });
+      Object.keys(byNote).forEach(k => {
+        const idx = +k;
+        const group = byNote[idx];
+        const baseAngle = (idx / 7) * Math.PI * 2 - Math.PI / 2;
+        group.forEach((starIdx, gi) => {
+          const spread = (gi - (group.length - 1) / 2) * 0.14;
+          const r = ringR + (gi % 3) * 18 - 18;
+          const a = baseAngle + spread;
+          stars[starIdx].tx = cx + Math.cos(a) * r;
+          stars[starIdx].ty = cy + Math.sin(a) * r * 0.72;
+        });
+      });
+      layoutDone = true;
+    }
+
+    function enterPhase2() {
+      phase = "phase2";
+      setCursor("default");
+      clearPlayTimers();
+      setPlayingUI(false);
+      spiritWrap.innerHTML = `灵气 <span id="spiritCount">${spirit}</span> · 星图已成`;
+      phaseHint.textContent = "悬停光点听音 · 点击她听完整旋律";
+      startStatus.textContent = "🌟 星图已成 · 悬停光点探索";
+      startStatus.classList.add("ready");
+      victoryCenter.classList.add("show");
+      playBtn.classList.add("show");
+      updateUnlockUI();
+      [0, 4, 7, 11, 7, 4, 0].forEach((s, i) =>
+        Sfx.pianoSemi(s, 0.28, i * 0.14, 0.14)
+      );
+    }
+
+    async function startGame(x, y) {
+      if (started) return;
+      started = true;
+      startStatus.textContent = "⏳ 正在激活音频…";
+      mx = x; my = y; player.x = x; player.y = y;
+      player.r = 12; player.brightness = 1;
+      spirit = 0; stars = []; layoutDone = false;
+      victoryCenter.classList.remove("show");
+      setSpiritDisplay(0);
+      updateUnlockUI();
+      try {
+        const ok = await Sfx.init();
+        startStatus.textContent = ok ? "🔊 音频已就绪 · 吞噬光点" : "⚠ 请再点一次";
+        startStatus.classList.toggle("ready", ok);
+        if (ok) Sfx.pianoSemi(0, 0.25, 0, 0.14);
+      } catch {
+        started = false;
+        startStatus.textContent = "⚠ 启动失败，请重试";
+        return;
+      }
+      overlay.classList.add("hidden");
+      phase = "phase1";
+      setCursor("none");
+      phaseHint.textContent = "吞噬光点 · 凝聚灵气";
+      initNpcs();
+    }
+
+    function updatePhase1() {
+      if (phase !== "phase1") return;
+      player.x += (mx - player.x) * 0.17;
+      player.y += (my - player.y) * 0.17;
+      while (npcs.length < NPC_TARGET) spawnNpc();
+      for (let i = npcs.length - 1; i >= 0; i--) {
+        const n = npcs[i];
+        n.pulse += 0.05;
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 24 || n.x > W - 24) n.vx *= -1;
+        if (n.y < 24 || n.y > H - 24) n.vy *= -1;
+        if (Math.hypot(n.x - player.x, n.y - player.y) < player.r + n.r + 8) {
+          eatNpc(i);
+          if (phase !== "phase1") break;
+        }
+      }
+      ripples.forEach(r => { r.r += 2.2; r.life -= 0.03; });
+      ripples = ripples.filter(r => r.life > 0);
+      particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= 0.03; });
+      particles = particles.filter(p => p.life > 0);
+    }
+
+    function updateTransition(dt) {
+      if (phase !== "transition") return;
+      transitionT += dt;
+      const shrink = 1.6, expand = 3.8;
+      if (transitionT < shrink) {
+        const t = (transitionT / shrink) ** 2;
+        stars.forEach(s => {
+          s.x = s.ox + (W / 2 - s.ox) * t;
+          s.y = s.oy + (H / 2 - s.oy) * t;
+          s.alpha = 1 - t * 0.25;
+        });
+      } else if (transitionT < expand) {
+        if (!layoutDone) layoutStars();
+        const t = 1 - (1 - (transitionT - shrink) / (expand - shrink)) ** 3;
+        stars.forEach(s => {
+          s.x = W / 2 + (s.tx - W / 2) * t;
+          s.y = H / 2 + (s.ty - H / 2) * t;
+          s.alpha = 0.55 + t * 0.45;
+          s.r = 3 + t * 3.5;
+        });
+      } else {
+        enterPhase2();
+      }
+    }
+
+    function updatePhase2() {
+      if (phase !== "phase2") return;
+      if (playbackGlow > 0) playbackGlow = Math.max(0, playbackGlow - 0.028);
+      hoveredStar = -1;
+      stars.forEach((s, i) => {
+        s.pulse += 0.022;
+        if (Math.hypot(mx - s.x, my - s.y) < s.r + 18) hoveredStar = i;
+      });
+    }
+
+    function drawBg() {
+      const g = ctx.createRadialGradient(W * 0.5, H * 0.42, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.78);
+      g.addColorStop(0, "#0c1440"); g.addColorStop(0.45, "#140a30"); g.addColorStop(1, "#060818");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      for (let i = 0; i < 48; i++) {
+        ctx.beginPath(); ctx.arc((i * 127) % W, (i * 83) % H, 0.65, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(190,170,255,${0.08 + Math.sin(Date.now() * 0.001 + i) * 0.06})`;
+        ctx.fill();
+      }
+    }
+
+    function drawPhase1() {
+      npcs.forEach(n => drawGlow(n.x, n.y, n.r + Math.sin(n.pulse) * 0.35, "#4a5890", 0.48));
+      ripples.forEach(r => {
+        ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(210,175,255,${r.life * 0.48})`; ctx.lineWidth = 2; ctx.stroke();
+      });
+      particles.forEach(p => {
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,225,195,${p.life * 0.85})`; ctx.fill();
+      });
+      drawGlow(player.x, player.y, player.r, sizeColor(player.r), 0.9 * player.brightness);
+      ctx.beginPath(); ctx.arc(player.x, player.y, player.r * 0.32, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(235,248,255,0.92)"; ctx.fill();
+    }
+
+    function drawConstellation() {
+      const groups = {};
+      stars.forEach((s, i) => {
+        if (!groups[s.noteIdx]) groups[s.noteIdx] = [];
+        groups[s.noteIdx].push(s);
+      });
+      ctx.lineWidth = 0.8;
+      Object.values(groups).forEach(g => {
+        if (g.length < 2) return;
+        const c = NOTE_COLORS[g[0].noteIdx] || "#7c5cff";
+        ctx.strokeStyle = toRgba(c, 0.12);
+        for (let i = 0; i < g.length - 1; i++) {
+          ctx.beginPath();
+          ctx.moveTo(g[i].x, g[i].y);
+          ctx.lineTo(g[i + 1].x, g[i + 1].y);
+          ctx.stroke();
+        }
+      });
+    }
+
+    function drawStars(hover) {
+      stars.forEach((s, i) => {
+        const pr = s.r + Math.sin(s.pulse) * 0.6;
+        const isPlay = i === playbackStarIdx && playbackGlow > 0;
+        const isH = hover && i === hoveredStar;
+        const scale = isPlay ? 1.55 + playbackGlow * 0.35 : isH ? 1.28 : 1;
+        const alpha = s.alpha * (isPlay ? 1 : isH ? 1 : 0.78);
+        drawGlow(s.x, s.y, pr * scale, NOTE_COLORS[s.noteIdx] || "#7c5cff", alpha);
+        if (isPlay) {
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, pr * 2.8, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(255,220,160,${playbackGlow * 0.55})`;
+          ctx.lineWidth = 2 + playbackGlow * 2;
+          ctx.stroke();
+        }
+        if (isH || isPlay) {
+          ctx.fillStyle = "#fff";
+          ctx.font = `bold ${isPlay ? 16 : 14}px Segoe UI,sans-serif`;
+          ctx.textAlign = "center";
+          ctx.fillText(s.note, s.x, s.y - pr * scale - 12);
+        }
+      });
+      if (playbackStarIdx >= 0 && playbackGlow > 0.3) {
+        const s = stars[playbackStarIdx];
+        if (s) {
+          for (let k = 0; k < 3; k++) {
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r * (2 + k * 1.2 + (1 - playbackGlow) * 2), 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(255,200,120,${playbackGlow * 0.2 * (1 - k * 0.3)})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function drawTransition() {
+      if (!stars.length) { drawGlow(W / 2, H / 2, 20, "#b8d0ff", 0.5); return; }
+      drawStars(false);
+    }
+
+    let last = 0;
+    function gameLoop(ts) {
+      const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0.016;
+      last = ts;
+      if (started) {
+        if (phase === "phase1") updatePhase1();
+        else if (phase === "transition") updateTransition(dt);
+        else if (phase === "phase2") updatePhase2();
+      }
+      drawBg();
+      if (started) {
+        if (phase === "phase1") drawPhase1();
+        else if (phase === "transition") drawTransition();
+        else if (phase === "phase2") { drawConstellation(); drawStars(true); }
+      }
+      requestAnimationFrame(gameLoop);
+    }
+
+    function getPos(e) {
+      if (e.touches?.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
+    }
+
+    function starAt(x, y) {
+      for (let i = stars.length - 1; i >= 0; i--) {
+        if (Math.hypot(x - stars[i].x, y - stars[i].y) < stars[i].r + 18) return i;
+      }
+      return -1;
+    }
+
+    function handlePointerMove(x, y) {
+      mx = x; my = y;
+      if (phase !== "phase2" || melodyPlaying) return;
+      const h = starAt(x, y);
+      if (h < 0) return;
+      const s = stars[h];
+      if (!s._lp || Date.now() - s._lp > 320) {
+        Sfx.pianoSemi(s.semi, 0.42, 0, 0.16);
+        s._lp = Date.now();
+      }
+    }
+
+    canvas.addEventListener("mousemove", e => handlePointerMove(e.clientX, e.clientY));
+    canvas.addEventListener("pointermove", e => handlePointerMove(e.clientX, e.clientY));
+    canvas.addEventListener("touchmove", e => {
+      e.preventDefault();
+      const p = getPos(e);
+      handlePointerMove(p.x, p.y);
+    }, { passive: false });
+
+    canvas.addEventListener("pointerdown", e => {
+      if (!started) { startGame(e.clientX, e.clientY); return; }
+      if (phase === "phase2" && hoveredStar >= 0 && !melodyPlaying)
+        Sfx.pianoSemi(stars[hoveredStar].semi, 0.58, 0, 0.2);
+    });
+
+    canvas.addEventListener("touchstart", e => {
+      const p = getPos(e);
+      if (!started) { e.preventDefault(); startGame(p.x, p.y); return; }
+      mx = p.x; my = p.y;
+      if (phase === "phase2" && !melodyPlaying) {
+        const h = starAt(p.x, p.y);
+        if (h >= 0) Sfx.pianoSemi(stars[h].semi, 0.58, 0, 0.2);
+      }
+    }, { passive: false });
+
+    overlay.addEventListener("pointerdown", e => {
+      if (!started) { e.preventDefault(); startGame(e.clientX, e.clientY); }
+    });
+    overlay.addEventListener("touchstart", e => {
+      if (!started) { e.preventDefault(); const p = getPos(e); startGame(p.x, p.y); }
+    }, { passive: false });
+
+    musicianHit.addEventListener("click", async e => {
+      e.stopPropagation();
+      await Sfx.init();
+      playFullMedley();
+    });
+
+    playBtn.addEventListener("click", async e => {
+      e.stopPropagation();
+      await Sfx.init();
+      if (melodyPlaying) { stopPlayback(); return; }
+      playMelody();
+    });
+
+    window.addEventListener("resize", resize);
+    resize();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>

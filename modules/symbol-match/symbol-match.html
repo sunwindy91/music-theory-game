@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>符号翻翻乐 · 乐理小达人</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-top: #fff5e6; --bg-bottom: #e8f4ff; --card: #ffffff;
+      --primary: #7c5cff; --text: #3d3a50; --text-light: #7a7590;
+      --shadow: rgba(124, 92, 255, 0.18); --radius: 24px;
+    }
+    body {
+      min-height: 100vh; font-family: "Fredoka", "Segoe UI", sans-serif; color: var(--text);
+      background: linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      display: flex; align-items: center; justify-content: center; padding: 24px 16px;
+    }
+    .game-container {
+      width: 100%; max-width: 520px; background: var(--card); border-radius: var(--radius);
+      box-shadow: 0 12px 40px var(--shadow); padding: 36px 32px 32px; border: 3px solid #f0ebff;
+    }
+    .header { text-align: center; margin-bottom: 24px; }
+    .header-icon { font-size: 3rem; display: block; margin-bottom: 8px; }
+    .header h1 { font-size: 1.75rem; font-weight: 700; color: var(--primary); }
+    .header p { margin-top: 6px; font-size: 0.95rem; color: var(--text-light); }
+  </style>
+</head>
+<body>
+  <main class="game-container">
+    <header class="header">
+      <span class="header-icon" aria-hidden="true">🃏</span>
+      <h1>符号翻翻乐</h1>
+      <p>符号与名称配对，认识乐理记号</p>
+    </header>
+    <div id="symbolMatchRoot"></div>
+  </main>
+  <script src="symbol-data.js"></script>
+  <script src="symbol-match.js"></script>
+  <script>
+    SymbolMatchModule.mount(document.getElementById("symbolMatchRoot"));
+  </script>
+</body>
+</html>

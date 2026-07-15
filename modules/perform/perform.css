@@ -1,0 +1,410 @@
+/* 演奏练习模块 · 与主站主题一致 */
+.pf-module {
+  width: 100%;
+  font-family: "Fredoka", "Segoe UI", sans-serif;
+}
+
+.pf-instrument-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pf-tab {
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  border: 2.5px solid #e8e0ff;
+  border-radius: 50px;
+  background: #fff;
+  color: #3d3a50;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
+  flex: 1;
+  min-width: 100px;
+  text-align: center;
+}
+
+.pf-tab:hover { transform: scale(1.03); border-color: #7c5cff; }
+.pf-tab.active {
+  background: linear-gradient(135deg, #7c5cff, #5a3fd4);
+  border-color: #5a3fd4;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(124, 92, 255, 0.25);
+}
+
+.pf-info-bar {
+  background: linear-gradient(135deg, #f5f0ff, #fff8ee);
+  border: 2px dashed #ddd0ff;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.pf-info-mode {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #7c5cff;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.pf-info-main {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #3d3a50;
+  margin-bottom: 4px;
+}
+
+.pf-info-sub {
+  font-size: 0.85rem;
+  color: #7a7590;
+}
+
+.pf-info-feedback {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e89420;
+  min-height: 1.2em;
+}
+
+.pf-panel { display: none; }
+.pf-panel.active { display: block; }
+
+/* ── 钢琴 ── */
+.pf-piano-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.pf-oct-btn {
+  font-family: inherit;
+  width: 36px;
+  height: 36px;
+  border: 2px solid #7c5cff;
+  border-radius: 50%;
+  background: #fff;
+  color: #7c5cff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.pf-oct-btn:hover:not(:disabled) {
+  transform: scale(1.08);
+  background: #f5f0ff;
+}
+
+.pf-oct-btn:disabled { opacity: 0.35; cursor: default; }
+
+.pf-oct-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #3d3a50;
+  min-width: 72px;
+  text-align: center;
+}
+
+.pf-keyboard {
+  position: relative;
+  height: 140px;
+  margin: 0 auto 12px;
+  max-width: 420px;
+  user-select: none;
+}
+
+.pf-keys-black {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 58%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.pf-keys-black .pf-key-black {
+  pointer-events: auto;
+}
+
+.pf-keys-white {
+  display: flex;
+  height: 100%;
+  gap: 2px;
+}
+
+.pf-key-white {
+  flex: 1;
+  background: #fff;
+  border: 2px solid #ccc;
+  border-radius: 0 0 8px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 8px;
+  transition: transform 0.1s, background 0.1s;
+  position: relative;
+  z-index: 1;
+}
+
+.pf-key-white:hover { transform: scaleY(1.02); background: #faf8ff; }
+.pf-key-white.active { background: #e8deff; transform: scaleY(0.98); border-color: #7c5cff; }
+
+.pf-key-black {
+  position: absolute;
+  width: 9%;
+  height: 58%;
+  background: #333;
+  border: 2px solid #111;
+  border-radius: 0 0 6px 6px;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+  transition: transform 0.1s, background 0.1s;
+}
+
+.pf-key-black:hover { transform: scale(1.05); background: #444; }
+.pf-key-black.active { background: #7c5cff; border-color: #5a3fd4; transform: scale(0.96); }
+
+.pf-key-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #7a7590;
+}
+
+.pf-key-black .pf-key-label { color: #ccc; font-size: 0.55rem; }
+
+.pf-key-note {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #5a3fd4;
+  margin-bottom: 2px;
+}
+
+.pf-key-black .pf-key-note { color: #e8deff; }
+
+.pf-hint {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #7a7590;
+  line-height: 1.5;
+}
+
+/* ── 吉他 ── */
+.pf-guitar-neck {
+  background: #faf8ff;
+  border: 2px solid #ece6ff;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.pf-guitar-neck h4 {
+  font-size: 0.85rem;
+  color: #7c5cff;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.pf-strings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pf-string-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #3d3a50;
+}
+
+.pf-string-name {
+  font-weight: 700;
+  color: #5a3fd4;
+  min-width: 28px;
+}
+
+.pf-string-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, #7c5cff, #ddd0ff);
+  border-radius: 2px;
+}
+
+.pf-chord-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.pf-chord-btn {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 14px 8px;
+  border: 2.5px solid #e8e0ff;
+  border-radius: 14px;
+  background: #fff;
+  color: #3d3a50;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.pf-chord-btn:hover {
+  transform: scale(1.04);
+  border-color: #7c5cff;
+  box-shadow: 0 4px 12px rgba(124, 92, 255, 0.18);
+}
+
+.pf-chord-btn.active {
+  background: #e8deff;
+  border-color: #7c5cff;
+  transform: scale(0.97);
+}
+
+.pf-chord-btn kbd {
+  display: block;
+  font-size: 0.7rem;
+  color: #7a7590;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.pf-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.pf-toggle {
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  border: 2px solid #e8e0ff;
+  border-radius: 50px;
+  background: #fff;
+  color: #7a7590;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, color 0.15s;
+}
+
+.pf-toggle:hover { transform: scale(1.03); }
+.pf-toggle.on {
+  background: linear-gradient(135deg, #ffb347, #e89420);
+  border-color: #e89420;
+  color: #fff;
+}
+
+/* ── 架子鼓 ── */
+.pf-drum-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.pf-drum-pad {
+  font-family: inherit;
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.12s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.pf-drum-pad:hover { transform: scale(1.06); }
+.pf-drum-pad.hit { transform: scale(0.92); }
+
+.pf-drum-pad kbd {
+  font-size: 0.68rem;
+  opacity: 0.85;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.pf-drum-pad::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(255,255,255,0.45) 0%, transparent 65%);
+  opacity: 0;
+  transform: scale(0.3);
+  pointer-events: none;
+}
+
+.pf-drum-pad.ripple::after {
+  animation: pf-ripple 0.45s ease-out;
+}
+
+@keyframes pf-ripple {
+  0%   { opacity: 1; transform: scale(0.3); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+.pf-drum-kick  { background: linear-gradient(145deg, #5a3fd4, #7c5cff); grid-column: span 1; }
+.pf-drum-snare { background: linear-gradient(145deg, #e8650a, #ffb347); }
+.pf-drum-hihat { background: linear-gradient(145deg, #4cd964, #2a9d4e); }
+.pf-drum-crash { background: linear-gradient(145deg, #ff6b6b, #d94040); }
+.pf-drum-ride  { background: linear-gradient(145deg, #e89420, #ffd080); color: #3d3a50; }
+.pf-drum-tom   { background: linear-gradient(145deg, #5a3fd4, #9b7cff); }
+
+.pf-actions {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.pf-back-btn {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #7c5cff;
+  background: #fff;
+  border: 2px solid #7c5cff;
+  border-radius: 50px;
+  padding: 12px 28px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.pf-back-btn:hover {
+  transform: translateY(-2px);
+  background: #f5f0ff;
+}
+
+.pf-back-btn.hidden { display: none; }
+
+@media (max-width: 400px) {
+  .pf-chord-grid { grid-template-columns: repeat(2, 1fr); }
+  .pf-keyboard { height: 120px; }
+}

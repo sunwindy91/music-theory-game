@@ -1,0 +1,72 @@
+#dailyChallengeRoot { display: none; }
+#dailyChallengeRoot.active { display: block; }
+
+.dc-module { width: 100%; }
+
+.dc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dc-header h2 {
+  font-size: 1.15rem; font-weight: 700; color: var(--primary, #7c5cff);
+}
+.dc-back {
+  font-family: inherit; font-size: 0.85rem; font-weight: 600;
+  padding: 8px 16px; border: 2px solid #e8e0ff; border-radius: 50px;
+  background: #fff; color: #7a7590; cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.dc-back:hover { border-color: #7c5cff; transform: translateY(-1px); }
+
+.dc-stats {
+  background: linear-gradient(135deg, #fff5e6, #f5f0ff);
+  border-radius: 14px; padding: 14px 18px; margin-bottom: 16px;
+  border: 2px dashed #ffc87a; font-size: 0.9rem; color: #7a7590;
+  text-align: center; line-height: 1.7;
+}
+.dc-stats strong { color: #e89420; }
+
+.dc-streak {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: linear-gradient(135deg, #fff0e0, #ffe8cc);
+  border: 2px solid #ffc87a; border-radius: 50px;
+  padding: 6px 14px; font-size: 0.85rem; font-weight: 700;
+  color: #e8650a; margin-top: 8px;
+}
+
+.dc-progress-bar {
+  height: 10px; background: #ece6ff; border-radius: 50px;
+  overflow: hidden; margin: 12px 0 4px;
+}
+.dc-progress-fill {
+  height: 100%; background: linear-gradient(90deg, #7c5cff, #ffb347);
+  border-radius: 50px; transition: width 0.3s ease;
+}
+
+.dc-actions { margin-bottom: 16px; text-align: center; }
+.dc-btn-primary {
+  font-family: inherit; font-size: 1rem; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, #ffb347, #e89420);
+  border: none; border-radius: 50px; padding: 14px 32px; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255, 179, 71, 0.35);
+  transition: transform 0.15s, opacity 0.15s;
+}
+.dc-btn-primary:hover:not(:disabled) { transform: translateY(-2px); }
+.dc-btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.dc-info {
+  background: #faf8ff; border: 2px solid #ece6ff; border-radius: 14px;
+  padding: 16px; font-size: 0.88rem; color: #7a7590; line-height: 1.6;
+}
+.dc-info li { margin-left: 18px; margin-bottom: 4px; }
+
+.dc-done {
+  text-align: center; padding: 24px 16px;
+}
+.dc-done .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
+.dc-done h3 {
+  font-size: 1.1rem; color: #7c5cff; margin-bottom: 8px;
+}
+.dc-done p { color: #7a7590; font-size: 0.92rem; line-height: 1.6; }
+
+.chip-daily { position: relative; }

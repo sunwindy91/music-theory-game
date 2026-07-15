@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>乐理小达人 · 练习游戏</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-top: #fff5e6;
+      --bg-bottom: #e8f4ff;
+      --card: #ffffff;
+      --primary: #7c5cff;
+      --primary-dark: #5a3fd4;
+      --accent: #ffb347;
+      --accent-dark: #e89420;
+      --success: #4cd964;
+      --error: #ff6b6b;
+      --text: #3d3a50;
+      --text-light: #7a7590;
+      --shadow: rgba(124, 92, 255, 0.18);
+      --radius: 24px;
+      --radius-sm: 14px;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Fredoka", "Segoe UI", sans-serif;
+      color: var(--text);
+      background: linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+    }
+
+    .bg-notes { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .bg-notes span { position: absolute; font-size: 2rem; opacity: 0.12; animation: float 6s ease-in-out infinite; }
+    .bg-notes span:nth-child(1) { top: 8%;  left: 6%;  animation-delay: 0s;   font-size: 2.4rem; }
+    .bg-notes span:nth-child(2) { top: 18%; right: 10%; animation-delay: 1s;   font-size: 1.8rem; }
+    .bg-notes span:nth-child(3) { bottom: 22%; left: 12%; animation-delay: 2s; font-size: 2.2rem; }
+    .bg-notes span:nth-child(4) { bottom: 10%; right: 8%; animation-delay: 0.5s; font-size: 1.6rem; }
+    .bg-notes span:nth-child(5) { top: 45%; left: 3%;  animation-delay: 1.5s; font-size: 1.4rem; }
+    .bg-notes span:nth-child(6) { top: 55%; right: 4%; animation-delay: 2.5s; font-size: 2rem; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-12px) rotate(6deg); }
+    }
+
+    .game-container {
+      position: relative; z-index: 1; width: 100%; max-width: 520px;
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: 0 12px 40px var(--shadow), 0 2px 8px rgba(0,0,0,0.06);
+      padding: 36px 32px 32px; border: 3px solid #f0ebff;
+    }
+
+    .header { text-align: center; margin-bottom: 24px; }
+    .header-icon { font-size: 3rem; line-height: 1; margin-bottom: 8px; display: block; }
+    .header h1 { font-size: 1.75rem; font-weight: 700; color: var(--primary); letter-spacing: 0.02em; }
+    .header p { margin-top: 6px; font-size: 0.95rem; color: var(--text-light); }
+
+    /* 开始设置区 */
+    .setup-panel { margin-bottom: 8px; }
+    .setup-label {
+      font-size: 0.85rem; font-weight: 600; color: var(--text-light);
+      margin-bottom: 10px; text-align: center;
+    }
+    .setup-group { margin-bottom: 18px; }
+    .chip-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+    .chip {
+      font-family: inherit; font-size: 0.9rem; font-weight: 600;
+      padding: 10px 16px; border: 2.5px solid #e8e0ff; border-radius: 50px;
+      background: #fff; color: var(--text); cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .chip:hover { transform: translateY(-1px); border-color: var(--primary); }
+    .chip.selected {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-color: var(--primary-dark); color: #fff;
+      box-shadow: 0 4px 14px var(--shadow);
+    }
+    .chip-mode { flex: 1; min-width: 120px; text-align: center; }
+
+    .setup-hint {
+      text-align: center; font-size: 0.8rem; color: var(--text-light);
+      margin-top: 4px; min-height: 1.2em;
+    }
+
+    .score-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(135deg, #f5f0ff, #fff8ee);
+      border-radius: var(--radius-sm); padding: 14px 20px; margin-bottom: 16px;
+      border: 2px dashed #ddd0ff;
+    }
+    .score-label { font-size: 0.9rem; color: var(--text-light); font-weight: 500; }
+    .score-value { font-size: 1.6rem; font-weight: 700; color: var(--accent-dark); }
+    .score-value .unit { font-size: 0.85rem; font-weight: 500; color: var(--text-light); margin-left: 2px; }
+    .progress-text { font-size: 0.85rem; color: var(--text-light); font-weight: 500; text-align: right; }
+    .diff-badge {
+      display: block; font-size: 0.75rem; color: var(--primary); font-weight: 600; margin-top: 2px;
+    }
+
+    .combo-display {
+      display: none; align-items: center; justify-content: center; gap: 6px;
+      margin-bottom: 16px; padding: 10px 20px;
+      background: linear-gradient(135deg, #fff0e0, #ffe8cc);
+      border-radius: 50px; border: 2px solid #ffc87a;
+      font-size: 1.1rem; font-weight: 700; color: #e8650a;
+      animation: combo-pop 0.35s ease-out;
+    }
+    .combo-display.show { display: flex; }
+
+    @keyframes combo-pop {
+      0%   { transform: scale(0.85); opacity: 0.5; }
+      60%  { transform: scale(1.08); }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+
+    .question-area {
+      background: #faf8ff; border-radius: var(--radius-sm); padding: 28px 24px;
+      min-height: 160px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      margin-bottom: 24px; border: 2px solid #ece6ff; transition: border-color 0.3s;
+    }
+    .question-area.active { border-color: var(--primary); }
+    .question-area.correct { border-color: var(--success); background: #f0fff4; }
+    .question-area.wrong   { border-color: var(--error);   background: #fff5f5; }
+
+    .question-placeholder { color: var(--text-light); font-size: 1rem; line-height: 1.6; }
+    .question-placeholder .emoji { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+
+    .question-type {
+      display: inline-block; background: var(--primary); color: #fff;
+      font-size: 0.75rem; font-weight: 600; padding: 4px 12px;
+      border-radius: 20px; margin-bottom: 14px; letter-spacing: 0.04em;
+    }
+
+    .question-text { font-size: 1.25rem; font-weight: 600; line-height: 1.5; color: var(--text); }
+    .question-hint { margin-top: 10px; font-size: 0.85rem; color: var(--text-light); }
+
+    /* 听音区 */
+    .audio-zone { margin-top: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .audio-visual {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, #e8deff, #fff0d0);
+      border: 3px solid #d4c4ff; display: flex; align-items: center;
+      justify-content: center; font-size: 2rem;
+      animation: pulse-ring 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-ring {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(124, 92, 255, 0.3); }
+      50%      { box-shadow: 0 0 0 10px rgba(124, 92, 255, 0); }
+    }
+    .btn-replay {
+      font-family: inherit; font-size: 0.85rem; font-weight: 600;
+      padding: 8px 18px; border: 2px solid var(--primary); border-radius: 50px;
+      background: #fff; color: var(--primary); cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .btn-replay:hover { background: #f5f0ff; transform: translateY(-1px); }
+
+    .options-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
+    }
+    .option-btn {
+      font-family: inherit; font-size: 1rem; font-weight: 600;
+      padding: 14px 12px; border: 2.5px solid #e8e0ff; border-radius: var(--radius-sm);
+      background: #fff; color: var(--text); cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+    .option-btn:hover:not(:disabled) {
+      transform: translateY(-2px); border-color: var(--primary); box-shadow: 0 4px 12px var(--shadow);
+    }
+    .option-btn:disabled { cursor: default; opacity: 0.7; }
+    .option-btn.selected-correct { border-color: var(--success); background: #eaffef; color: #2a9d4e; }
+    .option-btn.selected-wrong   { border-color: var(--error);   background: #ffeaea; color: #d94040; }
+    .option-btn.reveal-correct   { border-color: var(--success); background: #eaffef; }
+
+    .action-area { text-align: center; }
+    .btn-start {
+      font-family: inherit; font-size: 1.15rem; font-weight: 700; color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none; border-radius: 50px; padding: 16px 48px; cursor: pointer;
+      box-shadow: 0 6px 20px var(--shadow);
+      transition: transform 0.15s, box-shadow 0.15s; letter-spacing: 0.03em;
+    }
+    .btn-start:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 28px var(--shadow); }
+    .btn-start.hidden { display: none; }
+
+    .feedback-msg { margin-top: 14px; font-size: 0.95rem; font-weight: 600; min-height: 1.4em; }
+    .feedback-msg.correct { color: var(--success); }
+    .feedback-msg.wrong   { color: var(--error); }
+
+    .result-panel { display: none; text-align: center; padding: 8px 0; }
+    .result-panel.show { display: block; }
+    .result-panel .result-emoji { font-size: 3rem; margin-bottom: 8px; }
+    .result-panel h2 { font-size: 1.4rem; color: var(--primary); margin-bottom: 6px; }
+    .result-panel p { color: var(--text-light); margin-bottom: 8px; }
+    .result-combo { font-size: 1.05rem; font-weight: 700; color: #e8650a; margin-bottom: 20px; }
+
+    .hidden { display: none !important; }
+
+    /* 模块壳 */
+    #symbolMatchRoot { display: none; }
+    #symbolMatchRoot.active { display: block; }
+    #performRoot { display: none; }
+    #performRoot.active { display: block; }
+    .quiz-shell.hidden { display: none !important; }
+
+    /* 灵气星图 · 全屏模块 */
+    #spiritJourneyRoot {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: #050818;
+    }
+    #spiritJourneyRoot.active { display: block; }
+    #spiritJourneyRoot .sj-back {
+      position: absolute; top: 14px; left: 14px; z-index: 510;
+      font-family: inherit; font-size: 0.88rem; font-weight: 600;
+      color: rgba(255,255,255,0.92); background: rgba(20,16,48,0.75);
+      border: 1px solid rgba(160,120,255,0.45); border-radius: 999px;
+      padding: 8px 16px; cursor: pointer; backdrop-filter: blur(8px);
+    }
+    #spiritJourneyRoot .sj-back:hover { background: rgba(90,65,180,0.85); }
+    #spiritJourneyRoot .sj-frame { width: 100%; height: 100%; border: 0; display: block; }
+
+    .chip-soon { opacity: 0.45; cursor: not-allowed; }
+    .setup-group-future { margin-top: 4px; }
+
+    .chip-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 18px; height: 18px; padding: 0 5px;
+      margin-left: 4px; font-size: 0.7rem; font-weight: 700;
+      background: #ff6b6b; color: #fff; border-radius: 50px;
+      vertical-align: middle;
+    }
+    .chip-badge.hidden { display: none; }
+
+    #wrongBookRoot { display: none; }
+    #wrongBookRoot.active { display: block; }
+    #dailyChallengeRoot { display: none; }
+    #dailyChallengeRoot.active { display: block; }
+
+    .app-footer {
+      text-align: center; margin-top: 20px; padding-top: 14px;
+      border-top: 1px dashed #ece6ff;
+      font-size: 0.72rem; color: #b0a8c0; letter-spacing: 0.02em;
+    }
+    .app-footer .version {
+      display: inline-block; margin-left: 6px;
+      padding: 1px 6px; border-radius: 6px;
+      background: #f5f0ff; color: #9a8fc0; font-weight: 600;
+    }
+  </style>
+  <link rel="stylesheet" href="modules/perform/perform.css">
+  <link rel="stylesheet" href="modules/wrong-book/wrong-book.css">
+  <link rel="stylesheet" href="modules/daily-challenge/daily-challenge.css">
+  <link rel="stylesheet" href="modules/share-card/share-card.css">
+</head>
+<body>
+
+  <div class="bg-notes" aria-hidden="true">
+    <span>♪</span><span>♫</span><span>♩</span>
+    <span>♬</span><span>♭</span><span>♯</span>
+  </div>
+
+  <main class="game-container">
+    <header class="header">
+      <span class="header-icon" aria-hidden="true">🎵</span>
+      <h1>乐理小达人</h1>
+      <p>轻松练习，快乐学音乐</p>
+    </header>
+
+    <section class="score-bar hidden" id="scoreBar" aria-label="得分信息">
+      <div>
+        <div class="score-label">当前得分</div>
+        <div class="score-value" id="scoreDisplay">0<span class="unit">分</span></div>
+      </div>
+      <div>
+        <div class="progress-text" id="progressDisplay">准备开始</div>
+        <span class="diff-badge" id="diffBadge"></span>
+      </div>
+    </section>
+
+    <div class="combo-display" id="comboDisplay" aria-live="polite"></div>
+
+    <!-- 符号翻翻乐模块挂载点 -->
+    <div id="symbolMatchRoot"></div>
+
+    <!-- 演奏练习模块挂载点 -->
+    <div id="performRoot"></div>
+
+    <!-- 错题本模块挂载点 -->
+    <div id="wrongBookRoot"></div>
+
+    <!-- 每日挑战模块挂载点 -->
+    <div id="dailyChallengeRoot"></div>
+
+    <div class="quiz-shell" id="quizShell">
+    <!-- 开始设置 -->
+    <section class="setup-panel" id="setupPanel">
+      <div class="setup-group">
+        <div class="setup-label">练习模式</div>
+        <div class="chip-row">
+          <button class="chip chip-mode selected" type="button" data-mode="quiz">📚 综合练习</button>
+          <button class="chip chip-mode" type="button" data-mode="audio">🎧 听音识名</button>
+          <button class="chip chip-mode" type="button" data-module="symbol">🃏 符号翻翻乐</button>
+          <button class="chip chip-mode" type="button" data-module="perform">🎹 演奏练习</button>
+          <button class="chip chip-mode" type="button" data-module="spirit">✨ 灵气星图</button>
+        </div>
+      </div>
+      <div class="setup-group" id="reviewGroup">
+        <div class="setup-label">复习巩固</div>
+        <div class="chip-row">
+          <button class="chip chip-review chip-soon" type="button" disabled id="chipWrongBook" data-module="wrongbook" title="Phase 2">📖 错题本<span class="chip-badge hidden" id="wrongBookDueBadge">0</span></button>
+          <button class="chip chip-review chip-soon chip-daily" type="button" disabled id="chipDailyChallenge" data-module="daily" title="Phase 2">📅 每日挑战<span class="chip-badge hidden" id="dailyChallengeBadge">0</span></button>
+        </div>
+        <p class="setup-hint" id="reviewHint">今日待复习 0 题 · 共 0 题</p>
+      </div>
+      <div class="setup-group setup-group-future" aria-label="即将推出的功能">
+        <div class="setup-label">即将推出</div>
+        <div class="chip-row">
+          <button class="chip chip-soon" type="button" disabled title="Phase 3+">🥁 节奏闯关</button>
+          <button class="chip chip-soon" type="button" disabled title="Phase 3+">🎼 识谱教学</button>
+        </div>
+      </div>
+      <div class="setup-group" id="difficultyGroup">
+        <div class="setup-label">选择难度</div>
+        <div class="chip-row">
+          <button class="chip selected" type="button" data-difficulty="1">🌱 初级</button>
+          <button class="chip" type="button" data-difficulty="2">🌿 中级</button>
+          <button class="chip" type="button" data-difficulty="3">🌳 高级</button>
+        </div>
+        <p class="setup-hint" id="setupHint">初级 · 10 道基础题</p>
+      </div>
+    </section>
+
+    <section class="question-area" id="questionArea" aria-live="polite">
+      <div class="question-placeholder" id="questionPlaceholder">
+        <span class="emoji">🎹</span>
+        选择模式与难度<br>点击「开始练习」吧！
+      </div>
+      <div class="question-content hidden" id="questionContent">
+        <span class="question-type" id="questionType"></span>
+        <p class="question-text" id="questionText"></p>
+        <p class="question-hint" id="questionHint"></p>
+        <div class="audio-zone hidden" id="audioZone">
+          <div class="audio-visual" aria-hidden="true">🔊</div>
+          <button class="btn-replay" id="btnReplay" type="button">🔁 再听一次</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="options-grid hidden" id="optionsGrid"></div>
+
+    <div class="action-area">
+      <button class="btn-start" id="btnStart" type="button">开始练习</button>
+      <p class="feedback-msg" id="feedbackMsg" aria-live="assertive"></p>
+
+      <div class="share-actions hidden" id="shareCardActions">
+        <button class="btn-share" id="btnShareCard" type="button">📤 生成分享卡片</button>
+      </div>
+
+      <div class="result-panel" id="resultPanel">
+        <div class="result-emoji" id="resultEmoji">🎉</div>
+        <h2 id="resultTitle">练习完成！</h2>
+        <p id="resultDesc"></p>
+        <p class="result-combo" id="resultCombo"></p>
+        <button class="btn-start" id="btnRestart" type="button">再来一次</button>
+      </div>
+    </div>
+    </div><!-- /quiz-shell -->
+
+    <footer class="app-footer" aria-label="版本信息">
+      乐理小达人 · demo · 仅供学习娱乐<span class="version" id="appVersionTag">v0.2</span>
+    </footer>
+  </main>
+
+  <div id="spiritJourneyRoot" aria-hidden="true"></div>
+
+  <script src="core/features.js"></script>
+  <script src="core/wrong-book.js"></script>
+  <script src="core/daily-challenge.js"></script>
+  <script src="core/ux-simulator.js"></script>
+  <script src="core/persona-simulator.js"></script>
+  <script src="core/share-card.js"></script>
+  <script src="modules/wrong-book/wrong-book.js"></script>
+  <script src="modules/daily-challenge/daily-challenge.js"></script>
+  <script src="modules/share-card/share-card.js"></script>
+  <script src="modules/symbol-match/symbol-data.js"></script>
+  <script src="modules/symbol-match/symbol-match.js"></script>
+  <script src="modules/perform/perform.js"></script>
+  <script src="modules/spirit-journey/spirit-journey.js"></script>
+  <script>
+    /* ── 模块壳：Tab 切换（不侵入答题逻辑） ── */
+    (function AppShell() {
+      const symbolRoot = document.getElementById("symbolMatchRoot");
+      const performRoot = document.getElementById("performRoot");
+      const wrongBookRoot = document.getElementById("wrongBookRoot");
+      const dailyChallengeRoot = document.getElementById("dailyChallengeRoot");
+      const spiritRoot = document.getElementById("spiritJourneyRoot");
+      const quizShell = document.getElementById("quizShell");
+      const scoreBar = document.getElementById("scoreBar");
+      const comboDisplay = document.getElementById("comboDisplay");
+      const difficultyGroup = document.getElementById("difficultyGroup");
+      const reviewGroup = document.getElementById("reviewGroup");
+      const btnStart = document.getElementById("btnStart");
+      const headerSub = document.querySelector(".header p");
+      const defaultSub = headerSub.textContent;
+      let activeModule = "quiz";
+
+      function hideAllModules() {
+        symbolRoot.classList.remove("active");
+        performRoot.classList.remove("active");
+        wrongBookRoot.classList.remove("active");
+        dailyChallengeRoot.classList.remove("active");
+        spiritRoot.classList.remove("active");
+        document.body.style.overflow = "";
+        if (typeof ShareCardModule !== "undefined") ShareCardModule.close();
+        SymbolMatchModule.unmount();
+        PerformModule.unmount();
+        WrongBookModule.unmount();
+        DailyChallengeModule.unmount();
+        SpiritJourneyModule.unmount();
+      }
+
+      function showQuizModule() {
+        activeModule = "quiz";
+        hideAllModules();
+        quizShell.classList.remove("hidden");
+        difficultyGroup.classList.remove("hidden");
+        if (reviewGroup) reviewGroup.classList.remove("hidden");
+        btnStart.classList.remove("hidden");
+        headerSub.textContent = defaultSub;
+        if (typeof refreshReviewHint === "function") refreshReviewHint();
+        if (typeof state !== "undefined" && !state.playing) {
+          scoreBar.classList.remove("hidden");
+        }
+      }
+
+      function showWrongBookModule() {
+        if (window.AppFeatures && !AppFeatures.wrongBook) return;
+        activeModule = "wrongbook";
+        quizShell.classList.add("hidden");
+        scoreBar.classList.add("hidden");
+        comboDisplay.classList.remove("show");
+        hideAllModules();
+        wrongBookRoot.classList.add("active");
+        headerSub.textContent = "间隔复习，巩固薄弱知识点";
+        WrongBookModule.mount(wrongBookRoot, {
+          onBack: () => {
+            document.querySelector('[data-mode="quiz"]').click();
+            showQuizModule();
+          },
+          onRefreshBadge: () => {
+            if (typeof refreshReviewHint === "function") refreshReviewHint();
+          },
+          onStartReview: (dueEntries) => {
+            if (typeof startWrongBookReview === "function") {
+              startWrongBookReview(dueEntries);
+            }
+          },
+          onPracticeOne: (entry) => {
+            if (typeof startWrongBookPractice === "function") {
+              startWrongBookPractice(entry);
+            }
+          }
+        });
+      }
+
+      function showDailyChallengeModule() {
+        if (window.AppFeatures && !AppFeatures.dailyChallenge) return;
+        activeModule = "daily";
+        quizShell.classList.add("hidden");
+        scoreBar.classList.add("hidden");
+        comboDisplay.classList.remove("show");
+        hideAllModules();
+        dailyChallengeRoot.classList.add("active");
+        headerSub.textContent = "每天 10 题，坚持打卡领 streak";
+        DailyChallengeModule.mount(dailyChallengeRoot, {
+          onBack: () => {
+            document.querySelector('[data-mode="quiz"]').click();
+            showQuizModule();
+          },
+          onStart: () => {
+            if (typeof startDailyChallenge === "function") startDailyChallenge();
+          }
+        });
+      }
+
+      window.AppShell = { showQuizModule, showWrongBookModule, showDailyChallengeModule };
+
+      function showSymbolModule() {
+        activeModule = "symbol";
+        quizShell.classList.add("hidden");
+        scoreBar.classList.add("hidden");
+        comboDisplay.classList.remove("show");
+        hideAllModules();
+        symbolRoot.classList.add("active");
+        headerSub.textContent = "符号与名称配对，认识乐理记号";
+        SymbolMatchModule.mount(symbolRoot, {
+          onBack: () => {
+            document.querySelector('[data-mode="quiz"]').click();
+            showQuizModule();
+          }
+        });
+      }
+
+      function showPerformModule() {
+        activeModule = "perform";
+        quizShell.classList.add("hidden");
+        scoreBar.classList.add("hidden");
+        comboDisplay.classList.remove("show");
+        hideAllModules();
+        performRoot.classList.add("active");
+        headerSub.textContent = "钢琴 · 吉他 · 架子鼓，键盘即乐器";
+        PerformModule.mount(performRoot, {
+          onBack: () => {
+            document.querySelector('[data-mode="quiz"]').click();
+            showQuizModule();
+          }
+        });
+      }
+
+      function showSpiritModule() {
+        if (window.AppFeatures && !AppFeatures.spiritJourney) return;
+        activeModule = "spirit";
+        quizShell.classList.add("hidden");
+        scoreBar.classList.add("hidden");
+        comboDisplay.classList.remove("show");
+        hideAllModules();
+        spiritRoot.classList.add("active");
+        spiritRoot.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        headerSub.textContent = "吞噬光点 · 凝聚灵气 · 星图聆听";
+        SpiritJourneyModule.mount(spiritRoot, {
+          onBack: () => {
+            document.querySelector('[data-mode="quiz"]').click();
+            showQuizModule();
+          }
+        });
+      }
+
+      document.querySelector('[data-module="symbol"]').addEventListener("click", (e) => {
+        document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
+        document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+        e.currentTarget.classList.add("selected");
+        showSymbolModule();
+      });
+
+      document.querySelector('[data-module="perform"]').addEventListener("click", (e) => {
+        document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
+        document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+        e.currentTarget.classList.add("selected");
+        showPerformModule();
+      });
+
+      document.querySelector('[data-module="spirit"]').addEventListener("click", (e) => {
+        document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
+        document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+        e.currentTarget.classList.add("selected");
+        showSpiritModule();
+      });
+
+      const wrongBookChip = document.getElementById("chipWrongBook");
+      if (wrongBookChip) {
+        wrongBookChip.addEventListener("click", (e) => {
+          if (window.AppFeatures && !AppFeatures.wrongBook) return;
+          document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
+          document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+          e.currentTarget.classList.add("selected");
+          showWrongBookModule();
+        });
+      }
+
+      const dailyChip = document.getElementById("chipDailyChallenge");
+      if (dailyChip) {
+        dailyChip.addEventListener("click", (e) => {
+          if (window.AppFeatures && !AppFeatures.dailyChallenge) return;
+          document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
+          document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+          e.currentTarget.classList.add("selected");
+          showDailyChallengeModule();
+        });
+      }
+
+      document.querySelectorAll("[data-mode]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          if (activeModule !== "quiz") showQuizModule();
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    /**
+     * 题库：30 道题，5 类 × 6 道，每类含初级(1)/中级(2)/高级(3) 各 2 道
+     * 格式：{ type, difficulty, text, hint?, options, answer }
+     */
+    const QUESTIONS = [
+      // ── 音名识别 ×6 ──
+      { type: "音名识别", difficulty: 1, text: "高音谱号下，第一线是什么音？", hint: "线音从下到上：E G B D F", options: ["E（Mi）", "G（Sol）", "C（Do）", "F（Fa）"], answer: 0 },
+      { type: "音名识别", difficulty: 1, text: "低音谱号下，第二线是什么音？", options: ["G（Sol）", "B（Si）", "D（Re）", "A（La）"], answer: 2 },
+      { type: "音名识别", difficulty: 2, text: "下列哪个音名带升号？", options: ["F", "F♯", "G♭", "E♭"], answer: 1 },
+      { type: "音名识别", difficulty: 2, text: "C 大调中，B 音与 C 音之间相差几个半音？", hint: "B 到 C 是相邻音", options: ["0 个", "1 个", "2 个", "3 个"], answer: 1 },
+      { type: "音名识别", difficulty: 3, text: "下列哪组是等音（同音异名）关系？", options: ["C 与 D", "F♯ 与 G♭", "E 与 F", "G 与 A"], answer: 1 },
+      { type: "音名识别", difficulty: 3, text: "高音谱号下，下加二线是什么音？", hint: "下加线从中央 C 往下数", options: ["A（La）", "B（Si）", "G（Sol）", "D（Re）"], answer: 0 },
+
+      // ── 音程识别 ×6 ──
+      { type: "音程识别", difficulty: 1, text: "从 C 到 D 是什么音程？", options: ["纯一度", "大二度", "小三度", "纯四度"], answer: 1 },
+      { type: "音程识别", difficulty: 1, text: "从 C 到 E 是什么音程？", hint: "C→D→E 共 4 个半音", options: ["大二度", "小三度", "大三度", "纯四度"], answer: 2 },
+      { type: "音程识别", difficulty: 2, text: "从 C 到 F 是什么音程？", options: ["大三度", "纯四度", "纯五度", "大六度"], answer: 1 },
+      { type: "音程识别", difficulty: 2, text: "从 C 到 G 是什么音程？", options: ["纯四度", "增四度", "纯五度", "小六度"], answer: 2 },
+      { type: "音程识别", difficulty: 3, text: "从 C 到 A 是什么音程？", options: ["纯五度", "小六度", "大六度", "小七度"], answer: 2 },
+      { type: "音程识别", difficulty: 3, text: "从 C 到高八度 C 是什么音程？", options: ["小七度", "大七度", "纯八度", "增八度"], answer: 2 },
+
+      // ── 节奏型识别 ×6 ──
+      { type: "节奏型识别", difficulty: 1, text: "一个四分音符的时值等于几个八分音符？", options: ["1 个", "2 个", "3 个", "4 个"], answer: 1 },
+      { type: "节奏型识别", difficulty: 1, text: "一个全音符的时值等于几个四分音符？", options: ["2 个", "3 个", "4 个", "8 个"], answer: 2 },
+      { type: "节奏型识别", difficulty: 2, text: "附点四分音符的时值等于？", options: ["1 个四分 + 1 个八分", "2 个四分", "1 个二分", "2 个八分"], answer: 0 },
+      { type: "节奏型识别", difficulty: 2, text: "4/4 拍中，一小节最多能容纳几个四分音符？", options: ["2 个", "3 个", "4 个", "8 个"], answer: 2 },
+      { type: "节奏型识别", difficulty: 3, text: "三连音的含义是？", options: ["三个音占两拍的时值", "三个音占三拍的时值", "三个音占一拍", "三个音占四拍"], answer: 0 },
+      { type: "节奏型识别", difficulty: 3, text: "6/8 拍是以几分音符为一拍？", hint: "复合拍号：每拍含三个八分音符", options: ["四分音符", "八分音符", "附点四分音符", "二分音符"], answer: 2 },
+
+      // ── 调号识别 ×6 ──
+      { type: "调号识别", difficulty: 1, text: "C 大调有几个升降号？", options: ["0 个", "1 个升号", "1 个降号", "2 个升号"], answer: 0 },
+      { type: "调号识别", difficulty: 1, text: "G 大调的调号是什么？", hint: "G 大调只有一个升号", options: ["无升降号", "1 个升号（F♯）", "1 个降号（B♭）", "2 个升号"], answer: 1 },
+      { type: "调号识别", difficulty: 2, text: "F 大调的调号是什么？", options: ["1 个升号", "1 个降号（B♭）", "2 个降号", "3 个升号"], answer: 1 },
+      { type: "调号识别", difficulty: 2, text: "D 大调有几个升号？", options: ["1 个", "2 个", "3 个", "4 个"], answer: 1 },
+      { type: "调号识别", difficulty: 3, text: "E 大调有几个升号？", options: ["3 个", "4 个", "5 个", "6 个"], answer: 1 },
+      { type: "调号识别", difficulty: 3, text: "Bb 大调有几个降号？", options: ["1 个", "2 个", "3 个", "4 个"], answer: 1 },
+
+      // ── 和弦识别 ×6 ──
+      { type: "和弦识别", difficulty: 1, text: "C 大三和弦由哪三个音组成？", options: ["C D E", "C E G", "C F A", "C E A"], answer: 1 },
+      { type: "和弦识别", difficulty: 1, text: "G 大三和弦由哪三个音组成？", options: ["G B D", "G A B", "G C E", "G D F"], answer: 0 },
+      { type: "和弦识别", difficulty: 2, text: "A 小三和弦由哪三个音组成？", options: ["A C E", "A C♯ E", "A B D", "A D F"], answer: 0 },
+      { type: "和弦识别", difficulty: 2, text: "D 小三和弦的组成音是？", options: ["D F A", "D F♯ A", "D G B", "D E A"], answer: 0 },
+      { type: "和弦识别", difficulty: 3, text: "C 属七和弦（C7）包含哪个音？", options: ["B", "B♭", "E♭", "F♯"], answer: 1 },
+      { type: "和弦识别", difficulty: 3, text: "减三和弦的音程结构是？", hint: "根音 → 小三度 → 再小三度", options: ["大三度 + 小三度", "小三度 + 小三度", "小三度 + 大三度", "大三度 + 大三度"], answer: 1 }
+    ];
+
+    QUESTIONS.forEach((q, i) => {
+      q.id = `q${String(i + 1).padStart(2, "0")}`;
+    });
+    window.QUESTIONS = QUESTIONS;
+
+    const POINTS_PER_QUESTION = 20;
+    const DIFF_LABELS = { 1: "初级", 2: "中级", 3: "高级" };
+    const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const NOTE_NAMES_FLAT = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+
+    // ── Web Audio 引擎 ──
+    const AudioEngine = {
+      ctx: null,
+
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx.state === "suspended") this.ctx.resume();
+      },
+
+      midiToFreq(midi) {
+        return 440 * Math.pow(2, (midi - 69) / 12);
+      },
+
+      playTone(freq, duration = 0.55, type = "sine", gain = 0.28, startDelay = 0) {
+        this.init();
+        const t = this.ctx.currentTime + startDelay;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, t);
+        g.gain.setValueAtTime(0.001, t);
+        g.gain.linearRampToValueAtTime(gain, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, t + duration);
+        osc.connect(g);
+        g.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + duration + 0.05);
+      },
+
+      playNote(midi) {
+        this.playTone(this.midiToFreq(midi), 0.7, "sine", 0.32);
+      },
+
+      playCorrect() {
+        [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+          this.playTone(f, 0.18, "sine", 0.22, i * 0.09);
+        });
+      },
+
+      playWrong() {
+        this.playTone(98, 0.45, "sawtooth", 0.18);
+        this.playTone(73.42, 0.55, "triangle", 0.14, 0.18);
+      }
+    };
+
+    // ── DOM ──
+    const scoreBar        = document.getElementById("scoreBar");
+    const scoreDisplay    = document.getElementById("scoreDisplay");
+    const progressDisplay = document.getElementById("progressDisplay");
+    const diffBadge       = document.getElementById("diffBadge");
+    const setupPanel      = document.getElementById("setupPanel");
+    const setupHint       = document.getElementById("setupHint");
+    const questionArea    = document.getElementById("questionArea");
+    const questionPlaceholder = document.getElementById("questionPlaceholder");
+    const questionContent = document.getElementById("questionContent");
+    const questionType    = document.getElementById("questionType");
+    const questionText    = document.getElementById("questionText");
+    const questionHint    = document.getElementById("questionHint");
+    const audioZone       = document.getElementById("audioZone");
+    const btnReplay       = document.getElementById("btnReplay");
+    const optionsGrid     = document.getElementById("optionsGrid");
+    const btnStart        = document.getElementById("btnStart");
+    const btnRestart      = document.getElementById("btnRestart");
+    const feedbackMsg     = document.getElementById("feedbackMsg");
+    const resultPanel     = document.getElementById("resultPanel");
+    const resultEmoji     = document.getElementById("resultEmoji");
+    const resultTitle     = document.getElementById("resultTitle");
+    const resultDesc      = document.getElementById("resultDesc");
+    const resultCombo     = document.getElementById("resultCombo");
+    const shareCardActions = document.getElementById("shareCardActions");
+    const btnShareCard    = document.getElementById("btnShareCard");
+    const comboDisplay    = document.getElementById("comboDisplay");
+    const reviewHint      = document.getElementById("reviewHint");
+    const wrongBookBadge  = document.getElementById("wrongBookDueBadge");
+    const dailyChallengeBadge = document.getElementById("dailyChallengeBadge");
+    const reviewGroup     = document.getElementById("reviewGroup");
+
+    DailyChallengeStore.configure({
+      getQuizPool: () => QUESTIONS
+    });
+
+    if (typeof PersonaSimulator !== "undefined") {
+      PersonaSimulator.configure({
+        getQuizPool: () => QUESTIONS,
+        buildAudioQuestion: (difficulty) => buildAudioQuestion(difficulty)
+      });
+    }
+
+    const versionTag = document.getElementById("appVersionTag");
+    if (versionTag && window.APP_VERSION) versionTag.textContent = APP_VERSION;
+
+    // ── 设置状态 ──
+    let settings = { mode: "quiz", difficulty: 1 };
+
+    let state = {
+      playing: false,
+      questions: [],
+      currentIndex: 0,
+      score: 0,
+      combo: 0,
+      maxCombo: 0,
+      correctCount: 0,
+      answered: false,
+      reviewMode: null,
+      reviewEntryIds: []
+    };
+
+    function refreshReviewHint() {
+      const parts = [];
+
+      if (window.AppFeatures && AppFeatures.wrongBook) {
+        const due = WrongBookStore.getDueCount();
+        const total = WrongBookStore.getTotalCount();
+        parts.push(`今日待复习 ${due} 题 · 共 ${total} 题`);
+        if (wrongBookBadge) {
+          if (due > 0) {
+            wrongBookBadge.textContent = due > 99 ? "99+" : String(due);
+            wrongBookBadge.classList.remove("hidden");
+          } else {
+            wrongBookBadge.classList.add("hidden");
+          }
+        }
+      }
+
+      if (window.AppFeatures && AppFeatures.dailyChallenge) {
+        const prog = DailyChallengeStore.getProgress();
+        const streak = DailyChallengeStore.getStreak();
+        if (prog.completed) {
+          parts.push(`每日挑战 已完成 ✓ · 🔥${streak}天`);
+        } else if (prog.current > 0) {
+          parts.push(`每日挑战 ${prog.current}/${prog.total}`);
+        } else {
+          parts.push("每日挑战 待开始");
+        }
+        if (dailyChallengeBadge) {
+          if (!prog.completed && prog.current > 0) {
+            dailyChallengeBadge.textContent = `${prog.current}/${prog.total}`;
+            dailyChallengeBadge.classList.remove("hidden");
+          } else if (!prog.completed) {
+            dailyChallengeBadge.textContent = "!";
+            dailyChallengeBadge.classList.remove("hidden");
+          } else {
+            dailyChallengeBadge.classList.add("hidden");
+          }
+        }
+      }
+
+      if (reviewHint) {
+        reviewHint.textContent = parts.length ? parts.join(" · ") : "";
+      }
+    }
+
+    function initFeatureChips() {
+      const wrongBookChip = document.getElementById("chipWrongBook");
+      if (wrongBookChip && AppFeatures.wrongBook) {
+        wrongBookChip.classList.remove("chip-soon");
+        wrongBookChip.disabled = false;
+        wrongBookChip.removeAttribute("title");
+      }
+      const dailyChip = document.getElementById("chipDailyChallenge");
+      if (dailyChip && AppFeatures.dailyChallenge) {
+        dailyChip.classList.remove("chip-soon");
+        dailyChip.disabled = false;
+        dailyChip.removeAttribute("title");
+      }
+      if (reviewGroup && !AppFeatures.wrongBook && !AppFeatures.dailyChallenge) {
+        reviewGroup.classList.add("hidden");
+      }
+      refreshReviewHint();
+    }
+
+    initFeatureChips();
+
+    function showShareCardIfEnabled(payload) {
+      if (!window.AppFeatures || !AppFeatures.shareCard) return;
+      if (typeof ShareCardModule !== "undefined") ShareCardModule.offer(payload);
+    }
+
+    function buildQuizSharePayload() {
+      return buildSharePayload({
+        sessionType: "quiz",
+        score: state.score,
+        totalQuestions: state.questions.length,
+        correctCount: state.correctCount,
+        maxCombo: state.maxCombo,
+        difficulty: settings.difficulty,
+        mode: settings.mode,
+        dateKey: getTodayKey()
+      });
+    }
+
+    function buildDailySharePayload(sessionScore, sessionMaxCombo) {
+      const prog = DailyChallengeStore.getProgress();
+      return buildSharePayload({
+        sessionType: "daily",
+        score: sessionScore != null ? sessionScore : prog.score,
+        totalQuestions: DailyChallengeStore.DAILY_TOTAL,
+        correctCount: prog.correctCount,
+        maxCombo: sessionMaxCombo != null ? sessionMaxCombo : 0,
+        streak: DailyChallengeStore.getStreak(),
+        dateKey: getTodayKey()
+      });
+    }
+
+    // ── 工具函数 ──
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function getQuestionCount(difficulty) {
+      return { 1: 10, 2: 20, 3: 30 }[difficulty];
+    }
+
+    function filterQuizQuestions(difficulty) {
+      const maxDiff = difficulty;
+      const pool = QUESTIONS.filter(q => q.difficulty <= maxDiff);
+      return shuffle(pool).slice(0, getQuestionCount(difficulty));
+    }
+
+    function pickDistractors(correctName, pool, count = 3) {
+      const others = pool.filter(n => n !== correctName);
+      return shuffle(others).slice(0, count);
+    }
+
+    function buildAudioQuestion(difficulty) {
+      let midiPool, namePool, useFlats = false;
+
+      if (difficulty === 1) {
+        midiPool = [60, 62, 64, 65, 67, 69, 71]; // C4–B4 自然音
+        namePool = ["C", "D", "E", "F", "G", "A", "B"];
+      } else if (difficulty === 2) {
+        midiPool = [57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72];
+        namePool = NOTE_NAMES;
+      } else {
+        midiPool = Array.from({ length: 25 }, (_, i) => 55 + i); // G3–G5
+        namePool = NOTE_NAMES;
+        useFlats = Math.random() > 0.5;
+      }
+
+      const midi = midiPool[Math.floor(Math.random() * midiPool.length)];
+      const idx = midi % 12;
+      const correctName = useFlats ? NOTE_NAMES_FLAT[idx] : NOTE_NAMES[idx];
+      const distractorPool = difficulty === 1 ? namePool : (useFlats ? NOTE_NAMES_FLAT : NOTE_NAMES);
+      const distractors = pickDistractors(correctName, distractorPool);
+      const options = shuffle([correctName, ...distractors]);
+      const answer = options.indexOf(correctName);
+
+      return {
+        id: `audio-${midi}`,
+        type: "听音识名",
+        difficulty,
+        isAudio: true,
+        midi,
+        text: "请听音，选择正确的音名",
+        hint: difficulty === 1 ? "提示：自然音 Do Re Mi…" : "提示：注意升降号",
+        options,
+        answer
+      };
+    }
+
+    function generateAudioQuestions(difficulty) {
+      const count = getQuestionCount(difficulty);
+      return Array.from({ length: count }, () => buildAudioQuestion(difficulty));
+    }
+
+    function updateSetupHint() {
+      const count = getQuestionCount(settings.difficulty);
+      const modeLabel = settings.mode === "audio" ? "听音识名" : "综合练习";
+      const diffLabel = DIFF_LABELS[settings.difficulty];
+      setupHint.textContent = `${diffLabel} · ${modeLabel} · ${count} 道题`;
+    }
+
+    // ── 设置面板交互 ──
+    document.querySelectorAll("[data-mode]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        settings.mode = btn.dataset.mode;
+        updateSetupHint();
+      });
+    });
+
+    document.querySelectorAll("[data-difficulty]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-difficulty]").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        settings.difficulty = Number(btn.dataset.difficulty);
+        updateSetupHint();
+      });
+    });
+
+    updateSetupHint();
+
+    // ── 游戏逻辑 ──
+    function updateScore() {
+      scoreDisplay.innerHTML = `${state.score}<span class="unit">分</span>`;
+    }
+
+    function updateProgress() {
+      if (!state.playing) {
+        progressDisplay.textContent = "准备开始";
+        return;
+      }
+      if (state.reviewMode && state.reviewMode.type === "daily") {
+        const base = state.reviewMode.startOffset || 0;
+        progressDisplay.textContent = `第 ${base + state.currentIndex + 1} / ${DailyChallengeStore.DAILY_TOTAL} 题`;
+        return;
+      }
+      progressDisplay.textContent = `第 ${state.currentIndex + 1} / ${state.questions.length} 题`;
+    }
+
+    function updateComboDisplay() {
+      if (state.combo >= 2) {
+        comboDisplay.textContent = `🔥 连击 x${state.combo}`;
+        comboDisplay.classList.remove("show");
+        void comboDisplay.offsetWidth;
+        comboDisplay.classList.add("show");
+      } else {
+        comboDisplay.classList.remove("show");
+        comboDisplay.textContent = "";
+      }
+    }
+
+    function resetQuestionArea() {
+      questionArea.className = "question-area";
+      feedbackMsg.textContent = "";
+      feedbackMsg.className = "feedback-msg";
+    }
+
+    function playCurrentNote() {
+      const q = state.questions[state.currentIndex];
+      if (q && q.isAudio) AudioEngine.playNote(q.midi);
+    }
+
+    function showQuestion(index) {
+      const q = state.questions[index];
+      resetQuestionArea();
+
+      questionPlaceholder.classList.add("hidden");
+      questionContent.classList.remove("hidden");
+      optionsGrid.classList.remove("hidden");
+      questionArea.classList.add("active");
+
+      questionType.textContent = q.type;
+      questionText.textContent = q.text;
+      questionHint.textContent = q.hint || "";
+      questionHint.style.display = q.hint ? "block" : "none";
+
+      if (q.isAudio) {
+        audioZone.classList.remove("hidden");
+        setTimeout(playCurrentNote, 300);
+      } else {
+        audioZone.classList.add("hidden");
+      }
+
+      optionsGrid.innerHTML = "";
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.type = "button";
+        btn.textContent = opt;
+        btn.addEventListener("click", () => handleAnswer(i, btn));
+        optionsGrid.appendChild(btn);
+      });
+
+      state.answered = false;
+      updateProgress();
+    }
+
+    function handleAnswer(selectedIndex, btn) {
+      if (state.answered) return;
+      state.answered = true;
+
+      const q = state.questions[state.currentIndex];
+      const isCorrect = selectedIndex === q.answer;
+      const wrongOption = q.options[selectedIndex];
+      const buttons = optionsGrid.querySelectorAll(".option-btn");
+      buttons.forEach(b => b.disabled = true);
+
+      if (state.reviewMode && state.reviewMode.type === "daily") {
+        let points = 0;
+        if (isCorrect) {
+          AudioEngine.playCorrect();
+          state.combo++;
+          if (state.combo > state.maxCombo) state.maxCombo = state.combo;
+          const comboBonus = state.combo * 2;
+          points = POINTS_PER_QUESTION + comboBonus;
+          btn.classList.add("selected-correct");
+          questionArea.classList.add("correct");
+          feedbackMsg.textContent = `太棒了！+${points} 分`;
+          feedbackMsg.classList.add("correct");
+          state.score += points;
+          state.correctCount++;
+          updateScore();
+          updateComboDisplay();
+        } else {
+          AudioEngine.playWrong();
+          state.combo = 0;
+          updateComboDisplay();
+          btn.classList.add("selected-wrong");
+          questionArea.classList.add("wrong");
+          buttons[q.answer].classList.add("reveal-correct");
+          feedbackMsg.textContent = "再想想，正确答案是上方高亮的选项";
+          feedbackMsg.classList.add("wrong");
+          WrongBookStore.recordWrong(q, "daily", wrongOption);
+        }
+        DailyChallengeStore.recordAnswer(isCorrect, points);
+        refreshReviewHint();
+      } else if (state.reviewMode) {
+        const entryId = state.reviewEntryIds[state.currentIndex];
+        if (isCorrect) {
+          AudioEngine.playCorrect();
+          btn.classList.add("selected-correct");
+          questionArea.classList.add("correct");
+          if (state.reviewMode.type === "review") {
+            WrongBookStore.recordReviewCorrect(entryId);
+            state.reviewMode.stats.correct++;
+            feedbackMsg.textContent = "复习正确，已延长下次复习间隔 ✓";
+          } else {
+            feedbackMsg.textContent = "答对了！继续加油 🎶";
+          }
+          feedbackMsg.classList.add("correct");
+        } else {
+          AudioEngine.playWrong();
+          btn.classList.add("selected-wrong");
+          questionArea.classList.add("wrong");
+          buttons[q.answer].classList.add("reveal-correct");
+          if (state.reviewMode.type === "review") {
+            WrongBookStore.recordReviewWrong(entryId, wrongOption);
+            state.reviewMode.stats.wrong++;
+            feedbackMsg.textContent = "复习答错，已重置复习计划";
+          } else {
+            const entry = WrongBookStore.getById(entryId);
+            WrongBookStore.recordWrong(q, entry ? entry.source : settings.mode, wrongOption);
+            feedbackMsg.textContent = "再想想，正确答案是上方高亮的选项";
+          }
+          feedbackMsg.classList.add("wrong");
+        }
+        refreshReviewHint();
+      } else if (isCorrect) {
+        AudioEngine.playCorrect();
+        state.combo++;
+        if (state.combo > state.maxCombo) state.maxCombo = state.combo;
+        const comboBonus = state.combo * 2;
+        btn.classList.add("selected-correct");
+        questionArea.classList.add("correct");
+        feedbackMsg.textContent = `太棒了！答对了 🎶 +${POINTS_PER_QUESTION + comboBonus} 分（连击 +${comboBonus}）`;
+        feedbackMsg.classList.add("correct");
+        state.score += POINTS_PER_QUESTION + comboBonus;
+        state.correctCount++;
+        updateScore();
+        updateComboDisplay();
+      } else {
+        AudioEngine.playWrong();
+        state.combo = 0;
+        updateComboDisplay();
+        btn.classList.add("selected-wrong");
+        questionArea.classList.add("wrong");
+        buttons[q.answer].classList.add("reveal-correct");
+        feedbackMsg.textContent = "再想想，正确答案是上方高亮的选项";
+        feedbackMsg.classList.add("wrong");
+        if (settings.mode === "quiz" || settings.mode === "audio") {
+          WrongBookStore.recordWrong(q, settings.mode, wrongOption);
+          refreshReviewHint();
+        }
+      }
+
+      setTimeout(() => {
+        state.currentIndex++;
+        if (state.currentIndex < state.questions.length) {
+          showQuestion(state.currentIndex);
+        } else if (state.reviewMode && state.reviewMode.type === "daily") {
+          endDailyChallenge();
+        } else if (state.reviewMode) {
+          endReviewSession();
+        } else {
+          endGame();
+        }
+      }, 1400);
+    }
+
+    function beginSession(questions, entryIds, reviewMode) {
+      AudioEngine.init();
+      const initialScore = reviewMode && reviewMode.initialScore ? reviewMode.initialScore : 0;
+      if (typeof ShareCardModule !== "undefined") ShareCardModule.reset();
+      if (shareCardActions) shareCardActions.classList.add("hidden");
+
+      state = {
+        playing: true,
+        questions,
+        currentIndex: 0,
+        score: initialScore,
+        combo: 0,
+        maxCombo: 0,
+        correctCount: 0,
+        answered: false,
+        reviewMode,
+        reviewEntryIds: entryIds || []
+      };
+
+      updateScore();
+      updateComboDisplay();
+      setupPanel.classList.add("hidden");
+      if (reviewGroup) reviewGroup.classList.add("hidden");
+      scoreBar.classList.remove("hidden");
+      btnRestart.classList.remove("hidden");
+      if (reviewMode) {
+        if (reviewMode.type === "daily") {
+          diffBadge.textContent = "每日挑战 · 中级";
+        } else {
+          diffBadge.textContent = reviewMode.type === "review" ? "错题复习" : "单题练习";
+        }
+        comboDisplay.classList.remove("show");
+      } else {
+        diffBadge.textContent = `${DIFF_LABELS[settings.difficulty]} · ${settings.mode === "audio" ? "听音识名" : "综合练习"}`;
+      }
+      btnStart.classList.add("hidden");
+      resultPanel.classList.remove("show");
+      resultCombo.textContent = "";
+      showQuestion(0);
+    }
+
+    function startWrongBookReview(dueEntries) {
+      if (!dueEntries.length) return;
+      if (window.AppShell) AppShell.showQuizModule();
+      const questions = dueEntries.map(e => ({ ...e.question }));
+      const entryIds = dueEntries.map(e => e.id);
+      beginSession(questions, entryIds, { type: "review", stats: { correct: 0, wrong: 0 } });
+    }
+
+    function startWrongBookPractice(entry) {
+      if (window.AppShell) AppShell.showQuizModule();
+      beginSession([{ ...entry.question }], [entry.id], { type: "practice" });
+    }
+
+    function startDailyChallenge() {
+      if (!DailyChallengeStore.canStart()) return;
+      if (window.AppShell) AppShell.showQuizModule();
+      const prog = DailyChallengeStore.getProgress();
+      const allQuestions = DailyChallengeStore.generateToday({ quizPool: QUESTIONS });
+      const questions = prog.current > 0 ? allQuestions.slice(prog.current) : allQuestions;
+      if (!questions.length) return;
+      beginSession(questions, [], { type: "daily", initialScore: prog.score, startOffset: prog.current });
+    }
+
+    function endDailyChallenge() {
+      state.playing = false;
+      const sessionScore = state.score;
+      const sessionMaxCombo = state.maxCombo;
+      DailyChallengeStore.markComplete();
+      const streak = DailyChallengeStore.getStreak();
+
+      optionsGrid.classList.add("hidden");
+      questionContent.classList.add("hidden");
+      audioZone.classList.add("hidden");
+      questionPlaceholder.classList.remove("hidden");
+      setupPanel.classList.remove("hidden");
+      if (reviewGroup) reviewGroup.classList.remove("hidden");
+      scoreBar.classList.add("hidden");
+      diffBadge.textContent = "";
+      resetQuestionArea();
+      updateProgress();
+      comboDisplay.classList.remove("show");
+      refreshReviewHint();
+
+      questionPlaceholder.innerHTML = `
+        <span class="emoji">🎉</span>
+        每日挑战完成！<br>
+        得分 <strong>${state.score}</strong> · 🔥 连续 <strong>${streak}</strong> 天
+      `;
+
+      resultPanel.classList.remove("show");
+      btnRestart.classList.add("hidden");
+      state.reviewMode = null;
+      state.reviewEntryIds = [];
+
+      if (typeof DailyChallengeModule !== "undefined") {
+        const dcRoot = document.getElementById("dailyChallengeRoot");
+        if (dcRoot && dcRoot.classList.contains("active")) DailyChallengeModule.refresh();
+      }
+
+      showShareCardIfEnabled(buildDailySharePayload(sessionScore, sessionMaxCombo));
+    }
+
+    function startGame() {
+      const questions = settings.mode === "audio"
+        ? generateAudioQuestions(settings.difficulty)
+        : filterQuizQuestions(settings.difficulty);
+      beginSession(questions, [], null);
+    }
+
+    function endReviewSession() {
+      state.playing = false;
+      const stats = state.reviewMode.stats || { correct: 0, wrong: 0 };
+      const total = state.questions.length;
+      const isReview = state.reviewMode.type === "review";
+
+      optionsGrid.classList.add("hidden");
+      questionContent.classList.add("hidden");
+      audioZone.classList.add("hidden");
+      questionPlaceholder.classList.remove("hidden");
+      setupPanel.classList.remove("hidden");
+      if (reviewGroup) reviewGroup.classList.remove("hidden");
+      scoreBar.classList.add("hidden");
+      diffBadge.textContent = "";
+      resetQuestionArea();
+      updateProgress();
+      comboDisplay.classList.remove("show");
+      refreshReviewHint();
+
+      if (isReview) {
+        questionPlaceholder.innerHTML = `
+          <span class="emoji">${stats.wrong === 0 ? "✨" : "📖"}</span>
+          复习完成 · 共 ${total} 题<br>
+          正确 <strong>${stats.correct}</strong> · 错误 <strong>${stats.wrong}</strong>
+        `;
+      } else {
+        questionPlaceholder.innerHTML = `
+          <span class="emoji">💪</span>
+          单题练习完成<br>继续加油！
+        `;
+      }
+
+      resultPanel.classList.remove("show");
+      state.reviewMode = null;
+      state.reviewEntryIds = [];
+    }
+
+    function endGame() {
+      state.playing = false;
+      optionsGrid.classList.add("hidden");
+      questionContent.classList.add("hidden");
+      audioZone.classList.add("hidden");
+      questionPlaceholder.classList.remove("hidden");
+      setupPanel.classList.remove("hidden");
+      if (reviewGroup) reviewGroup.classList.remove("hidden");
+      scoreBar.classList.add("hidden");
+      diffBadge.textContent = "";
+      refreshReviewHint();
+
+      const total = state.questions.length;
+      const maxScore = total * POINTS_PER_QUESTION;
+      const ratio = state.score / maxScore;
+
+      questionPlaceholder.innerHTML = `
+        <span class="emoji">${ratio >= 0.8 ? "🏆" : "💪"}</span>
+        本次得分 <strong>${state.score}</strong> 分<br>
+        共 ${total} 题，继续加油！
+      `;
+      resetQuestionArea();
+      updateProgress();
+      comboDisplay.classList.remove("show");
+
+      if (ratio >= 0.8) {
+        resultEmoji.textContent = "🏆";
+        resultTitle.textContent = "太厉害了！";
+        resultDesc.textContent = `你获得了 ${state.score} 分（基础 ${maxScore} 分 + 连击奖励），乐理小达人非你莫属！`;
+      } else if (ratio >= 0.5) {
+        resultEmoji.textContent = "🎵";
+        resultTitle.textContent = "不错哦！";
+        resultDesc.textContent = `你获得了 ${state.score} 分（基础 ${maxScore} 分 + 连击奖励），再多练几题就能更棒！`;
+      } else {
+        resultEmoji.textContent = "📖";
+        resultTitle.textContent = "继续加油！";
+        resultDesc.textContent = `你获得了 ${state.score} 分（基础 ${maxScore} 分 + 连击奖励），复习一下再来挑战吧！`;
+      }
+
+      resultCombo.textContent = state.maxCombo >= 2
+        ? `🔥 最高连击 x${state.maxCombo}`
+        : "最高连击 x0";
+
+      resultPanel.classList.add("show");
+      showShareCardIfEnabled(buildQuizSharePayload());
+    }
+
+    if (btnShareCard) {
+      btnShareCard.addEventListener("click", () => {
+        let payload = ShareCardModule.getPayload();
+        if (!payload) {
+          payload = state.reviewMode && state.reviewMode.type === "daily"
+            ? buildDailySharePayload()
+            : buildQuizSharePayload();
+        }
+        ShareCardModule.openPreview(payload);
+      });
+    }
+
+    btnReplay.addEventListener("click", playCurrentNote);
+    btnStart.addEventListener("click", () => {
+      if (typeof ShareCardModule !== "undefined") ShareCardModule.reset();
+      startGame();
+    });
+    btnRestart.addEventListener("click", () => {
+      if (typeof ShareCardModule !== "undefined") ShareCardModule.reset();
+      startGame();
+    });
+
+    if (window.UxSimulator && UxSimulator.isEnabled()) {
+      UxSimulator.mountUI();
+    }
+    if (window.PersonaSimulator && PersonaSimulator.isEnabled()) {
+      PersonaSimulator.mountUI();
+    }
+  </script>
+</body>
+</html>
