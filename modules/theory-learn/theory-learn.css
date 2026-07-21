@@ -1,0 +1,36 @@
+/* 乐理入门 · 单元专属视觉（引擎样式见 core/lesson-engine.css） */
+
+.tl-staff-demo { text-align: center; }
+.tl-staff-line {
+  padding: 6px 0; border-bottom: 2px solid #d4c4ff;
+  font-weight: 600; font-size: 0.95rem;
+}
+.tl-staff-line:last-of-type { border-bottom: none; }
+.tl-note.hl { color: var(--primary); }
+.tl-caption { font-size: 0.78rem; color: var(--text-light); margin-top: 10px; }
+
+.tl-interval-demo { display: flex; flex-direction: column; gap: 10px; }
+.tl-pair {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 600; font-size: 1rem;
+}
+.tl-pair span:first-child, .tl-pair span:nth-child(3) {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #f5f0ff; display: flex; align-items: center; justify-content: center;
+}
+.tl-arrow { color: var(--text-light); }
+.tl-label {
+  margin-left: auto; font-size: 0.82rem; font-weight: 600;
+  color: var(--primary); background: #f5f0ff; padding: 4px 10px; border-radius: 8px;
+}
+
+.tl-triad-demo { text-align: center; }
+.tl-triad { display: flex; justify-content: center; gap: 12px; align-items: flex-end; }
+.tl-root, .tl-third, .tl-fifth {
+  width: 36px; border-radius: 50% 50% 4px 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: #fff;
+}
+.tl-root { height: 48px; background: var(--primary); }
+.tl-third { height: 64px; background: #9a7cff; }
+.tl-fifth { height: 56px; background: #b89cff; }

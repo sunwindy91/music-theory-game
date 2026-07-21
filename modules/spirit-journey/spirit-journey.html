@@ -3,782 +3,2011 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>灵气 · 光点星图</title>
+  <title>灵气星图</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #050818; }
     canvas#c { display: block; position: fixed; inset: 0; z-index: 1; }
     #ui {
       position: fixed; inset: 0; pointer-events: none; z-index: 10;
-      font-family: "Segoe UI", system-ui, sans-serif; color: rgba(255,255,255,0.9);
+      font-family: "Segoe UI", system-ui, sans-serif; color: rgba(255,255,255,0.92);
     }
-    #spirit { position: absolute; top: 24px; left: 28px; font-size: 1.1rem; letter-spacing: 0.12em; text-shadow: 0 0 20px rgba(160,120,255,0.8); }
-    #spirit span { font-size: 1.6rem; font-weight: 300; color: #fff; }
-    #startStatus {
-      position: absolute; top: 58px; left: 28px; font-size: 0.82rem; letter-spacing: 0.08em;
-      color: rgba(255,220,160,0.95); animation: pulseHint 2s ease-in-out infinite;
+    #spirit {
+      position: absolute; top: 22px; left: 24px; font-size: 1.05rem; letter-spacing: 0.1em;
+      text-shadow: 0 0 18px rgba(160,120,255,0.75);
     }
-    #startStatus.ready { color: rgba(160,255,200,0.95); animation: none; }
-    @keyframes pulseHint { 0%,100%{opacity:.65} 50%{opacity:1} }
-    #phaseHint { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); font-size: 0.85rem; opacity: 0.85; letter-spacing: 0.12em; }
-    #unlockedList {
-      position: absolute; top: 24px; right: 28px; max-width: 260px;
-      font-size: 0.78rem; line-height: 1.55; text-align: right; opacity: 0.78; letter-spacing: 0.05em;
+    #spirit span { font-size: 1.55rem; font-weight: 300; color: #fff; }
+    #lives { position: absolute; top: 58px; left: 24px; font-size: 0.9rem; letter-spacing: 0.08em; opacity: 0.85; }
+    #evo {
+      position: absolute; top: 82px; left: 24px; font-size: 0.75rem; letter-spacing: 0.06em;
+      line-height: 1.55; opacity: 0.92; color: #ffe8c0;
+      text-shadow: 0 0 12px rgba(255, 180, 100, 0.35);
     }
-    #unlockBar { position: absolute; top: 82px; left: 28px; font-size: 0.75rem; opacity: 0.75; line-height: 1.7; }
-    #nowPlaying {
-      position: absolute; bottom: 96px; right: 28px; font-size: 0.8rem; opacity: 0;
-      text-align: right; letter-spacing: 0.08em; color: #ffd4a8;
-      text-shadow: 0 0 12px rgba(255,180,100,0.4); transition: opacity 0.4s;
-      max-width: 240px;
+    #ammoHud {
+      position: absolute; top: 128px; left: 20px;
+      display: flex; flex-direction: column; gap: 8px;
+      pointer-events: auto; width: 168px;
     }
-    #nowPlaying.show { opacity: 0.9; }
-    #playMelodyWrap {
-      position: absolute; bottom: 28px; right: 28px; pointer-events: auto;
-      display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 11;
+    .ammo-slot {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; border-radius: 12px; cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.22);
+      background: rgba(18,14,40,0.72); font-size: 0.78rem; letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.85);
     }
-    #songNames { font-size: 0.7rem; opacity: 0.6; text-align: right; max-width: 220px; }
-    #playMelody {
-      cursor: pointer; padding: 14px 28px; border: 1px solid rgba(255,255,255,0.32);
-      background: rgba(90,65,180,0.72); backdrop-filter: blur(10px);
-      color: #fff; font-size: 0.92rem; letter-spacing: 0.1em; border-radius: 999px;
-      opacity: 0; transition: opacity 0.5s, transform 0.2s;
-      box-shadow: 0 4px 24px rgba(124,92,255,0.45); font-family: inherit;
+    .ammo-slot .count { font-size: 1.15rem; font-weight: 600; }
+    .ammo-slot.major { border-color: rgba(255, 210, 120, 0.35); }
+    .ammo-slot.minor { border-color: rgba(160, 130, 255, 0.4); }
+    .ammo-slot.flat { border-color: rgba(180, 190, 210, 0.35); opacity: 0.9; }
+    .ammo-slot.super { border-color: rgba(255, 180, 220, 0.55); }
+    .ammo-slot.active {
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.35);
+      background: rgba(40, 32, 80, 0.9);
     }
-    #playMelody.show { opacity: 1; }
-    #playMelody:hover:not(:disabled) { transform: scale(1.05); background: rgba(110,80,200,0.85); }
-    #playMelody:disabled { opacity: 0.45; cursor: default; transform: none; }
+    .ammo-slot.major.active { background: rgba(80, 55, 20, 0.55); }
+    .ammo-slot.minor.active { background: rgba(45, 30, 90, 0.65); }
+    .ammo-slot.super.active { background: rgba(70, 30, 70, 0.7); }
+    #evoPanel {
+      position: fixed; inset: 0; z-index: 19; display: none; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(24,14,40,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      pointer-events: none;
+    }
+    #evoPanel.show { display: flex; pointer-events: auto; }
+    #evoChoices { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+    #evoChoices button {
+      width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px;
+      pointer-events: auto; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.28); background: rgba(255,255,255,0.08); color: #fff;
+      font-size: 0.82rem; letter-spacing: 0.04em; line-height: 1.45;
+    }
+    #evoChoices button:hover { background: rgba(255,255,255,0.16); }
+    #evoChoices button strong { color: #ffe8c0; }
+    #pack {
+      position: absolute; bottom: 88px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; align-items: center; pointer-events: none;
+    }
+    #pack .chip {
+      min-width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.9rem;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(30,24,64,0.75);
+    }
+    #pack .chip.empty { opacity: 0.35; font-weight: 400; font-size: 0.7rem; }
+    #hint {
+      position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+      font-size: 0.82rem; letter-spacing: 0.1em; opacity: 0.88; text-align: center;
+      max-width: min(520px, 90vw);
+    }
+    #toast {
+      position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+      font-size: 1.05rem; letter-spacing: 0.12em; opacity: 0; transition: opacity 0.25s;
+      text-shadow: 0 0 16px rgba(255,210,140,0.55); color: #ffe8c0;
+      max-width: 90vw; text-align: center;
+    }
+    #toast.show { opacity: 1; }
+    #keys {
+      position: absolute; bottom: 28px; left: 24px; font-size: 0.72rem; opacity: 0.55; line-height: 1.7;
+      letter-spacing: 0.06em;
+    }
     #overlay {
       position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at center, rgba(10,8,30,0.6) 0%, rgba(5,5,20,0.92) 100%);
-      transition: opacity 0.8s; cursor: pointer;
+      background: radial-gradient(ellipse at center, rgba(12,10,36,0.55) 0%, rgba(5,5,20,0.94) 100%);
+      transition: opacity 0.7s; cursor: pointer;
     }
     #overlay.hidden { opacity: 0; pointer-events: none; }
     #overlay h1 {
       font-weight: 200; font-size: 2rem; letter-spacing: 0.35em;
-      color: rgba(255,255,255,0.85); text-shadow: 0 0 40px rgba(140,100,255,0.6);
-      text-align: center; line-height: 2;
+      color: rgba(255,255,255,0.88); text-shadow: 0 0 40px rgba(140,100,255,0.55);
+      text-align: center; line-height: 1.9;
     }
-    #overlay p { font-size: 0.85rem; opacity: 0.55; letter-spacing: 0.12em; margin-top: 1rem; text-align: center; line-height: 1.8; }
-    #victoryCenter {
-      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -52%);
-      z-index: 5; text-align: center; pointer-events: none;
-      opacity: 0; transition: opacity 1.4s ease;
+    #overlay p {
+      font-size: 0.84rem; opacity: 0.6; letter-spacing: 0.1em; margin-top: 1rem;
+      text-align: center; line-height: 1.85;
     }
-    #victoryCenter.show { opacity: 1; }
-    #musicianHit {
-      pointer-events: auto; cursor: pointer; display: inline-block;
-      padding: 8px; border-radius: 12px; transition: transform 0.25s, box-shadow 0.25s;
+    #victory, #timestop {
+      position: fixed; inset: 0; z-index: 15; display: none; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(20,12,48,0.45) 0%, rgba(5,5,18,0.82) 100%);
+      pointer-events: none;
     }
-    #musicianHit:hover { transform: scale(1.04); box-shadow: 0 0 32px rgba(180,140,255,0.35); }
-    #musicianHit.playing { animation: glowPulse 1.2s ease-in-out infinite; }
-    @keyframes glowPulse {
-      0%,100% { box-shadow: 0 0 20px rgba(180,140,255,0.3); }
-      50%      { box-shadow: 0 0 40px rgba(255,200,140,0.5); }
+    #victory.show, #timestop.show { display: flex; pointer-events: auto; }
+    #timestop {
+      z-index: 18;
+      background: radial-gradient(ellipse at center, rgba(8,16,40,0.55) 0%, rgba(2,4,16,0.92) 100%);
     }
-    #musicianArt {
-      display: block; max-width: min(220px, 36vw); max-height: min(360px, 48vh);
-      width: auto; height: auto; object-fit: contain;
-      filter: drop-shadow(0 0 16px rgba(140,100,255,0.4));
+    .panel-box {
+      text-align: center; padding: 28px 32px; max-width: min(440px, 92vw);
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 16px;
+      background: rgba(20,16,48,0.78); backdrop-filter: blur(10px);
     }
-    #victoryText {
-      margin-top: 16px; font-size: 0.95rem; font-weight: 300; letter-spacing: 0.08em;
-      line-height: 1.85; color: rgba(255,255,255,0.88);
-      text-shadow: 0 0 20px rgba(180,140,255,0.45); padding: 0 16px;
+    .panel-box h2 {
+      font-weight: 300; letter-spacing: 0.22em; font-size: 1.25rem;
+      text-shadow: 0 0 24px rgba(180,140,255,0.5);
     }
-    #meowaHint {
-      margin-top: 8px; font-size: 0.68rem; opacity: 0.45; letter-spacing: 0.06em;
+    .panel-box .reward {
+      margin-top: 14px; padding: 12px 14px; border-radius: 10px;
+      background: rgba(255, 184, 77, 0.12); border: 1px solid rgba(255, 200, 120, 0.35);
+      font-size: 0.88rem; letter-spacing: 0.06em; line-height: 1.65; color: #ffe8c0;
     }
+    .panel-box p { margin-top: 12px; font-size: 0.85rem; opacity: 0.78; letter-spacing: 0.06em; line-height: 1.7; }
+    .panel-box .teach {
+      margin-top: 14px; text-align: left; font-size: 0.84rem; line-height: 1.75; opacity: 0.88;
+      padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,0.05);
+    }
+    .actions {
+      margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    }
+    .actions button, #tsChoices button {
+      pointer-events: auto; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.28); border-radius: 999px;
+      background: rgba(255,255,255,0.08); color: #fff;
+      padding: 10px 18px; font-size: 0.82rem; letter-spacing: 0.06em;
+    }
+    .actions button.primary { background: rgba(124, 92, 255, 0.45); border-color: rgba(180,160,255,0.55); }
+    .actions button:hover, #tsChoices button:hover { background: rgba(255,255,255,0.16); }
+    #tsChoices { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+    #tsChoices button { width: 100%; border-radius: 12px; padding: 12px 16px; }
+    #tsStatus { margin-top: 12px; min-height: 1.4em; font-size: 0.85rem; color: #ffe8a0; }
+    #whyChord {
+      position: fixed; inset: 0; z-index: 16; display: none; align-items: center; justify-content: center;
+      background: rgba(4, 6, 18, 0.72); pointer-events: none;
+    }
+    #whyChord.show { display: flex; pointer-events: auto; }
+    #whyChord .why-box {
+      max-width: min(420px, 92vw); padding: 22px 24px; border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.22); background: rgba(22,18,52,0.92);
+      text-align: center;
+    }
+    #whyChord h3 {
+      font-weight: 400; letter-spacing: 0.18em; font-size: 1.05rem; margin-bottom: 12px;
+    }
+    #whyChord .why-notes {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 14px 0;
+    }
+    #whyChord .why-note {
+      min-width: 72px; padding: 10px 8px; border-radius: 12px;
+      border: 1.5px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.06);
+    }
+    #whyChord .why-note strong { display: block; font-size: 1.25rem; margin-bottom: 4px; }
+    #whyChord .why-note span { font-size: 0.72rem; opacity: 0.75; letter-spacing: 0.04em; }
+    #whyChord .why-formula {
+      font-size: 0.88rem; line-height: 1.7; opacity: 0.9; letter-spacing: 0.04em;
+      text-align: left; padding: 12px 14px; border-radius: 10px;
+      background: rgba(255,255,255,0.05); margin-top: 4px;
+    }
+    #whyChord .why-ammo {
+      margin-top: 12px; color: #ffe8a0; font-size: 0.9rem; letter-spacing: 0.06em;
+    }
+    #pauseBtn {
+      position: absolute; top: 18px; right: 18px;
+      pointer-events: auto; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.28); border-radius: 999px;
+      background: rgba(18,14,40,0.75); color: rgba(255,255,255,0.9);
+      padding: 8px 14px; font-size: 0.78rem; letter-spacing: 0.08em;
+    }
+    #pauseBtn:hover { background: rgba(40,32,72,0.9); }
+    #pausePanel {
+      position: fixed; inset: 0; z-index: 17; display: none; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(10,14,36,0.5) 0%, rgba(4,6,16,0.88) 100%);
+      pointer-events: none;
+    }
+    #pausePanel.show { display: flex; pointer-events: auto; }
+    #pausePanel .teach strong { color: #ffe8c0; }
   </style>
 </head>
 <body>
   <canvas id="c"></canvas>
   <div id="ui">
     <div id="spirit">灵气 <span id="spiritCount">0</span> / 30</div>
-    <div id="startStatus">👆 点击屏幕任意处开始</div>
-    <div id="phaseHint">等待开始…</div>
-    <div id="unlockedList">已解锁：—</div>
-    <div id="unlockBar"></div>
-    <div id="nowPlaying"></div>
-    <div id="playMelodyWrap">
-      <div id="songNames"></div>
-      <button id="playMelody" type="button">♪ 播放旋律</button>
+    <div id="lives">生命 ●●●</div>
+    <div id="evo">叠层 0 · 下一阶 10</div>
+    <div id="ammoHud" aria-label="弹药">
+      <button type="button" class="ammo-slot major active" data-ammo="major" id="slotMajor">
+        <span>1 大三·明快穿透</span><span class="count" id="ammoMajorCount">0</span>
+      </button>
+      <button type="button" class="ammo-slot minor" data-ammo="minor" id="slotMinor">
+        <span>2 小三·阴郁冰冻</span><span class="count" id="ammoMinorCount">0</span>
+      </button>
+      <button type="button" class="ammo-slot flat" data-ammo="flat" id="slotFlat">
+        <span>3 平击</span><span class="count">∞</span>
+      </button>
+      <button type="button" class="ammo-slot super" data-ammo="super" id="slotSuper">
+        <span>4 超级·合弦</span><span class="count" id="ammoSuperCount">0</span>
+      </button>
+    </div>
+    <div id="hint">WASD 移动 · 凑和弦入库 · 1/2/3/4 切弹 · R 合成超级弹</div>
+    <button type="button" id="pauseBtn" aria-label="暂停">暂停 P</button>
+    <div id="pack" aria-label="音符背包"></div>
+    <div id="toast"></div>
+    <div id="keys">1/2/3/4 切弹 · R 大小三合成超级弹<br>E 撞击 · P 暂停 · 清场喘息 · Boss 波</div>
+  </div>
+
+  <div id="evoPanel" aria-hidden="true">
+    <div class="panel-box">
+      <h2>进化 · 三选一</h2>
+      <p id="evoTierLabel">选择一条成长路线</p>
+      <div id="evoChoices"></div>
     </div>
   </div>
-  <div id="victoryCenter">
-    <div id="musicianHit" title="点击聆听完整旋律">
-      <img id="musicianArt" src="../../assets/goddess.png" alt="音乐家">
+
+  <div id="pausePanel" aria-hidden="true">
+    <div class="panel-box">
+      <h2>暂停 · 想一想</h2>
+      <div class="teach" id="pauseTeach">
+        <strong>明快大三</strong>：根音 + 大三度(+4) + 纯五度 → 穿透，克刚石<br>
+        <strong>阴郁小三</strong>：根音 + 小三度(+3) + 纯五度 → 冰冻，克雾灵<br>
+        掉落不全是音符：刚盾挡伤 · 闪速加速 · 弹药直接补给<br>
+        看左下背包构成，再决定用哪一槽开火。
+      </div>
+      <p>世界已冻结 · 适合对照抗性与和弦色彩</p>
+      <div class="actions">
+        <button type="button" class="primary" id="pauseResume">继续探索</button>
+      </div>
     </div>
-    <p id="victoryText">你收集了 30 个灵气，星图已完整。<br>点击她，听一首歌。</p>
-    <p id="meowaHint">点击光点探索音阶 · 右下角可播放已解锁旋律</p>
   </div>
+
+  <div id="whyChord" aria-hidden="true">
+    <div class="why-box">
+      <h3 id="whyTitle">为什么算凑成了？</h3>
+      <div class="why-notes" id="whyNotes"></div>
+      <div class="why-formula" id="whyFormula"></div>
+      <div class="why-ammo" id="whyAmmo"></div>
+      <div class="actions">
+        <button type="button" class="primary" id="whyOk">知道了 · 继续</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="timestop" aria-hidden="true">
+    <div class="panel-box">
+      <h2>时间停止 · 学堂</h2>
+      <div class="teach" id="tsTeach"></div>
+      <p id="tsPrompt"></p>
+      <div class="actions" style="margin-top:12px">
+        <button type="button" class="primary" id="tsHear">再听一遍</button>
+      </div>
+      <div id="tsChoices"></div>
+      <div id="tsStatus"></div>
+    </div>
+  </div>
+
+  <div id="victory" aria-hidden="true">
+    <div class="panel-box">
+      <h2>星图已成</h2>
+      <div class="reward" id="victoryReward">解锁：星图探索者</div>
+      <p>灵气已达目标。可继续探索，或返回学习路径。</p>
+      <div class="actions">
+        <button type="button" class="primary" id="vicContinue">继续探索</button>
+        <button type="button" id="vicZone">下一星区（预告）</button>
+        <button type="button" id="vicBack">返回路径</button>
+      </div>
+    </div>
+  </div>
+
   <div id="overlay">
     <div>
-      <h1>灵 气<br><span style="font-size:0.45em;letter-spacing:0.5em">点击任意处开始</span></h1>
-      <p>移动鼠标 · 吞噬光点 · 解锁经典旋律<br><span style="opacity:0.75">手机可触摸拖动</span></p>
+      <h1>灵 气 星 图</h1>
+      <p>捡音入背包 → 凑<strong>大三/小三</strong>自动装入弹药包（+6）<br>
+        <strong>1 / 2 / 3</strong> 切换弹药 · <strong>空格</strong> 自动瞄准开火<br>
+        明快弹可<strong>穿透</strong> · 阴郁弹可<strong>冰冻</strong><br>
+        怪有抗性：刚石怕大三 · 雾灵怕小三 · 影刺都行<br>
+        击散掉落<strong>音符 / 弹药 / 属性碎片</strong> · <strong>波次制</strong>清场后喘息<br>
+        第 3/5/7… 波出现 <strong>Boss</strong> · <strong>R</strong> 合成超级弹 · 进化<strong>三选一</strong><br>
+        <span style="opacity:0.8">点击或按空格开始</span></p>
     </div>
   </div>
 
   <script>
     const canvas = document.getElementById("c");
     const ctx = canvas.getContext("2d");
-    const spiritWrap = document.getElementById("spirit");
-    const phaseHint = document.getElementById("phaseHint");
-    const unlockBar = document.getElementById("unlockBar");
-    const unlockedList = document.getElementById("unlockedList");
-    const songNamesEl = document.getElementById("songNames");
-    const nowPlayingEl = document.getElementById("nowPlaying");
-    const playBtn = document.getElementById("playMelody");
+    const spiritEl = document.getElementById("spiritCount");
+    const livesEl = document.getElementById("lives");
+    const evoEl = document.getElementById("evo");
+    const hintEl = document.getElementById("hint");
+    const toastEl = document.getElementById("toast");
+    const packEl = document.getElementById("pack");
     const overlay = document.getElementById("overlay");
-    const startStatus = document.getElementById("startStatus");
-    const victoryCenter = document.getElementById("victoryCenter");
-    const musicianHit = document.getElementById("musicianHit");
+    const victoryEl = document.getElementById("victory");
+    const victoryReward = document.getElementById("victoryReward");
+    const timestopEl = document.getElementById("timestop");
+    const tsTeach = document.getElementById("tsTeach");
+    const tsPrompt = document.getElementById("tsPrompt");
+    const tsChoices = document.getElementById("tsChoices");
+    const tsStatus = document.getElementById("tsStatus");
+    const ammoMajorEl = document.getElementById("ammoMajorCount");
+    const ammoMinorEl = document.getElementById("ammoMinorCount");
+    const slotMajor = document.getElementById("slotMajor");
+    const slotMinor = document.getElementById("slotMinor");
+    const slotFlat = document.getElementById("slotFlat");
+    const slotSuper = document.getElementById("slotSuper");
+    const ammoSuperEl = document.getElementById("ammoSuperCount");
+    const whyChordEl = document.getElementById("whyChord");
+    const whyTitle = document.getElementById("whyTitle");
+    const whyNotes = document.getElementById("whyNotes");
+    const whyFormula = document.getElementById("whyFormula");
+    const whyAmmo = document.getElementById("whyAmmo");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const pausePanelEl = document.getElementById("pausePanel");
+    const pauseTeach = document.getElementById("pauseTeach");
+    const evoPanelEl = document.getElementById("evoPanel");
+    const evoTierLabel = document.getElementById("evoTierLabel");
+    const evoChoicesEl = document.getElementById("evoChoices");
 
-    const NOTES = ["C","D","E","F","G","A","B"];
-    const NOTE_COLORS = ["#3a5cc8","#4a62d8","#6a52cc","#8058d8","#b070dc","#e0a0c8","#ffd8a0"];
-    const SPIRIT_GOAL = 30;
-    const NPC_TARGET = 7;
+    const NOTE_DEFS = [
+      { letter: "C", solfege: "do", pc: 0, color: "#5a8cff" },
+      { letter: "D", solfege: "re", pc: 2, color: "#6a9cff" },
+      { letter: "E", solfege: "mi", pc: 4, color: "#7a6cff" },
+      { letter: "F", solfege: "fa", pc: 5, color: "#a06cff" },
+      { letter: "G", solfege: "sol", pc: 7, color: "#c078e8" },
+      { letter: "A", solfege: "la", pc: 9, color: "#e078c0" },
+      { letter: "B", solfege: "si", pc: 11, color: "#ff9a7a" }
+    ];
+    const OCTAVE_SHIFTS = [-12, 0, 12];
     const BASE_MIDI = 60;
+    const PACK_MAX = 5;
+    const AMMO_PER_CHORD = 6;
+    const AMMO_CAP = 30;
+    const MAX_NOTES = 6;
+    const MAX_NOTES_HARD = 9; // 击杀掉落可短暂超出场上上限
+    const MAX_ENEMIES = 5;
+    const BREATH_MS_EARLY = 3200;
+    const BREATH_MS_LATER = 2400;
+    const DEATH_BREATH_MS = 3800;
+    const PLAYER_SPEED = 220;
+    const INVULN_MS = 1200;
+    const FIRE_COOLDOWN_MS = 220;
+    const STACK_T1 = 10;
+    const STACK_T2 = 20;
+    const RAM_COOLDOWN_MS = 1400;
+    const RAM_DURATION_MS = 300;
 
-    const SONGS = [
+    /** 抗性怪谱 + 成长掉落表（音符只是其中一种） */
+    const ENEMY_TYPES = [
       {
-        id: 1, name: "卡农", unlockAt: 10,
-        notes: [
-          {semi:0,d:0.55,t:0},{semi:4,d:0.55,t:0.55},{semi:7,d:0.55,t:1.1},{semi:4,d:0.55,t:1.65},
-          {semi:5,d:0.55,t:2.2},{semi:0,d:0.55,t:2.75},{semi:5,d:0.55,t:3.3},{semi:7,d:0.55,t:3.85},
-          {semi:7,d:0.55,t:4.4},{semi:4,d:0.55,t:4.95},{semi:7,d:0.55,t:5.5},{semi:4,d:0.55,t:6.05},
-          {semi:0,d:0.55,t:6.6},{semi:7,d:0.55,t:7.15},{semi:0,d:0.55,t:7.7},{semi:4,d:0.9,t:8.25}
-        ]
+        id: "shadow", name: "影刺", tag: "平",
+        color: "#3a2048", eye: "rgba(255,120,140,0.9)",
+        hp: 1, speedMul: 1, r: 13,
+        mult: { major: 1, minor: 1, flat: 1 },
+        dropPcs: null,
+        loot: [
+          { kind: "note", w: 55 },
+          { kind: "ammo_flat", w: 25 },
+          { kind: "heart", w: 20 }
+        ],
+        tip: "三种弹都行"
       },
       {
-        id: 2, name: "月亮代表我的心", unlockAt: 20,
-        notes: [
-          {semi:0,d:0.6,t:0},{semi:4,d:0.6,t:0.6},{semi:7,d:0.6,t:1.2},{semi:4,d:0.6,t:1.8},
-          {semi:9,d:0.6,t:2.4},{semi:7,d:0.6,t:3.0},{semi:4,d:0.6,t:3.6},{semi:2,d:0.6,t:4.2},
-          {semi:4,d:0.6,t:4.8},{semi:7,d:0.6,t:5.4},{semi:9,d:0.6,t:6.0},{semi:7,d:0.6,t:6.6},
-          {semi:4,d:0.8,t:7.2},{semi:2,d:0.8,t:8.0},{semi:0,d:1.2,t:8.8}
-        ]
+        id: "stone", name: "刚石", tag: "刚",
+        color: "#6a4830", eye: "rgba(255,200,120,0.95)",
+        hp: 2.2, speedMul: 0.38, r: 16,
+        mult: { major: 1.6, minor: 0.12, flat: 0.55 },
+        dropPcs: [0, 4, 7],
+        loot: [
+          { kind: "armor", w: 42 },
+          { kind: "ammo_major", w: 38 },
+          { kind: "note", w: 20 }
+        ],
+        tip: "怕明快大三 · 移速慢"
       },
       {
-        id: 3, name: "欢乐颂", unlockAt: 30,
-        notes: [
-          {semi:4,d:0.5,t:0},{semi:4,d:0.5,t:0.5},{semi:5,d:0.5,t:1.0},{semi:7,d:0.5,t:1.5},
-          {semi:7,d:0.5,t:2.0},{semi:5,d:0.5,t:2.5},{semi:4,d:0.5,t:3.0},{semi:2,d:0.5,t:3.5},
-          {semi:0,d:0.5,t:4.0},{semi:0,d:0.5,t:4.5},{semi:2,d:0.5,t:5.0},{semi:4,d:0.5,t:5.5},
-          {semi:4,d:0.75,t:6.0},{semi:2,d:0.35,t:6.75},{semi:2,d:0.6,t:7.1},
-          {semi:4,d:0.5,t:7.8},{semi:4,d:0.5,t:8.3},{semi:5,d:0.5,t:8.8},{semi:7,d:0.5,t:9.3},
-          {semi:7,d:0.5,t:9.8},{semi:5,d:0.5,t:10.3},{semi:4,d:0.5,t:10.8},{semi:2,d:0.5,t:11.3},
-          {semi:0,d:0.5,t:11.8},{semi:0,d:0.5,t:12.3},{semi:2,d:0.5,t:12.8},{semi:4,d:0.5,t:13.3},
-          {semi:2,d:0.75,t:13.8},{semi:0,d:0.35,t:14.55},{semi:0,d:1.0,t:14.9}
-        ]
+        id: "mist", name: "雾灵", tag: "雾",
+        color: "#3a3470", eye: "rgba(170,150,255,0.95)",
+        hp: 1.4, speedMul: 1.05, r: 12,
+        mult: { major: 0.2, minor: 1.65, flat: 0.55 },
+        dropPcs: [9, 0, 4],
+        loot: [
+          { kind: "ammo_minor", w: 42 },
+          { kind: "note", w: 38 },
+          { kind: "heart", w: 20 }
+        ],
+        tip: "怕阴郁小三"
+      },
+      {
+        id: "dart", name: "闪鼠", tag: "闪",
+        color: "#204858", eye: "rgba(120,230,210,0.95)",
+        hp: 1, speedMul: 2.15, r: 10,
+        mult: { major: 0.85, minor: 1.25, flat: 1.15 },
+        dropPcs: [2, 5, 9],
+        loot: [
+          { kind: "swift", w: 48 },
+          { kind: "ammo_minor", w: 27 },
+          { kind: "note", w: 25 }
+        ],
+        tip: "敏捷极快 · 阴郁更好控"
       }
     ];
 
-    let W, H, mx, my, started = false;
-    let phase = "idle";
-    let transitionT = 0, layoutDone = false;
-    let spirit = 0, melodyPlaying = false, hoveredStar = -1;
-    let stars = [], npcs = [], ripples = [], particles = [];
-    let playTimers = [], playbackStarIdx = -1, playbackGlow = 0;
-    const player = { x: 0, y: 0, r: 12, brightness: 1 };
+    const LOOT_META = {
+      note: { label: "♪", color: "#c8b0ff", r: 11 },
+      ammo_major: { label: "大", color: "#ffb060", r: 10 },
+      ammo_minor: { label: "小", color: "#90b0ff", r: 10 },
+      ammo_flat: { label: "弹", color: "#d0d0e8", r: 10 },
+      armor: { label: "刚", color: "#c89050", r: 10 },
+      swift: { label: "闪", color: "#50e0c8", r: 10 },
+      heart: { label: "♥", color: "#ff8090", r: 10 }
+    };
+    const MAX_LOOT = 10;
+    const AMMO_DROP = 2;
+    const SWIFT_MS = 4500;
+
+    let W = 0, H = 0, started = false, lastTs = 0, toastTimer = 0;
+    let spiritGoal = 30, spiritTotal = 0, sessionPicks = 0, lives = 3;
+    let invulnUntil = 0, goalShown = false, victoryOpen = false, timeStopped = false;
+    let paused = false;
+    let schoolTriggered = false, schoolStep = 0, schoolAnswer = null;
+    let facing = { x: 1, y: 0 };
+    let skillMajor = 0, skillMinor = 0;
+    let ammoMajor = 0, ammoMinor = 0, ammoSuper = 0;
+    let selectedAmmo = "major";
+    let lastFireAt = 0;
+    let whyOpen = false;
+    let pendingSchoolKind = null;
+    let whyAutoTimer = 0;
+    let correctKills = 0;
+    let lastRamAt = 0;
+    let ramUntil = 0;
+    let wave = 1;
+    let breathUntil = 0;
+    let waveLive = false;
+    let evoChoosing = false;
+    let traitLifeSteal = 0;
+    let traitCraftMaster = false;
+    const keys = Object.create(null);
+    const player = { x: 0, y: 0, r: 14, baseR: 14, maxLives: 3, ramVx: 0, ramVy: 0 };
+    let notes = [], loot = [], enemies = [], particles = [], floatTexts = [], bullets = [];
+    let backpack = [];
+    let aimTarget = null;
+    let armorCharges = 0;
+    let swiftUntil = 0;
+
+    function getStore() {
+      try {
+        if (window.parent && window.parent !== window && window.parent.SpiritProgressStore) {
+          return window.parent.SpiritProgressStore;
+        }
+      } catch { /* ignore */ }
+      return window.SpiritProgressStore || null;
+    }
+
+    function midiToName(midi) {
+      const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+      return names[((midi % 12) + 12) % 12] + Math.floor(midi / 12 - 1);
+    }
+
+    function loadSkills() {
+      const store = getStore();
+      if (store && typeof store.getSkills === "function") {
+        const s = store.getSkills();
+        skillMajor = s.major || 0;
+        skillMinor = s.minor || 0;
+        schoolTriggered = !!s.schoolDone;
+      }
+    }
+
+    function persistSkills(patch) {
+      const store = getStore();
+      if (store && typeof store.setSkills === "function") {
+        const s = store.setSkills(patch);
+        skillMajor = s.major || 0;
+        skillMinor = s.minor || 0;
+        schoolTriggered = !!s.schoolDone;
+      } else {
+        if (patch.major != null) skillMajor = patch.major;
+        if (patch.minor != null) skillMinor = patch.minor;
+        if (patch.schoolDone != null) schoolTriggered = patch.schoolDone;
+      }
+    }
+
+    function selectAmmo(kind) {
+      selectedAmmo = kind;
+      slotMajor.classList.toggle("active", kind === "major");
+      slotMinor.classList.toggle("active", kind === "minor");
+      slotFlat.classList.toggle("active", kind === "flat");
+      if (slotSuper) slotSuper.classList.toggle("active", kind === "super");
+      const label = kind === "major" ? "大三·明快穿透"
+        : kind === "minor" ? "小三·阴郁冰冻"
+        : kind === "super" ? "超级合弦" : "平击";
+      if (started && !timeStopped && !whyOpen && !paused && !evoChoosing) {
+        hintEl.textContent = `当前弹药：${label} · R 可合成超级弹`;
+      }
+    }
+
+    function cycleAmmo(dir) {
+      const order = ammoSuper > 0 || selectedAmmo === "super"
+        ? ["major", "minor", "flat", "super"]
+        : ["major", "minor", "flat"];
+      let i = order.indexOf(selectedAmmo);
+      if (i < 0) i = 0;
+      i = (i + dir + order.length) % order.length;
+      selectAmmo(order[i]);
+      const names = { major: "明快穿透", minor: "阴郁冰冻", flat: "平击", super: "超级合弦" };
+      showToast(names[order[i]] || order[i]);
+      if (paused) refreshPauseTeach();
+    }
+
+    function renderAmmo() {
+      ammoMajorEl.textContent = String(ammoMajor);
+      ammoMinorEl.textContent = String(ammoMinor);
+      if (ammoSuperEl) ammoSuperEl.textContent = String(ammoSuper);
+      selectAmmo(selectedAmmo);
+    }
+
+    function tryCraftSuper() {
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing) return;
+      const cost = traitCraftMaster ? 1 : 1;
+      if (ammoMajor < cost || ammoMinor < cost) {
+        showToast("合成需要：大三 + 小三 各至少 1");
+        return;
+      }
+      ammoMajor -= cost;
+      ammoMinor -= cost;
+      ammoSuper = Math.min(AMMO_CAP, ammoSuper + (traitCraftMaster ? 2 : 1));
+      renderAmmo();
+      selectAmmo("super");
+      showToast(traitCraftMaster ? "精通合成 · 超级弹 +2" : "合成超级弹 · 明快×阴郁");
+      floatTexts.push({ x: player.x, y: player.y - 24, text: "合弦!", life: 1, color: "#ffb0e0" });
+      try {
+        Sfx.playChord("major", 60);
+        setTimeout(() => { try { Sfx.playChord("minor", 57); } catch { /* */ } }, 90);
+      } catch { /* */ }
+    }
+
+    function refreshPauseTeach() {
+      const pack = backpack.length
+        ? backpack.map(b => b.letter).join(" ")
+        : "（空）";
+      const ammoLine = `弹药 大×${ammoMajor} · 小×${ammoMinor} · 超×${ammoSuper} · 刚盾×${armorCharges}`;
+      pauseTeach.innerHTML =
+        `<strong>明快大三</strong>：根音 + 大三度(+4) + 纯五度 → 穿透，克刚石<br>` +
+        `<strong>阴郁小三</strong>：根音 + 小三度(+3) + 纯五度 → 冰冻，克雾灵<br>` +
+        `<strong>超级合弦</strong>：R 合成（大+小）→ 高伤兼控<br>` +
+        `当前背包：<strong>${pack}</strong><br>${ammoLine}<br>` +
+        `Boss 波看清抗性；想不清楚就按 P。`;
+    }
+
+    function setPaused(on) {
+      if (!started || victoryOpen || timeStopped || whyOpen || evoChoosing) return;
+      paused = !!on;
+      pausePanelEl.classList.toggle("show", paused);
+      pausePanelEl.setAttribute("aria-hidden", paused ? "false" : "true");
+      pauseBtn.textContent = paused ? "继续 P" : "暂停 P";
+      if (paused) {
+        refreshPauseTeach();
+        hintEl.textContent = "已暂停 · 对照背包与抗性再行动";
+        showToast("暂停 · 想清楚再继续");
+      } else {
+        hintEl.textContent = "继续 · 1/2/3/4 切弹 · R 合成 · P 暂停";
+        showToast("时间恢复");
+      }
+    }
+
+    function togglePause() {
+      setPaused(!paused);
+    }
+
+    function renderPack() {
+      packEl.innerHTML = "";
+      for (let i = 0; i < PACK_MAX; i++) {
+        const chip = document.createElement("div");
+        const item = backpack[i];
+        chip.className = "chip" + (item ? "" : " empty");
+        if (item) {
+          chip.textContent = item.letter;
+          chip.style.background = item.color + "55";
+          chip.style.borderColor = item.color;
+        } else {
+          chip.textContent = "·";
+        }
+        packEl.appendChild(chip);
+      }
+    }
+
+    function detectChordQuality(kind) {
+      const pcs = [...new Set(backpack.map(b => b.pc))];
+      if (pcs.length < 3) return null;
+      for (const root of pcs) {
+        const need = kind === "major"
+          ? [root, (root + 4) % 12, (root + 7) % 12]
+          : [root, (root + 3) % 12, (root + 7) % 12];
+        if (need.every(p => pcs.includes(p))) {
+          const letters = need.map(p => (NOTE_DEFS.find(d => d.pc === p) || {}).letter).filter(Boolean);
+          return { root, letters, kind };
+        }
+      }
+      return null;
+    }
+
+    function consumeChord(chord) {
+      const need = new Set(chord.letters);
+      backpack = backpack.filter(b => {
+        if (need.has(b.letter)) {
+          need.delete(b.letter);
+          return false;
+        }
+        return true;
+      });
+      renderPack();
+    }
+
+    function letterOfPc(pc) {
+      const d = NOTE_DEFS.find(n => n.pc === pc);
+      return d ? d.letter : "?";
+    }
+
+    function showWhyChord(chord) {
+      const rootL = letterOfPc(chord.root);
+      const isMaj = chord.kind === "major";
+      const roles = isMaj
+        ? [
+            { letter: rootL, role: "根音", hint: "起点" },
+            { letter: letterOfPc((chord.root + 4) % 12), role: "大三度", hint: "+4 半音" },
+            { letter: letterOfPc((chord.root + 7) % 12), role: "纯五度", hint: "+7 半音" }
+          ]
+        : [
+            { letter: rootL, role: "根音", hint: "起点" },
+            { letter: letterOfPc((chord.root + 3) % 12), role: "小三度", hint: "+3 半音" },
+            { letter: letterOfPc((chord.root + 7) % 12), role: "纯五度", hint: "+7 半音" }
+          ];
+      whyTitle.textContent = isMaj ? "凑成了 · 大三和弦（明快）" : "凑成了 · 小三和弦（阴郁）";
+      whyNotes.innerHTML = roles.map(r =>
+        `<div class="why-note"><strong>${r.letter}</strong><span>${r.role}</span><span>${r.hint}</span></div>`
+      ).join("");
+      whyFormula.innerHTML = isMaj
+        ? `<strong>为什么算大三？</strong><br>背包里同时有「${roles.map(r => r.letter).join(" · ")}」。` +
+          `结构是 <em>根音 + 大三度 + 纯五度</em>（半音距离 0–4–7）。听感偏<strong>明快、稳定</strong> → 装入上槽「明快弹」。`
+        : `<strong>为什么算小三？</strong><br>背包里同时有「${roles.map(r => r.letter).join(" · ")}」。` +
+          `结构是 <em>根音 + 小三度 + 纯五度</em>（半音距离 0–3–7）。听感偏<strong>阴郁、柔和</strong> → 装入下槽「阴郁控」。`;
+      whyAmmo.textContent = isMaj
+        ? `已入库：大三弹药 +${AMMO_PER_CHORD}（现 ${ammoMajor}）`
+        : `已入库：小三弹药 +${AMMO_PER_CHORD}（现 ${ammoMinor}）`;
+      whyOpen = true;
+      whyChordEl.classList.add("show");
+      whyChordEl.setAttribute("aria-hidden", "false");
+      clearTimeout(whyAutoTimer);
+      whyAutoTimer = setTimeout(() => dismissWhyChord(), 6500);
+    }
+
+    function dismissWhyChord() {
+      if (!whyOpen) return;
+      whyOpen = false;
+      whyChordEl.classList.remove("show");
+      whyChordEl.setAttribute("aria-hidden", "true");
+      clearTimeout(whyAutoTimer);
+      const kind = pendingSchoolKind;
+      pendingSchoolKind = null;
+      if (kind) maybeTriggerSchool(kind);
+    }
+
+    /** Bank one ready chord into ammo pack (+6). Returns kind or null. */
+    function tryBankAmmo() {
+      if (whyOpen) return null;
+      const maj = detectChordQuality("major");
+      const min = detectChordQuality("minor");
+      const chord = maj || min;
+      if (!chord) return null;
+      consumeChord(chord);
+      if (chord.kind === "major") {
+        ammoMajor = Math.min(AMMO_CAP, ammoMajor + AMMO_PER_CHORD);
+        selectAmmo("major");
+        Sfx.playChord("major", BASE_MIDI + chord.root);
+      } else {
+        ammoMinor = Math.min(AMMO_CAP, ammoMinor + AMMO_PER_CHORD);
+        selectAmmo("minor");
+        Sfx.playChord("minor", BASE_MIDI + chord.root);
+      }
+      renderAmmo();
+      floatTexts.push({
+        x: player.x, y: player.y - 24,
+        text: chord.kind === "major" ? `+${AMMO_PER_CHORD} 大三` : `+${AMMO_PER_CHORD} 小三`,
+        life: 1, color: chord.kind === "major" ? "#ffe08a" : "#9a7cff"
+      });
+      showWhyChord(chord);
+      return chord.kind;
+    }
+
+    function nearestEnemy() {
+      let best = null, bestD = Infinity;
+      for (const e of enemies) {
+        const d = Math.hypot(e.x - player.x, e.y - player.y);
+        if (d < bestD) { bestD = d; best = e; }
+      }
+      return best;
+    }
+
+    function fire() {
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing) return;
+      const now = Date.now();
+      if (now - lastFireAt < FIRE_COOLDOWN_MS) return;
+      lastFireAt = now;
+
+      let kind = selectedAmmo;
+      if (kind === "major" && ammoMajor <= 0) {
+        showToast("大三弹药空 · 改用平击");
+        kind = "flat";
+      } else if (kind === "minor" && ammoMinor <= 0) {
+        showToast("小三弹药空 · 改用平击");
+        kind = "flat";
+      } else if (kind === "super" && ammoSuper <= 0) {
+        showToast("超级弹空 · 按 R 合成");
+        kind = "flat";
+      }
+
+      const target = nearestEnemy();
+      aimTarget = target;
+      let dirX = facing.x, dirY = facing.y;
+      if (target) {
+        dirX = target.x - player.x;
+        dirY = target.y - player.y;
+      }
+      const len = Math.hypot(dirX, dirY) || 1;
+      dirX /= len; dirY /= len;
+      facing.x = dirX; facing.y = dirY;
+
+      const lv = kind === "major" ? skillMajor : kind === "minor" ? skillMinor : Math.max(skillMajor, skillMinor);
+      let speed, color, damage, slow, r, pierce;
+      if (kind === "super") {
+        ammoSuper--;
+        speed = 440 + lv * 30;
+        color = "#ffb0e8";
+        damage = 1.85 + lv * 0.4;
+        slow = 1.6 + lv * 0.3;
+        r = 10;
+        pierce = 2;
+        try {
+          Sfx.playChord("major", 60);
+          setTimeout(() => { try { Sfx.playChord("minor", 57); } catch { /* */ } }, 60);
+        } catch { /* */ }
+      } else if (kind === "major") {
+        ammoMajor--;
+        speed = 480 + lv * 40;
+        color = "#ffe08a";
+        damage = 1.15 + lv * 0.35;
+        slow = 0;
+        r = 7;
+        pierce = 1 + Math.floor(lv / 2);
+        Sfx.playChord("major", 60);
+      } else if (kind === "minor") {
+        ammoMinor--;
+        speed = 320 + lv * 22;
+        color = "#9a7cff";
+        damage = 0.85 + lv * 0.2;
+        slow = 2.4 + lv * 0.45;
+        r = 9;
+        pierce = 0;
+        Sfx.playChord("minor", 57);
+      } else {
+        speed = 380;
+        color = "#c8d0e0";
+        damage = 0.55;
+        slow = 0;
+        r = 5;
+        pierce = 0;
+        Sfx.playSung(BASE_MIDI + 7, 0.18, 0.1);
+      }
+
+      bullets.push({
+        x: player.x, y: player.y,
+        vx: dirX * speed, vy: dirY * speed,
+        r, kind, color, life: 1.55, damage, slow, pierce,
+        hitIds: Object.create(null)
+      });
+      burst(player.x, player.y, color);
+      renderAmmo();
+    }
+
+    function openVictory(fromSync) {
+      victoryOpen = true;
+      goalShown = true;
+      victoryEl.classList.add("show");
+      victoryEl.setAttribute("aria-hidden", "false");
+      victoryReward.textContent =
+        `解锁奖励：称号「星图探索者」· 弹药 大三×${ammoMajor} / 小三×${ammoMinor}`;
+      hintEl.textContent = fromSync ? "✦ 灵气已满 · 可继续探索或返回" : "✦ 灵气圆满 · 星图已成";
+      if (!fromSync) showToast("奖励已解锁");
+    }
+
+    function dismissVictory() {
+      victoryOpen = false;
+      victoryEl.classList.remove("show");
+      victoryEl.setAttribute("aria-hidden", "true");
+      hintEl.textContent = "继续探索 · 1/2/3 切弹 · 空格开火";
+      showToast("继续探索");
+    }
+
+    function requestExit() {
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: "mtg-spirit-exit" }, "*");
+        }
+      } catch { /* ignore */ }
+    }
+
+    function syncSpiritFromStore() {
+      const store = getStore();
+      if (store) {
+        spiritTotal = store.getTotal();
+        spiritGoal = store.GOAL || 30;
+      }
+      spiritEl.textContent = String(spiritTotal);
+      if (spiritTotal >= spiritGoal && !goalShown) openVictory(true);
+    }
+
+    function awardNote(letter) {
+      const store = getStore();
+      if (store) {
+        spiritTotal = store.award("spirit_note", { id: `${letter}_${Date.now()}_${sessionPicks}` });
+      } else {
+        spiritTotal = Math.min(spiritGoal, spiritTotal + 1);
+      }
+      spiritEl.textContent = String(spiritTotal);
+      if (!goalShown && spiritTotal >= spiritGoal) openVictory(false);
+    }
 
     const Sfx = {
-      ctx: null, master: null, reverb: null,
+      ctx: null,
       async init() {
-        if (!this.ctx) {
-          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-          this.master = this.ctx.createGain();
-          this.master.gain.value = 0.85;
-          this.reverb = this.ctx.createConvolver();
-          this.reverb.buffer = this._makeReverb(1.8, 2.2);
-          const wet = this.ctx.createGain();
-          wet.gain.value = 0.22;
-          this.reverb.connect(wet);
-          wet.connect(this.master);
-          this.master.connect(this.ctx.destination);
-        }
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         if (this.ctx.state === "suspended") await this.ctx.resume();
         return this.ctx.state === "running";
       },
-      _makeReverb(seconds, decay) {
-        const sr = this.ctx.sampleRate;
-        const len = Math.floor(sr * seconds);
-        const buf = this.ctx.createBuffer(2, len, sr);
-        for (let ch = 0; ch < 2; ch++) {
-          const d = buf.getChannelData(ch);
-          for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
-        }
-        return buf;
+      freq(midi) {
+        return 440 * Math.pow(2, (midi - 69) / 12);
       },
-      freqFromSemi(semi) { return 440 * Math.pow(2, (BASE_MIDI + semi - 69) / 12); },
-      pianoSemi(semi, dur, delay = 0, vol = 0.22, onStart = null) {
+      playSung(midi, dur = 0.55, vol = 0.2) {
         if (!this.ctx || this.ctx.state !== "running") return;
-        const f = this.freqFromSemi(semi);
-        const t = this.ctx.currentTime + delay;
-        const atk = 0.012, rel = Math.max(0.08, dur * 0.35);
-        const partials = [
-          ["sine", 1, f, 0],
-          ["triangle", 0.32, f * 2, 0.002],
-          ["sine", 0.12, f * 3, 0.004],
-          ["sine", 0.06, f * 4.02, 0.006]
-        ];
-        partials.forEach(([type, gain, freq, detune]) => {
-          const o = this.ctx.createOscillator();
-          const g = this.ctx.createGain();
-          const lp = this.ctx.createBiquadFilter();
-          o.type = type;
-          o.frequency.value = freq;
-          o.detune.value = detune * 100;
-          lp.type = "lowpass";
-          lp.frequency.setValueAtTime(Math.min(4200, freq * 3.2), t);
-          lp.frequency.exponentialRampToValueAtTime(Math.max(800, freq * 0.9), t + dur);
-          g.gain.setValueAtTime(0.0001, t);
-          g.gain.linearRampToValueAtTime(vol * gain, t + atk);
-          g.gain.setValueAtTime(vol * gain * 0.72, t + dur * 0.55);
-          g.gain.exponentialRampToValueAtTime(0.0001, t + dur + rel);
-          o.connect(g); g.connect(lp);
-          lp.connect(this.master);
-          lp.connect(this.reverb);
-          o.start(t); o.stop(t + dur + rel + 0.06);
+        const f = this.freq(midi);
+        const t = this.ctx.currentTime;
+        const master = this.ctx.createGain();
+        const lp = this.ctx.createBiquadFilter();
+        lp.type = "lowpass";
+        lp.frequency.value = 2800;
+        master.gain.setValueAtTime(0.0001, t);
+        master.gain.linearRampToValueAtTime(vol, t + 0.04);
+        master.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        master.connect(lp);
+        lp.connect(this.ctx.destination);
+        const o1 = this.ctx.createOscillator();
+        const o2 = this.ctx.createOscillator();
+        const g1 = this.ctx.createGain();
+        const g2 = this.ctx.createGain();
+        o1.type = "sine";
+        o2.type = "triangle";
+        o1.frequency.setValueAtTime(f, t);
+        o1.frequency.linearRampToValueAtTime(f * 1.008, t + dur * 0.45);
+        o1.frequency.linearRampToValueAtTime(f, t + dur);
+        o2.frequency.value = f;
+        g1.gain.value = 0.85;
+        g2.gain.value = 0.12;
+        o1.connect(g1); g1.connect(master);
+        o2.connect(g2); g2.connect(master);
+        o1.start(t); o2.start(t);
+        o1.stop(t + dur + 0.05);
+        o2.stop(t + dur + 0.05);
+      },
+      playChord(kind, rootMidi = 60) {
+        if (!this.ctx || this.ctx.state !== "running") return;
+        const intervals = kind === "major" ? [0, 4, 7] : [0, 3, 7];
+        intervals.forEach((iv, i) => {
+          setTimeout(() => this.playSung(rootMidi + iv, 0.55, 0.12), i * 35);
         });
-        if (onStart) {
-          const ms = Math.max(0, delay * 1000);
-          playTimers.push(setTimeout(onStart, ms));
-        }
       },
-      bassSemi(semi, dur, delay = 0, vol = 0.09) {
-        if (!this.ctx || this.ctx.state !== "running") return;
-        const f = this.freqFromSemi(semi - 12);
-        const t = this.ctx.currentTime + delay;
-        const o = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        o.type = "sine";
-        o.frequency.value = f;
-        g.gain.setValueAtTime(0.0001, t);
-        g.gain.linearRampToValueAtTime(vol, t + 0.04);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-        o.connect(g); g.connect(this.master);
-        o.start(t); o.stop(t + dur + 0.05);
-      },
-      noteName(semi) { const map = {0:"C",2:"D",4:"E",5:"F",7:"G",9:"A",11:"B"}; return map[semi] || "C"; },
-      eat() { [0,4,7].forEach((s,i) => this.pianoSemi(s, 0.14, i * 0.05, 0.13)); }
+      hit() {
+        this.playSung(BASE_MIDI - 5, 0.2, 0.1);
+        this.playSung(BASE_MIDI - 8, 0.28, 0.08);
+      }
     };
 
-    function setCursor(mode) { canvas.style.cursor = mode; }
-
-    function setSpiritDisplay(n) {
-      spiritWrap.innerHTML = `灵气 <span id="spiritCount">${n}</span> / ${SPIRIT_GOAL}`;
+    function showToast(text) {
+      toastEl.textContent = text;
+      toastEl.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1100);
     }
 
-    function getUnlockedSongs() { return SONGS.filter(s => spirit >= s.unlockAt); }
+    function setLivesDisplay() {
+      const maxL = player.maxLives || 3;
+      livesEl.textContent =
+        "生命 " + "●".repeat(Math.max(0, lives)) + "○".repeat(Math.max(0, maxL - lives));
+    }
 
-    function updateUnlockUI() {
-      const unlocked = getUnlockedSongs();
-      unlockBar.innerHTML = SONGS.map(s =>
-        `${s.name}（${s.unlockAt} 灵气）：${spirit >= s.unlockAt ? "✦ 已解锁" : "未解锁"}`
-      ).join("<br>");
-      if (unlocked.length) {
-        playBtn.classList.add("show");
-        unlockedList.textContent = `已解锁：${unlocked.map(s => s.name).join("、")}`;
-        songNamesEl.textContent = unlocked.map(s => `♪ ${s.name}`).join("  ");
+    function getEvoTier() {
+      if (correctKills >= STACK_T2) return 2;
+      if (correctKills >= STACK_T1) return 1;
+      return 0;
+    }
+
+    function renderStacks() {
+      if (!evoEl) return;
+      const tier = getEvoTier();
+      const next = tier >= 2 ? "已满阶" : `下一阶 ${tier === 0 ? STACK_T1 : STACK_T2}`;
+      const ramHint = tier >= 1 ? " · E 可撞击" : "";
+      const breath = Date.now() < breathUntil ? " · 喘息中" : "";
+      evoEl.textContent = `叠层 ${correctKills} · ${next}${ramHint}` +
+        (tier === 1 ? " · 进化I" : tier === 2 ? " · 龙鳞II" : "") +
+        ` · 第${wave}波${breath}`;
+    }
+
+    function waveEnemyCount(w) {
+      if (w <= 1) return 2;
+      if (w <= 3) return 3;
+      if (w <= 5) return 4;
+      return Math.min(MAX_ENEMIES, 5);
+    }
+
+    function isBossWave(w) {
+      return w === 3 || w === 5 || w === 7 || (w >= 9 && w % 3 === 0);
+    }
+
+    function spawnBoss(w) {
+      const type = (w % 2 === 1) ? ENEMY_TYPES[1] : ENEMY_TYPES[2];
+      const p = randEdge();
+      const hp = 5.5 + w * 0.85;
+      const speed = (38 + Math.min(24, w * 2)) * type.speedMul;
+      enemies.push({
+        id: `boss_${type.id}_${Date.now()}`,
+        typeId: type.id,
+        name: type.id === "stone" ? "刚石领主" : "雾灵领主",
+        tag: "Boss",
+        tip: type.id === "stone" ? "Boss·怕明快大三 / 超级弹" : "Boss·怕阴郁小三 / 超级弹",
+        color: type.color,
+        eye: type.eye,
+        mult: type.mult,
+        x: p.x, y: p.y,
+        r: type.r * 1.75,
+        hp, maxHp: hp,
+        speed, baseSpeed: speed,
+        slowUntil: 0,
+        freezeDeep: false,
+        wobble: Math.random() * Math.PI * 2,
+        isBoss: true
+      });
+    }
+
+    function spawnWave(w, opts = {}) {
+      if (isBossWave(w)) {
+        spawnBoss(w);
+        if (w >= 5) spawnEnemy();
+        waveLive = true;
+        breathUntil = 0;
+        renderStacks();
+        if (!opts.silent) {
+          showToast(`Boss 波 · 第 ${w} 波`);
+          hintEl.textContent = `Boss：看抗性 · 超级弹（R）克制更稳`;
+        }
+        return;
+      }
+      const count = waveEnemyCount(w);
+      for (let i = 0; i < count; i++) spawnEnemy();
+      waveLive = true;
+      breathUntil = 0;
+      renderStacks();
+      if (!opts.silent) {
+        showToast(`第 ${w} 波 · ${count} 只`);
+        hintEl.textContent = `第 ${w} 波 · 清场后可喘息捡音`;
+      }
+    }
+
+    function startBreath(ms, msg) {
+      breathUntil = Date.now() + ms;
+      waveLive = false;
+      renderStacks();
+      showToast(msg);
+      hintEl.textContent = "喘息中 · 整理背包 / R 合成 / P 思考";
+    }
+
+    function applyEvolutionStats() {
+      const tier = getEvoTier();
+      if (tier === 0) {
+        player.baseR = 14;
+        player.maxLives = 3;
+      } else if (tier === 1) {
+        player.baseR = 18;
+        player.maxLives = 4;
       } else {
-        unlockedList.textContent = "已解锁：—";
-        songNamesEl.textContent = "";
+        player.baseR = 22;
+        player.maxLives = 5;
       }
+      player.r = player.baseR;
+      if (lives > player.maxLives) lives = player.maxLives;
+      renderStacks();
+      setLivesDisplay();
     }
 
-    function clearPlayTimers() {
-      playTimers.forEach(t => clearTimeout(t));
-      playTimers = [];
-      playbackStarIdx = -1;
-      playbackGlow = 0;
-    }
-
-    function findStarForSemi(semi, preferIdx = -1) {
-      if (preferIdx >= 0 && stars[preferIdx]?.semi === semi) return preferIdx;
-      const matches = stars.map((s, i) => i).filter(i => stars[i].semi === semi);
-      if (!matches.length) return -1;
-      if (playbackStarIdx >= 0 && matches.includes(playbackStarIdx)) return playbackStarIdx;
-      return matches[Math.floor(Math.random() * matches.length)];
-    }
-
-    function highlightPlaybackStar(idx) {
-      playbackStarIdx = idx;
-      playbackGlow = 1;
-    }
-
-    function songDuration(song) {
-      return song.notes.reduce((m, n) => Math.max(m, n.t + n.d), 0);
-    }
-
-    function scheduleSong(song, offsetSec) {
-      let lastSemi = -1, lastStar = -1;
-      song.notes.forEach(n => {
-        const cb = () => {
-          const idx = findStarForSemi(n.semi, lastSemi === n.semi ? lastStar : -1);
-          if (idx >= 0) { highlightPlaybackStar(idx); lastStar = idx; }
-          lastSemi = n.semi;
-        };
-        Sfx.pianoSemi(n.semi, n.d, offsetSec + n.t, 0.2, cb);
-        if ([0, 5, 7].includes(n.semi))
-          Sfx.bassSemi(n.semi, Math.min(n.d, 0.75), offsetSec + n.t, 0.06);
+    function openEvoChoice(tier) {
+      evoChoosing = true;
+      if (paused) setPaused(false);
+      evoPanelEl.classList.add("show");
+      evoPanelEl.setAttribute("aria-hidden", "false");
+      evoTierLabel.textContent = tier === 1
+        ? "进化 I · 选一条成长（体型与撞击已解锁）"
+        : "龙鳞 II · 再选一条强化";
+      const opts = [
+        { id: "life", title: "生命上限 +1", desc: "更耐打，适合稳扎稳打学和弦" },
+        { id: "steal", title: "生命偷取", desc: "正确击杀时有机会回 1 命（土豆兄弟感）" },
+        { id: "craft", title: "合弦精通", desc: "立即 +2 超级弹；之后 R 合成多得 1 发" }
+      ];
+      evoChoicesEl.innerHTML = "";
+      opts.forEach(o => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerHTML = `<strong>${o.title}</strong><br>${o.desc}`;
+        btn.addEventListener("click", () => pickEvoChoice(o.id, tier));
+        evoChoicesEl.appendChild(btn);
       });
+      showToast("进化！选一条成长路线");
     }
 
-    function stopPlayback() {
-      clearPlayTimers();
-      setPlayingUI(false);
-      nowPlayingEl.textContent = "已停止";
-      nowPlayingEl.classList.add("show");
-      playTimers.push(setTimeout(() => nowPlayingEl.classList.remove("show"), 1500));
-    }
-
-    function setPlayingUI(active, label = "") {
-      melodyPlaying = active;
-      playBtn.disabled = false;
-      musicianHit.classList.toggle("playing", active);
-      nowPlayingEl.classList.toggle("show", active && !!label);
-      nowPlayingEl.textContent = label;
-      playBtn.textContent = active ? "■ 停止" : "♪ 播放旋律";
-      if (!active) {
-        playbackStarIdx = -1;
-        playbackGlow = 0;
+    function pickEvoChoice(id, tier) {
+      if (!evoChoosing) return;
+      if (id === "life") {
+        player.maxLives += 1;
+        lives = Math.min(player.maxLives, lives + 1);
+        setLivesDisplay();
+        showToast("生命上限提升");
+      } else if (id === "steal") {
+        traitLifeSteal = Math.min(2, traitLifeSteal + 1);
+        showToast(`生命偷取 ×${traitLifeSteal}`);
+      } else if (id === "craft") {
+        traitCraftMaster = true;
+        ammoSuper = Math.min(AMMO_CAP, ammoSuper + 2);
+        renderAmmo();
+        selectAmmo("super");
+        showToast("合弦精通 · 超级弹 +2");
       }
-    }
-
-    function playSongList(songs, labelPrefix = "正在播放") {
-      if (melodyPlaying || !songs.length) return;
-      clearPlayTimers();
-      setPlayingUI(true, `${labelPrefix}：${songs[0].name}`);
-      let offset = 0;
-      songs.forEach((song, idx) => {
-        playTimers.push(setTimeout(() => {
-          setPlayingUI(true, `${labelPrefix}：${song.name}`);
-        }, offset * 1000));
-        scheduleSong(song, offset);
-        offset += songDuration(song) + 0.55;
+      evoChoosing = false;
+      evoPanelEl.classList.remove("show");
+      evoPanelEl.setAttribute("aria-hidden", "true");
+      floatTexts.push({
+        x: player.x, y: player.y - 28,
+        text: tier === 1 ? "进化 I" : "龙鳞 II",
+        life: 1.2, color: "#ffe08a"
       });
-      playTimers.push(setTimeout(() => {
-        setPlayingUI(false);
-        nowPlayingEl.textContent = "播放完成";
-        playTimers.push(setTimeout(() => nowPlayingEl.classList.remove("show"), 2000));
-      }, offset * 1000 + 200));
+      burst(player.x, player.y, "#ffe08a");
+      hintEl.textContent = "成长已选 · 继续战斗";
     }
 
-    function playMelody() { playSongList(getUnlockedSongs()); }
-
-    function playFullMedley() {
-      playSongList(SONGS, "完整演奏");
-    }
-
-    function toRgba(c, a) {
-      if (!c) return `rgba(255,255,255,${a})`;
-      if (c.startsWith("#")) {
-        const r = parseInt(c.slice(1,3),16), g = parseInt(c.slice(3,5),16), b = parseInt(c.slice(5,7),16);
-        return `rgba(${r},${g},${b},${a})`;
+    function registerCorrectKill(mult) {
+      if (mult < 0.85) return;
+      const prevTier = getEvoTier();
+      correctKills++;
+      const tier = getEvoTier();
+      renderStacks();
+      if (traitLifeSteal > 0 && lives < player.maxLives) {
+        lives = Math.min(player.maxLives, lives + traitLifeSteal);
+        setLivesDisplay();
+        floatTexts.push({ x: player.x, y: player.y - 18, text: "偷取+", life: 0.8, color: "#ff8090" });
       }
-      return c;
+      if (tier > prevTier) {
+        applyEvolutionStats();
+        lives = Math.min(player.maxLives, lives + 1);
+        setLivesDisplay();
+        openEvoChoice(tier);
+      }
     }
 
-    function drawGlow(x, y, r, color, alpha = 1) {
-      const grd = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
-      grd.addColorStop(0, toRgba(color, alpha));
-      grd.addColorStop(0.5, toRgba(color, alpha * 0.28));
-      grd.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = grd;
-      ctx.beginPath(); ctx.arc(x, y, r * 3.2, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = toRgba(color, Math.min(1, alpha + 0.1)); ctx.fill();
-    }
-
-    function sizeColor(r) {
-      const t = Math.min(1, (r - 12) / 24);
-      if (t < 0.33) return `rgb(${Math.round(90 + t * 100)},${Math.round(150 + t * 30)},255)`;
-      if (t < 0.66) return `rgb(${Math.round(170 + t * 50)},${Math.round(110 + t * 70)},245)`;
-      return `rgb(255,${Math.round(190 + t * 30)},${Math.round(140 + t * 60)})`;
+    function tryRam() {
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing) return;
+      if (getEvoTier() < 1) {
+        showToast(`正确击杀再叠 ${STACK_T1 - correctKills} 次可撞击`);
+        return;
+      }
+      const now = Date.now();
+      if (now - lastRamAt < RAM_COOLDOWN_MS) {
+        showToast("撞击冷却中");
+        return;
+      }
+      lastRamAt = now;
+      ramUntil = now + RAM_DURATION_MS;
+      invulnUntil = Math.max(invulnUntil, ramUntil + 180);
+      const len = Math.hypot(facing.x, facing.y) || 1;
+      const boost = getEvoTier() >= 2 ? 620 : 520;
+      player.ramVx = (facing.x / len) * boost;
+      player.ramVy = (facing.y / len) * boost;
+      enemies.forEach(e => { e.ramHitToken = null; });
+      showToast(getEvoTier() >= 2 ? "龙鳞重击！" : "龙鳞撞击！");
+      Sfx.playSung(BASE_MIDI - 7, 0.22, 0.14);
     }
 
     function resize() {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
-      if (!started) { mx = player.x = W / 2; my = player.y = H / 2; }
-    }
-
-    function spawnNpc() {
-      if (phase !== "phase1" || npcs.length >= NPC_TARGET) return;
-      const m = 60;
-      let x, y, t = 0;
-      do {
-        x = m + Math.random() * (W - m * 2);
-        y = m + Math.random() * (H - m * 2);
-        t++;
-      } while (Math.hypot(x - player.x, y - player.y) < 90 && t < 40);
-      npcs.push({
-        x, y, r: 3 + Math.random() * 2,
-        vx: (Math.random() - 0.5) * 0.45, vy: (Math.random() - 0.5) * 0.45,
-        pulse: Math.random() * Math.PI * 2
-      });
-    }
-
-    function initNpcs() {
-      npcs = [];
-      for (let i = 0; i < 5 + Math.floor(Math.random() * 4); i++) spawnNpc();
-    }
-
-    function addRipple(x, y, r) {
-      ripples.push({ x, y, r: r * 0.35, life: 1 });
-      for (let i = 0; i < 8; i++) {
-        const a = Math.random() * Math.PI * 2;
-        particles.push({ x, y, vx: Math.cos(a) * 2, vy: Math.sin(a) * 2, life: 1, r: 1.4 });
+      if (!started) {
+        player.x = W / 2;
+        player.y = H / 2;
       }
     }
 
-    function startTransition() {
-      if (phase !== "phase1") return;
-      clearPlayTimers();
-      setPlayingUI(false);
-      phase = "transition";
-      transitionT = 0;
-      layoutDone = false;
-      npcs = [];
-      setCursor("default");
-      phaseHint.textContent = "灵气圆满 · 星图展开中…";
-      updateUnlockUI();
-      Sfx.pianoSemi(0, 0.35, 0, 0.18);
-      Sfx.pianoSemi(4, 0.35, 0.12, 0.16);
-      Sfx.pianoSemi(7, 0.55, 0.24, 0.2);
+    function randEdge() {
+      const m = 48;
+      const side = Math.floor(Math.random() * 4);
+      if (side === 0) return { x: m + Math.random() * (W - m * 2), y: m };
+      if (side === 1) return { x: m + Math.random() * (W - m * 2), y: H - m };
+      if (side === 2) return { x: m, y: m + Math.random() * (H - m * 2) };
+      return { x: W - m, y: m + Math.random() * (H - m * 2) };
     }
 
-    function eatNpc(i) {
-      if (phase !== "phase1") return;
-      const n = npcs[i];
-      const semi = [0,2,4,5,7,9,11][Math.floor(Math.random() * 7)];
-      const note = Sfx.noteName(semi);
-      stars.push({
-        ox: n.x, oy: n.y, x: n.x, y: n.y, tx: 0, ty: 0,
-        r: n.r + 2, semi, noteIdx: NOTES.indexOf(note), note,
-        pulse: Math.random() * Math.PI * 2, alpha: 1
+    function spawnNote() {
+      if (notes.length >= MAX_NOTES) return;
+      const def = NOTE_DEFS[Math.floor(Math.random() * NOTE_DEFS.length)];
+      const octShift = OCTAVE_SHIFTS[Math.floor(Math.random() * OCTAVE_SHIFTS.length)];
+      const midi = BASE_MIDI + def.pc + octShift;
+      let x, y, tries = 0;
+      do {
+        x = 60 + Math.random() * (W - 120);
+        y = 80 + Math.random() * (H - 160);
+        tries++;
+      } while (Math.hypot(x - player.x, y - player.y) < 100 && tries < 30);
+      notes.push({
+        x, y, r: 15, def, midi,
+        pulse: Math.random() * Math.PI * 2,
+        drift: Math.random() * Math.PI * 2
       });
-      addRipple(n.x, n.y, player.r);
-      Sfx.eat();
-      npcs.splice(i, 1);
-      spirit = Math.min(SPIRIT_GOAL, spirit + 1);
-      player.r = Math.min(34, player.r + 0.55);
-      player.brightness = Math.min(1.55, player.brightness + 0.02);
-      setSpiritDisplay(spirit);
-      updateUnlockUI();
-      if (spirit === 10 || spirit === 20) {
-        const song = SONGS.find(s => s.unlockAt === spirit);
-        if (song) {
-          phaseHint.textContent = `✦ 解锁「${song.name}」· 可点右下角试听`;
-          Sfx.pianoSemi(7, 0.2, 0, 0.15);
-          Sfx.pianoSemi(11, 0.35, 0.1, 0.17);
+    }
+
+    function spawnEnemy() {
+      if (enemies.length >= MAX_ENEMIES) return;
+      const p = randEdge();
+      // 随进度混入抗性怪
+      let pool;
+      if (sessionPicks < 4) pool = [ENEMY_TYPES[0], ENEMY_TYPES[0], ENEMY_TYPES[1]];
+      else if (sessionPicks < 10) pool = ENEMY_TYPES;
+      else pool = [ENEMY_TYPES[1], ENEMY_TYPES[2], ENEMY_TYPES[3], ENEMY_TYPES[0]];
+      const type = pool[Math.floor(Math.random() * pool.length)];
+      const speed = (55 + Math.random() * 35 + Math.min(40, sessionPicks * 1.2)) * type.speedMul;
+      enemies.push({
+        id: `${type.id}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        typeId: type.id,
+        name: type.name,
+        tag: type.tag,
+        tip: type.tip,
+        color: type.color,
+        eye: type.eye,
+        mult: type.mult,
+        x: p.x, y: p.y, r: type.r,
+        hp: type.hp,
+        maxHp: type.hp,
+        speed, baseSpeed: speed,
+        slowUntil: 0,
+        freezeDeep: false,
+        wobble: Math.random() * Math.PI * 2
+      });
+    }
+
+    function resolveHit(e, b) {
+      let mult = (e.mult && e.mult[b.kind] != null) ? e.mult[b.kind] : 1;
+      if (b.kind === "super") {
+        const maj = (e.mult && e.mult.major) || 1;
+        const min = (e.mult && e.mult.minor) || 1;
+        mult = Math.max(maj, min, 1) * 1.35;
+      }
+      const dmg = b.damage * mult;
+      if (mult <= 0.3) {
+        floatTexts.push({ x: e.x, y: e.y - 18, text: "抗性！", life: 1, color: "#ff8a8a" });
+        showToast(`抗性！${e.name}不怕这发 · ${e.tip}`);
+      } else if (b.kind === "super" || mult >= 1.35) {
+        const label = b.kind === "super" ? "合弦克制" : b.kind === "major" ? "明快克制" : b.kind === "minor" ? "阴郁克制" : "有效";
+        floatTexts.push({ x: e.x, y: e.y - 18, text: label, life: 1, color: b.color });
+        showToast(`${label} · ${e.name}`);
+      }
+      e.hp -= dmg;
+      if ((b.kind === "minor" || b.kind === "super") && mult > 0.35 && b.slow) {
+        e.slowUntil = Date.now() + b.slow * 1000;
+        e.freezeDeep = mult >= 1.35 || b.kind === "super";
+        if (e.freezeDeep) {
+          floatTexts.push({ x: e.x, y: e.y - 36, text: b.kind === "super" ? "合弦压制" : "冰冻", life: 0.9, color: "#a8c8ff" });
         }
       }
-      if (spirit >= SPIRIT_GOAL) { startTransition(); return; }
-      spawnNpc();
+      burst(e.x, e.y, mult <= 0.3 ? "#666" : b.color);
+      return { killed: e.hp <= 0, resisted: mult <= 0.3, mult };
     }
 
-    function layoutStars() {
-      const cx = W / 2, cy = H / 2 - 20;
-      const ringR = Math.min(W, H) * 0.32;
-      const byNote = {};
-      stars.forEach((s, i) => {
-        if (!byNote[s.noteIdx]) byNote[s.noteIdx] = [];
-        byNote[s.noteIdx].push(i);
-      });
-      Object.keys(byNote).forEach(k => {
-        const idx = +k;
-        const group = byNote[idx];
-        const baseAngle = (idx / 7) * Math.PI * 2 - Math.PI / 2;
-        group.forEach((starIdx, gi) => {
-          const spread = (gi - (group.length - 1) / 2) * 0.14;
-          const r = ringR + (gi % 3) * 18 - 18;
-          const a = baseAngle + spread;
-          stars[starIdx].tx = cx + Math.cos(a) * r;
-          stars[starIdx].ty = cy + Math.sin(a) * r * 0.72;
+    function burst(x, y, color) {
+      for (let i = 0; i < 10; i++) {
+        const a = Math.random() * Math.PI * 2;
+        particles.push({
+          x, y, vx: Math.cos(a) * (1.5 + Math.random() * 2.5),
+          vy: Math.sin(a) * (1.5 + Math.random() * 2.5),
+          life: 1, color
         });
+      }
+    }
+
+    function pickDropDef(typeId) {
+      const type = ENEMY_TYPES.find(t => t.id === typeId);
+      const pcs = type && type.dropPcs;
+      if (pcs && pcs.length) {
+        const pc = pcs[Math.floor(Math.random() * pcs.length)];
+        return NOTE_DEFS.find(d => d.pc === pc) || NOTE_DEFS[0];
+      }
+      return NOTE_DEFS[Math.floor(Math.random() * NOTE_DEFS.length)];
+    }
+
+    function rollLootKind(typeId) {
+      const type = ENEMY_TYPES.find(t => t.id === typeId);
+      const table = (type && type.loot) || [{ kind: "note", w: 1 }];
+      const total = table.reduce((s, row) => s + row.w, 0);
+      let r = Math.random() * total;
+      for (const row of table) {
+        r -= row.w;
+        if (r <= 0) return row.kind;
+      }
+      return table[0].kind;
+    }
+
+    function pushLootOrb(e, kind, ang, spd) {
+      if (loot.length >= MAX_LOOT) return null;
+      const meta = LOOT_META[kind] || LOOT_META.note;
+      const ox = Math.cos(ang) * 22;
+      const oy = Math.sin(ang) * 22;
+      let noteDef = null;
+      let midi = null;
+      let label = meta.label;
+      if (kind === "note") {
+        noteDef = pickDropDef(e.typeId);
+        midi = BASE_MIDI + noteDef.pc + OCTAVE_SHIFTS[Math.floor(Math.random() * OCTAVE_SHIFTS.length)];
+        label = noteDef.letter;
+      }
+      const orb = {
+        kind, label,
+        color: kind === "note" ? noteDef.color : meta.color,
+        x: e.x + ox, y: e.y + oy,
+        r: meta.r,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd,
+        pulse: Math.random() * Math.PI * 2,
+        shine: 1.6,
+        pickupAt: Date.now() + 480,
+        noteDef, midi
+      };
+      loot.push(orb);
+      particles.push({
+        x: e.x, y: e.y,
+        vx: Math.cos(ang) * (3.2 + Math.random()),
+        vy: Math.sin(ang) * (3.2 + Math.random()),
+        life: 1.15,
+        color: orb.color,
+        r: 2.2,
+        letter: label
       });
-      layoutDone = true;
+      return orb;
     }
 
-    function enterPhase2() {
-      phase = "phase2";
-      setCursor("default");
-      clearPlayTimers();
-      setPlayingUI(false);
-      spiritWrap.innerHTML = `灵气 <span id="spiritCount">${spirit}</span> · 星图已成`;
-      phaseHint.textContent = "悬停光点听音 · 点击她听完整旋律";
-      startStatus.textContent = "🌟 星图已成 · 悬停光点探索";
-      startStatus.classList.add("ready");
-      victoryCenter.classList.add("show");
-      playBtn.classList.add("show");
-      updateUnlockUI();
-      [0, 4, 7, 11, 7, 4, 0].forEach((s, i) =>
-        Sfx.pianoSemi(s, 0.28, i * 0.14, 0.14)
-      );
+    /** 击散：碎裂 + 按怪种掉落音符/弹药/属性碎片 */
+    function shatterEnemy(e, source) {
+      const count = e.isBoss ? 2 : (Math.random() < 0.4 ? 1 : 2);
+      const shardColor = source === "ram" ? "#ffe08a" : (e.color || "#c8b0ff");
+      for (let i = 0; i < 22; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const spd = 2.4 + Math.random() * 4.8;
+        particles.push({
+          x: e.x, y: e.y,
+          vx: Math.cos(a) * spd,
+          vy: Math.sin(a) * spd,
+          life: 1 + Math.random() * 0.35,
+          color: i % 3 === 0 ? "#fff6e0" : shardColor,
+          r: 1.4 + Math.random() * 2.2
+        });
+      }
+
+      const away = Math.atan2(e.y - player.y, e.x - player.x) || (Math.random() * Math.PI * 2);
+      const drops = [];
+      for (let i = 0; i < count; i++) {
+        const kind = rollLootKind(e.typeId);
+        const spread = (i - (count - 1) / 2) * 0.85;
+        const ang = away + spread + (Math.random() - 0.5) * 0.3;
+        const spd = 240 + Math.random() * 120;
+        const orb = pushLootOrb(e, kind, ang, spd);
+        if (orb) drops.push(orb);
+      }
+
+      const summary = drops.map(d => d.label).join(" ");
+      floatTexts.push({
+        x: e.x, y: e.y - 24,
+        text: summary ? `✦ ${summary}` : (source === "ram" ? "撞击碎裂" : "碎裂"),
+        life: 1.15,
+        color: source === "ram" ? "#ffe08a" : "#e8d8ff"
+      });
+
+      drops.filter(d => d.kind === "note" && d.midi != null).forEach((d, idx) => {
+        setTimeout(() => { try { Sfx.playSung(d.midi, 0.22, 0.12); } catch { /* */ } }, idx * 70);
+      });
+      showToast(summary
+        ? `${e.name}掉落 · ${drops.map(d => lootToastName(d)).join(" · ")}`
+        : `${e.name}击散`);
     }
 
-    async function startGame(x, y) {
-      if (started) return;
-      started = true;
-      startStatus.textContent = "⏳ 正在激活音频…";
-      mx = x; my = y; player.x = x; player.y = y;
-      player.r = 12; player.brightness = 1;
-      spirit = 0; stars = []; layoutDone = false;
-      victoryCenter.classList.remove("show");
-      setSpiritDisplay(0);
-      updateUnlockUI();
-      try {
-        const ok = await Sfx.init();
-        startStatus.textContent = ok ? "🔊 音频已就绪 · 吞噬光点" : "⚠ 请再点一次";
-        startStatus.classList.toggle("ready", ok);
-        if (ok) Sfx.pianoSemi(0, 0.25, 0, 0.14);
-      } catch {
-        started = false;
-        startStatus.textContent = "⚠ 启动失败，请重试";
+    function lootToastName(d) {
+      if (d.kind === "note") return `音符 ${d.label}`;
+      if (d.kind === "ammo_major") return "明快弹药";
+      if (d.kind === "ammo_minor") return "阴郁弹药";
+      if (d.kind === "ammo_flat") return "弹芯";
+      if (d.kind === "armor") return "刚石碎片";
+      if (d.kind === "swift") return "闪速碎片";
+      if (d.kind === "heart") return "灵息";
+      return d.label;
+    }
+
+    function collectLoot(i) {
+      const d = loot[i];
+      if (!d) return;
+      loot.splice(i, 1);
+      if (d.kind === "note" && d.noteDef) {
+        notes.push({
+          x: d.x, y: d.y, r: d.r,
+          def: d.noteDef, midi: d.midi,
+          pulse: 0, drift: 0
+        });
+        collectNote(notes.length - 1);
         return;
       }
-      overlay.classList.add("hidden");
-      phase = "phase1";
-      setCursor("none");
-      phaseHint.textContent = "吞噬光点 · 凝聚灵气";
-      initNpcs();
-    }
-
-    function updatePhase1() {
-      if (phase !== "phase1") return;
-      player.x += (mx - player.x) * 0.17;
-      player.y += (my - player.y) * 0.17;
-      while (npcs.length < NPC_TARGET) spawnNpc();
-      for (let i = npcs.length - 1; i >= 0; i--) {
-        const n = npcs[i];
-        n.pulse += 0.05;
-        n.x += n.vx; n.y += n.vy;
-        if (n.x < 24 || n.x > W - 24) n.vx *= -1;
-        if (n.y < 24 || n.y > H - 24) n.vy *= -1;
-        if (Math.hypot(n.x - player.x, n.y - player.y) < player.r + n.r + 8) {
-          eatNpc(i);
-          if (phase !== "phase1") break;
+      burst(d.x, d.y, d.color);
+      if (d.kind === "ammo_major") {
+        ammoMajor = Math.min(AMMO_CAP, ammoMajor + AMMO_DROP);
+        renderAmmo();
+        selectAmmo("major");
+        showToast(`明快弹药 +${AMMO_DROP}`);
+        Sfx.playSung(BASE_MIDI + 4, 0.2, 0.1);
+      } else if (d.kind === "ammo_minor") {
+        ammoMinor = Math.min(AMMO_CAP, ammoMinor + AMMO_DROP);
+        renderAmmo();
+        selectAmmo("minor");
+        showToast(`阴郁弹药 +${AMMO_DROP}`);
+        Sfx.playSung(BASE_MIDI + 3, 0.2, 0.1);
+      } else if (d.kind === "ammo_flat") {
+        ammoMajor = Math.min(AMMO_CAP, ammoMajor + 1);
+        ammoMinor = Math.min(AMMO_CAP, ammoMinor + 1);
+        renderAmmo();
+        showToast("弹芯 · 大小三各 +1");
+        Sfx.playSung(BASE_MIDI, 0.18, 0.1);
+      } else if (d.kind === "armor") {
+        armorCharges = Math.min(3, armorCharges + 1);
+        showToast(`刚石碎片 · 可挡伤 ×${armorCharges}`);
+        floatTexts.push({ x: player.x, y: player.y - 22, text: "刚盾+1", life: 1, color: "#c89050" });
+      } else if (d.kind === "swift") {
+        swiftUntil = Math.max(swiftUntil, Date.now() + SWIFT_MS);
+        showToast("闪速碎片 · 短暂加速");
+        floatTexts.push({ x: player.x, y: player.y - 22, text: "加速", life: 1, color: "#50e0c8" });
+      } else if (d.kind === "heart") {
+        if (lives < player.maxLives) {
+          lives++;
+          setLivesDisplay();
+          showToast("灵息 · 生命 +1");
+        } else {
+          showToast("灵息 · 生命已满");
         }
       }
-      ripples.forEach(r => { r.r += 2.2; r.life -= 0.03; });
-      ripples = ripples.filter(r => r.life > 0);
-      particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= 0.03; });
-      particles = particles.filter(p => p.life > 0);
     }
 
-    function updateTransition(dt) {
-      if (phase !== "transition") return;
-      transitionT += dt;
-      const shrink = 1.6, expand = 3.8;
-      if (transitionT < shrink) {
-        const t = (transitionT / shrink) ** 2;
-        stars.forEach(s => {
-          s.x = s.ox + (W / 2 - s.ox) * t;
-          s.y = s.oy + (H / 2 - s.oy) * t;
-          s.alpha = 1 - t * 0.25;
-        });
-      } else if (transitionT < expand) {
-        if (!layoutDone) layoutStars();
-        const t = 1 - (1 - (transitionT - shrink) / (expand - shrink)) ** 3;
-        stars.forEach(s => {
-          s.x = W / 2 + (s.tx - W / 2) * t;
-          s.y = H / 2 + (s.ty - H / 2) * t;
-          s.alpha = 0.55 + t * 0.45;
-          s.r = 3 + t * 3.5;
-        });
-      } else {
-        enterPhase2();
+    function defeatEnemy(j, result, source) {
+      const e = enemies[j];
+      shatterEnemy(e, source);
+      if (e.isBoss) {
+        ammoSuper = Math.min(AMMO_CAP, ammoSuper + 1);
+        renderAmmo();
+        floatTexts.push({ x: e.x, y: e.y - 40, text: "Boss击破 · 超+1", life: 1.2, color: "#ffb0e0" });
+      }
+      enemies.splice(j, 1);
+      registerCorrectKill(result.mult);
+    }
+
+    function maybeTriggerSchool(bankedKind) {
+      if (schoolTriggered || timeStopped || victoryOpen) return;
+      if (!bankedKind) return;
+      openTimeStop(bankedKind);
+    }
+
+    function openTimeStop(focusKind) {
+      timeStopped = true;
+      schoolStep = 0;
+      timestopEl.classList.add("show");
+      timestopEl.setAttribute("aria-hidden", "false");
+      tsTeach.innerHTML =
+        "<strong>世界暂停。</strong>大三听感<strong>明快</strong>→装入明快弹；" +
+        "小三听感<strong>阴郁</strong>→装入阴郁控。听辨正确可强化火力。";
+      runSchoolStep(focusKind);
+    }
+
+    function runSchoolStep(focusKind) {
+      schoolAnswer = Math.random() < 0.5 ? "major" : "minor";
+      if (schoolStep === 0 && focusKind) schoolAnswer = focusKind;
+      tsPrompt.textContent = schoolStep === 0
+        ? "先听这段和弦，它更像哪一种？"
+        : "再听一次：这是大三还是小三？";
+      tsStatus.textContent = "";
+      tsChoices.innerHTML = "";
+      [
+        { id: "major", label: "大三 · 明快（弹药包上槽）" },
+        { id: "minor", label: "小三 · 阴郁（弹药包下槽）" }
+      ].forEach(opt => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = opt.label;
+        btn.addEventListener("click", () => answerSchool(opt.id));
+        tsChoices.appendChild(btn);
+      });
+      Sfx.playChord(schoolAnswer, 60);
+    }
+
+    function answerSchool(choice) {
+      if (!timeStopped) return;
+      if (choice !== schoolAnswer) {
+        tsStatus.textContent = "还差一点 · 再听一遍，注意明快 vs 阴郁";
+        Sfx.playChord(schoolAnswer, 60);
+        return;
+      }
+      schoolStep++;
+      if (schoolStep < 2) {
+        tsStatus.textContent = "正确！再确认一题";
+        setTimeout(() => runSchoolStep(null), 450);
+        return;
+      }
+      tsStatus.textContent = "学会了！弹药威力提升，时间恢复";
+      persistSkills({ major: skillMajor + 1, minor: skillMinor + 1, schoolDone: true });
+      showToast("技能升级 · 时间恢复");
+      setTimeout(closeTimeStop, 700);
+    }
+
+    function closeTimeStop() {
+      timeStopped = false;
+      timestopEl.classList.remove("show");
+      timestopEl.setAttribute("aria-hidden", "true");
+      hintEl.textContent = "学堂完成 · 继续装弹与开火";
+    }
+
+    function collectNote(i) {
+      const n = notes[i];
+      const label = `${n.def.solfege} · ${midiToName(n.midi)}`;
+      Sfx.playSung(n.midi, 0.55, 0.2);
+      showToast(label);
+      burst(n.x, n.y, n.def.color);
+      floatTexts.push({
+        x: n.x, y: n.y - 10, text: label, life: 1, color: n.def.color
+      });
+      backpack.push({
+        letter: n.def.letter,
+        pc: n.def.pc,
+        solfege: n.def.solfege,
+        color: n.def.color,
+        midi: n.midi
+      });
+      if (backpack.length > PACK_MAX) backpack.shift();
+      renderPack();
+      notes.splice(i, 1);
+      sessionPicks++;
+      awardNote(n.def.letter);
+      spawnNote();
+      const banked = tryBankAmmo();
+      if (banked) pendingSchoolKind = banked;
+      // 若「为什么」面板未挡住且仍可再入库（极少见）
+      if (!whyOpen) {
+        const banked2 = tryBankAmmo();
+        if (banked2 && !pendingSchoolKind) pendingSchoolKind = banked2;
+        if (banked2 && !banked) maybeTriggerSchool(banked2);
       }
     }
 
-    function updatePhase2() {
-      if (phase !== "phase2") return;
-      if (playbackGlow > 0) playbackGlow = Math.max(0, playbackGlow - 0.028);
-      hoveredStar = -1;
-      stars.forEach((s, i) => {
-        s.pulse += 0.022;
-        if (Math.hypot(mx - s.x, my - s.y) < s.r + 18) hoveredStar = i;
-      });
-    }
-
-    function drawBg() {
-      const g = ctx.createRadialGradient(W * 0.5, H * 0.42, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.78);
-      g.addColorStop(0, "#0c1440"); g.addColorStop(0.45, "#140a30"); g.addColorStop(1, "#060818");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      for (let i = 0; i < 48; i++) {
-        ctx.beginPath(); ctx.arc((i * 127) % W, (i * 83) % H, 0.65, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(190,170,255,${0.08 + Math.sin(Date.now() * 0.001 + i) * 0.06})`;
-        ctx.fill();
+    function hurtPlayer() {
+      if (Date.now() < invulnUntil) return;
+      if (Date.now() < ramUntil) return; // 撞击中免疫
+      if (armorCharges > 0) {
+        armorCharges--;
+        invulnUntil = Date.now() + Math.floor(INVULN_MS * 0.7);
+        burst(player.x, player.y, "#c89050");
+        floatTexts.push({ x: player.x, y: player.y - 20, text: "刚盾抵挡", life: 0.95, color: "#c89050" });
+        showToast(armorCharges > 0 ? `刚盾抵挡 · 剩余 ${armorCharges}` : "刚盾碎裂");
+        return;
+      }
+      lives--;
+      invulnUntil = Date.now() + INVULN_MS;
+      Sfx.hit();
+      setLivesDisplay();
+      hintEl.textContent = lives > 0 ? "被暗影碰到了 · 暂避片刻" : "灵光消散 · 重新凝聚";
+      if (lives <= 0) {
+        lives = player.maxLives || 3;
+        setLivesDisplay();
+        // 不强制回原点：原地重聚 + 清场喘息
+        enemies = [];
+        bullets = [];
+        invulnUntil = Date.now() + DEATH_BREATH_MS;
+        wave = Math.max(1, wave - 1);
+        startBreath(DEATH_BREATH_MS, "灵光重聚 · 原地喘息，不强制回中心");
       }
     }
 
-    function drawPhase1() {
-      npcs.forEach(n => drawGlow(n.x, n.y, n.r + Math.sin(n.pulse) * 0.35, "#4a5890", 0.48));
-      ripples.forEach(r => {
-        ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(210,175,255,${r.life * 0.48})`; ctx.lineWidth = 2; ctx.stroke();
-      });
-      particles.forEach(p => {
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,225,195,${p.life * 0.85})`; ctx.fill();
-      });
-      drawGlow(player.x, player.y, player.r, sizeColor(player.r), 0.9 * player.brightness);
-      ctx.beginPath(); ctx.arc(player.x, player.y, player.r * 0.32, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(235,248,255,0.92)"; ctx.fill();
+    async function startGame() {
+      if (started || startGame.locking) return;
+      startGame.locking = true;
+      try {
+        try {
+          await Sfx.init();
+          Sfx.playSung(BASE_MIDI, 0.28, 0.14);
+        } catch { /* muted ok */ }
+        started = true;
+        syncSpiritFromStore();
+        loadSkills();
+        lives = 3;
+        sessionPicks = 0;
+        correctKills = 0;
+        lastRamAt = 0;
+        ramUntil = 0;
+        wave = 1;
+        breathUntil = Date.now() + 999999;
+        waveLive = false;
+        evoChoosing = false;
+        traitLifeSteal = 0;
+        traitCraftMaster = false;
+        evoPanelEl.classList.remove("show");
+        evoPanelEl.setAttribute("aria-hidden", "true");
+        armorCharges = 0;
+        swiftUntil = 0;
+        paused = false;
+        pausePanelEl.classList.remove("show");
+        pausePanelEl.setAttribute("aria-hidden", "true");
+        pauseBtn.textContent = "暂停 P";
+        backpack = [];
+        bullets = [];
+        loot = [];
+        ammoMajor = 0;
+        ammoMinor = 0;
+        ammoSuper = 0;
+        selectedAmmo = "major";
+        player.baseR = 14;
+        player.maxLives = 3;
+        player.r = 14;
+        applyEvolutionStats();
+        setLivesDisplay();
+        renderPack();
+        renderAmmo();
+        renderStacks();
+        player.x = W / 2;
+        player.y = H / 2;
+        notes = [];
+        enemies = [];
+        particles = [];
+        floatTexts = [];
+        overlay.classList.add("hidden");
+        if (!victoryOpen) {
+          hintEl.textContent = "波次制 · 清场喘息 · P 暂停思考";
+        }
+        for (let i = 0; i < 5; i++) spawnNote();
+        spawnWave(1);
+      } finally {
+        startGame.locking = false;
+      }
     }
 
-    function drawConstellation() {
-      const groups = {};
-      stars.forEach((s, i) => {
-        if (!groups[s.noteIdx]) groups[s.noteIdx] = [];
-        groups[s.noteIdx].push(s);
-      });
-      ctx.lineWidth = 0.8;
-      Object.values(groups).forEach(g => {
-        if (g.length < 2) return;
-        const c = NOTE_COLORS[g[0].noteIdx] || "#7c5cff";
-        ctx.strokeStyle = toRgba(c, 0.12);
-        for (let i = 0; i < g.length - 1; i++) {
-          ctx.beginPath();
-          ctx.moveTo(g[i].x, g[i].y);
-          ctx.lineTo(g[i + 1].x, g[i + 1].y);
-          ctx.stroke();
+    function update(dt) {
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing) return;
+      let dx = 0, dy = 0;
+      if (keys.w || keys.arrowup) dy -= 1;
+      if (keys.s || keys.arrowdown) dy += 1;
+      if (keys.a || keys.arrowleft) dx -= 1;
+      if (keys.d || keys.arrowright) dx += 1;
+      const now = Date.now();
+      const ramming = now < ramUntil;
+      if (ramming) {
+        player.x += player.ramVx * dt;
+        player.y += player.ramVy * dt;
+        const ramDmg = getEvoTier() >= 2 ? 2.2 : 1.35;
+        const ramBullet = {
+          kind: "flat", damage: ramDmg, slow: 0, color: "#ffe8c0",
+          hitIds: Object.create(null)
+        };
+        for (let j = enemies.length - 1; j >= 0; j--) {
+          const e = enemies[j];
+          if (e.ramHitToken === lastRamAt) continue;
+          if (Math.hypot(e.x - player.x, e.y - player.y) < player.r + e.r + 4) {
+            e.ramHitToken = lastRamAt;
+            const result = resolveHit(e, ramBullet);
+            if (result.killed) {
+              defeatEnemy(j, result, "ram");
+            } else {
+              showToast(result.resisted ? "撞击抗性！" : "撞击命中");
+            }
+          }
         }
-      });
-    }
+      } else if (dx || dy) {
+        const len = Math.hypot(dx, dy) || 1;
+        facing.x = dx / len;
+        facing.y = dy / len;
+        const spd = PLAYER_SPEED * (Date.now() < swiftUntil ? 1.38 : 1);
+        player.x += facing.x * spd * dt;
+        player.y += facing.y * spd * dt;
+      }
+      player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+      player.y = Math.max(player.r + 40, Math.min(H - player.r - 24, player.y));
 
-    function drawStars(hover) {
-      stars.forEach((s, i) => {
-        const pr = s.r + Math.sin(s.pulse) * 0.6;
-        const isPlay = i === playbackStarIdx && playbackGlow > 0;
-        const isH = hover && i === hoveredStar;
-        const scale = isPlay ? 1.55 + playbackGlow * 0.35 : isH ? 1.28 : 1;
-        const alpha = s.alpha * (isPlay ? 1 : isH ? 1 : 0.78);
-        drawGlow(s.x, s.y, pr * scale, NOTE_COLORS[s.noteIdx] || "#7c5cff", alpha);
-        if (isPlay) {
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, pr * 2.8, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(255,220,160,${playbackGlow * 0.55})`;
-          ctx.lineWidth = 2 + playbackGlow * 2;
-          ctx.stroke();
-        }
-        if (isH || isPlay) {
-          ctx.fillStyle = "#fff";
-          ctx.font = `bold ${isPlay ? 16 : 14}px Segoe UI,sans-serif`;
-          ctx.textAlign = "center";
-          ctx.fillText(s.note, s.x, s.y - pr * scale - 12);
-        }
+      aimTarget = nearestEnemy();
+
+      while (notes.length < MAX_NOTES) spawnNote();
+      notes.forEach(n => {
+        n.pulse += dt * 3;
+        n.drift += dt;
+        n.x += Math.sin(n.drift) * 8 * dt;
+        n.y += Math.cos(n.drift * 0.9) * 6 * dt;
+        n.x = Math.max(24, Math.min(W - 24, n.x));
+        n.y = Math.max(56, Math.min(H - 28, n.y));
       });
-      if (playbackStarIdx >= 0 && playbackGlow > 0.3) {
-        const s = stars[playbackStarIdx];
-        if (s) {
-          for (let k = 0; k < 3; k++) {
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, s.r * (2 + k * 1.2 + (1 - playbackGlow) * 2), 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(255,200,120,${playbackGlow * 0.2 * (1 - k * 0.3)})`;
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
+
+      loot.forEach(d => {
+        d.pulse += dt * 4;
+        if (d.shine != null && d.shine > 0) d.shine -= dt;
+        d.x += (d.vx || 0) * dt;
+        d.y += (d.vy || 0) * dt;
+        d.vx = (d.vx || 0) * Math.exp(-2.5 * dt);
+        d.vy = (d.vy || 0) * Math.exp(-2.5 * dt);
+        if (Math.hypot(d.vx, d.vy) < 16) { d.vx = 0; d.vy = 0; }
+        d.x = Math.max(20, Math.min(W - 20, d.x));
+        d.y = Math.max(52, Math.min(H - 24, d.y));
+      });
+
+      for (let i = notes.length - 1; i >= 0; i--) {
+        if (Math.hypot(notes[i].x - player.x, notes[i].y - player.y) < player.r + notes[i].r) {
+          collectNote(i);
+        }
+      }
+      for (let i = loot.length - 1; i >= 0; i--) {
+        const d = loot[i];
+        if (d.pickupAt && Date.now() < d.pickupAt) continue;
+        if (Math.hypot(d.x - player.x, d.y - player.y) < player.r + d.r + 2) {
+          collectLoot(i);
+        }
+      }
+
+      enemies.forEach(e => {
+        e.wobble += dt * 2;
+        const frozen = now < e.slowUntil;
+        const spd = frozen ? e.baseSpeed * (e.freezeDeep ? 0.12 : 0.32) : e.baseSpeed;
+        e.speed = spd;
+        const ang = Math.atan2(player.y - e.y, player.x - e.x);
+        e.x += Math.cos(ang) * e.speed * dt;
+        e.y += Math.sin(ang) * e.speed * dt;
+        e.x += Math.sin(e.wobble) * (frozen ? 6 : 20) * dt;
+      });
+
+      if (now >= invulnUntil && !ramming) {
+        for (let i = 0; i < enemies.length; i++) {
+          if (Math.hypot(enemies[i].x - player.x, enemies[i].y - player.y) < player.r + enemies[i].r) {
+            hurtPlayer();
+            break;
           }
         }
       }
-    }
 
-    function drawTransition() {
-      if (!stars.length) { drawGlow(W / 2, H / 2, 20, "#b8d0ff", 0.5); return; }
-      drawStars(false);
-    }
-
-    let last = 0;
-    function gameLoop(ts) {
-      const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0.016;
-      last = ts;
-      if (started) {
-        if (phase === "phase1") updatePhase1();
-        else if (phase === "transition") updateTransition(dt);
-        else if (phase === "phase2") updatePhase2();
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        const b = bullets[i];
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
+        b.life -= dt;
+        let removeBullet = false;
+        for (let j = enemies.length - 1; j >= 0; j--) {
+          const e = enemies[j];
+          if (b.hitIds[e.id]) continue;
+          if (Math.hypot(b.x - e.x, b.y - e.y) < b.r + e.r) {
+            b.hitIds[e.id] = true;
+            const result = resolveHit(e, b);
+            if (result.killed) {
+              defeatEnemy(j, result, b.kind === "flat" ? "flat" : "shot");
+            }
+            if (b.pierce > 0) {
+              b.pierce--;
+            } else {
+              removeBullet = true;
+              break;
+            }
+          }
+        }
+        if (removeBullet || b.life <= 0 || b.x < -40 || b.y < -40 || b.x > W + 40 || b.y > H + 40) {
+          bullets.splice(i, 1);
+        }
       }
-      drawBg();
-      if (started) {
-        if (phase === "phase1") drawPhase1();
-        else if (phase === "transition") drawTransition();
-        else if (phase === "phase2") { drawConstellation(); drawStars(true); }
-      }
-      requestAnimationFrame(gameLoop);
-    }
 
-    function getPos(e) {
-      if (e.touches?.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-      return { x: e.clientX, y: e.clientY };
-    }
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.life -= dt * 1.8;
+      });
+      particles = particles.filter(p => p.life > 0);
+      floatTexts.forEach(f => { f.y -= 28 * dt; f.life -= dt * 0.9; });
+      floatTexts = floatTexts.filter(f => f.life > 0);
 
-    function starAt(x, y) {
-      for (let i = stars.length - 1; i >= 0; i--) {
-        if (Math.hypot(x - stars[i].x, y - stars[i].y) < stars[i].r + 18) return i;
-      }
-      return -1;
-    }
-
-    function handlePointerMove(x, y) {
-      mx = x; my = y;
-      if (phase !== "phase2" || melodyPlaying) return;
-      const h = starAt(x, y);
-      if (h < 0) return;
-      const s = stars[h];
-      if (!s._lp || Date.now() - s._lp > 320) {
-        Sfx.pianoSemi(s.semi, 0.42, 0, 0.16);
-        s._lp = Date.now();
+      // 波次：清场 → 喘息 → 下一波（不再持续补怪）
+      if (enemies.length === 0) {
+        if (waveLive) {
+          const ms = wave <= 2 ? BREATH_MS_EARLY : BREATH_MS_LATER;
+          startBreath(ms, `清场 · 喘息 ${Math.round(ms / 1000)} 秒`);
+        } else if (Date.now() >= breathUntil) {
+          wave += 1;
+          spawnWave(wave);
+        }
       }
     }
 
-    canvas.addEventListener("mousemove", e => handlePointerMove(e.clientX, e.clientY));
-    canvas.addEventListener("pointermove", e => handlePointerMove(e.clientX, e.clientY));
-    canvas.addEventListener("touchmove", e => {
+    function drawGlow(x, y, r, color, alpha) {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3);
+      const hex = color.startsWith("#") ? color.slice(1) : color;
+      const c = (hex.match(/.{2}/g) || ["a8", "d0", "ff"]).map(h => parseInt(h, 16));
+      g.addColorStop(0, `rgba(${c[0]},${c[1]},${c[2]},${alpha})`);
+      g.addColorStop(0.45, `rgba(${c[0]},${c[1]},${c[2]},${alpha * 0.25})`);
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x, y, r * 3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${Math.min(1, alpha + 0.15)})`;
+      ctx.fill();
+    }
+
+    function draw() {
+      const bg = ctx.createRadialGradient(W * 0.5, H * 0.4, 0, W * 0.5, H * 0.5, Math.max(W, H) * 0.8);
+      bg.addColorStop(0, timeStopped ? "#081428" : "#0c1440");
+      bg.addColorStop(0.5, timeStopped ? "#0a1028" : "#120a30");
+      bg.addColorStop(1, "#050818");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      for (let i = 0; i < 40; i++) {
+        ctx.beginPath();
+        ctx.arc((i * 137) % W, (i * 97) % H, 0.7, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(190,170,255,${0.08 + Math.sin(Date.now() * 0.001 + i) * 0.05})`;
+        ctx.fill();
+      }
+
+      if (!started) return;
+
+      // aim line to nearest enemy
+      if (aimTarget && !victoryOpen && !timeStopped && !paused) {
+        ctx.beginPath();
+        ctx.moveTo(player.x, player.y);
+        ctx.lineTo(aimTarget.x, aimTarget.y);
+        ctx.strokeStyle = "rgba(255,255,255,0.12)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 6]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.arc(aimTarget.x, aimTarget.y, aimTarget.r + 6, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255, 220, 140, 0.35)";
+        ctx.stroke();
+      }
+
+      notes.forEach(n => {
+        const pr = n.r + Math.sin(n.pulse) * 1.5;
+        drawGlow(n.x, n.y, pr, n.def.color, 0.85);
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 13px Segoe UI,sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(n.def.letter, n.x, n.y - 1);
+        ctx.font = "9px Segoe UI,sans-serif";
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.fillText(midiToName(n.midi), n.x, n.y + pr + 11);
+      });
+
+      loot.forEach(d => {
+        const pr = d.r + Math.sin(d.pulse) * 1.1;
+        const locked = d.pickupAt && Date.now() < d.pickupAt;
+        drawGlow(d.x, d.y, pr, d.color, 0.92);
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, pr + 3.5, 0, Math.PI * 2);
+        ctx.strokeStyle = locked
+          ? `rgba(255, 245, 180, ${0.5 + (d.shine || 0) * 0.2})`
+          : `rgba(255, 255, 255, 0.28)`;
+        ctx.lineWidth = locked ? 2 : 1.2;
+        ctx.stroke();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 12px Segoe UI,sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(d.label, d.x, d.y - 0.5);
+      });
+
+      enemies.forEach(e => {
+        const slowed = Date.now() < e.slowUntil;
+        const bodyColor = slowed ? (e.freezeDeep ? "#6a90c8" : "#5a3080") : e.color;
+        drawGlow(e.x, e.y, e.r, bodyColor, 0.75);
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.r * 0.55, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(30,20,40,0.92)";
+        ctx.fill();
+        ctx.fillStyle = slowed ? "rgba(180,210,255,0.95)" : e.eye;
+        ctx.beginPath(); ctx.arc(e.x - 4, e.y - 2, 2, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(e.x + 4, e.y - 2, 2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,0.85)";
+        ctx.font = "bold 11px Segoe UI,sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(e.tag, e.x, e.y + e.r + 11);
+        if (e.isBoss) {
+          ctx.strokeStyle = "rgba(255, 200, 120, 0.65)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, e.r + 4, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        // 小血条（Boss 始终显示）
+        if (e.isBoss || e.hp < e.maxHp) {
+          const bw = e.r * 2.4;
+          ctx.fillStyle = "rgba(0,0,0,0.45)";
+          ctx.fillRect(e.x - bw / 2, e.y - e.r - 10, bw, 4);
+          ctx.fillStyle = e.isBoss ? "#ffc070" : "#f0a0a0";
+          ctx.fillRect(e.x - bw / 2, e.y - e.r - 10, bw * Math.max(0, e.hp / e.maxHp), 4);
+        }
+      });
+
+      bullets.forEach(b => drawGlow(b.x, b.y, b.r, b.color, 0.95));
+
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, (p.r || 2) * Math.max(0.35, p.life), 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, Math.min(1, p.life));
+        ctx.fill();
+        if (p.letter) {
+          ctx.font = "bold 11px Segoe UI,sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#fff";
+          ctx.fillText(p.letter, p.x, p.y);
+        }
+        ctx.globalAlpha = 1;
+      });
+
+      floatTexts.forEach(f => {
+        ctx.globalAlpha = f.life;
+        ctx.fillStyle = f.color;
+        ctx.font = "bold 15px Segoe UI,sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(f.text, f.x, f.y);
+        ctx.globalAlpha = 1;
+      });
+
+      const blink = Date.now() < invulnUntil && Math.floor(Date.now() / 80) % 2 === 0;
+      const ramming = Date.now() < ramUntil;
+      if (!blink) {
+        const body = getEvoTier() >= 2 ? "#ffd08a" : getEvoTier() >= 1 ? "#c8e0ff" : "#a8d0ff";
+        const swifting = Date.now() < swiftUntil;
+        drawGlow(player.x, player.y, player.r, ramming ? "#ffe08a" : swifting ? "#70f0d8" : body, 0.95);
+        if (armorCharges > 0) {
+          ctx.strokeStyle = "rgba(200, 144, 80, 0.7)";
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, player.r + 5, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.r * 0.35, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(240,250,255,0.95)";
+        ctx.fill();
+        if (getEvoTier() >= 1) {
+          ctx.strokeStyle = "rgba(255, 220, 140, 0.55)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, player.r + 3, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+    }
+
+    function loop(ts) {
+      const dt = lastTs ? Math.min(0.05, (ts - lastTs) / 1000) : 0.016;
+      lastTs = ts;
+      update(dt);
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    function onKey(e, down) {
+      const k = e.key.toLowerCase();
+      if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", " ", "1", "2", "3", "4", "e", "p", "r"].includes(k)) {
+        e.preventDefault();
+      }
+      keys[k] = down;
+      if (!down) return;
+      if ((k === " " || k === "enter") && !started) {
+        startGame();
+        return;
+      }
+      if ((k === "escape") && victoryOpen) {
+        dismissVictory();
+        return;
+      }
+      if (evoChoosing) return;
+      if (whyOpen) {
+        if (k === " " || k === "enter" || k === "escape") dismissWhyChord();
+        return;
+      }
+      if (timeStopped || victoryOpen) return;
+      if (k === "p" || (k === "escape" && paused)) {
+        if (started) togglePause();
+        return;
+      }
+      if (paused) {
+        if (k === "1") selectAmmo("major");
+        if (k === "2") selectAmmo("minor");
+        if (k === "3") selectAmmo("flat");
+        if (k === "4") selectAmmo("super");
+        if (k === "r") tryCraftSuper();
+        if (k === " " || k === "enter") setPaused(false);
+        return;
+      }
+      if (!started) return;
+      if (k === "1") selectAmmo("major");
+      if (k === "2") selectAmmo("minor");
+      if (k === "3") selectAmmo("flat");
+      if (k === "4") selectAmmo("super");
+      if (k === "r") tryCraftSuper();
+      if (k === " ") fire();
+      if (k === "e") tryRam();
+    }
+
+    slotMajor.addEventListener("click", () => selectAmmo("major"));
+    slotMinor.addEventListener("click", () => selectAmmo("minor"));
+    slotFlat.addEventListener("click", () => selectAmmo("flat"));
+    if (slotSuper) slotSuper.addEventListener("click", () => selectAmmo("super"));
+    pauseBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!started || evoChoosing) return;
+      togglePause();
+    });
+    document.getElementById("pauseResume").addEventListener("click", (e) => {
+      e.stopPropagation();
+      setPaused(false);
+    });
+    pausePanelEl.addEventListener("click", (e) => {
+      if (e.target === pausePanelEl) setPaused(false);
+    });
+
+    window.addEventListener("wheel", (e) => {
+      if (!started || timeStopped || victoryOpen || whyOpen || evoChoosing) return;
       e.preventDefault();
-      const p = getPos(e);
-      handlePointerMove(p.x, p.y);
+      cycleAmmo(e.deltaY > 0 ? 1 : -1);
+      if (paused) refreshPauseTeach();
     }, { passive: false });
 
-    canvas.addEventListener("pointerdown", e => {
-      if (!started) { startGame(e.clientX, e.clientY); return; }
-      if (phase === "phase2" && hoveredStar >= 0 && !melodyPlaying)
-        Sfx.pianoSemi(stars[hoveredStar].semi, 0.58, 0, 0.2);
-    });
-
-    canvas.addEventListener("touchstart", e => {
-      const p = getPos(e);
-      if (!started) { e.preventDefault(); startGame(p.x, p.y); return; }
-      mx = p.x; my = p.y;
-      if (phase === "phase2" && !melodyPlaying) {
-        const h = starAt(p.x, p.y);
-        if (h >= 0) Sfx.pianoSemi(stars[h].semi, 0.58, 0, 0.2);
-      }
-    }, { passive: false });
-
-    overlay.addEventListener("pointerdown", e => {
-      if (!started) { e.preventDefault(); startGame(e.clientX, e.clientY); }
-    });
-    overlay.addEventListener("touchstart", e => {
-      if (!started) { e.preventDefault(); const p = getPos(e); startGame(p.x, p.y); }
-    }, { passive: false });
-
-    musicianHit.addEventListener("click", async e => {
+    document.getElementById("whyOk").addEventListener("click", (e) => {
       e.stopPropagation();
-      await Sfx.init();
-      playFullMedley();
+      dismissWhyChord();
+    });
+    whyChordEl.addEventListener("click", (e) => {
+      if (e.target === whyChordEl) dismissWhyChord();
     });
 
-    playBtn.addEventListener("click", async e => {
+    document.getElementById("vicContinue").addEventListener("click", (e) => {
       e.stopPropagation();
-      await Sfx.init();
-      if (melodyPlaying) { stopPlayback(); return; }
-      playMelody();
+      dismissVictory();
+    });
+    document.getElementById("vicBack").addEventListener("click", (e) => {
+      e.stopPropagation();
+      requestExit();
+    });
+    document.getElementById("vicZone").addEventListener("click", (e) => {
+      e.stopPropagation();
+      showToast("下一星区与抗性怪：B3 即将接入");
+    });
+    victoryEl.addEventListener("click", (e) => {
+      if (e.target === victoryEl) dismissVictory();
+    });
+    document.getElementById("tsHear").addEventListener("click", () => {
+      if (schoolAnswer) Sfx.playChord(schoolAnswer, 60);
     });
 
+    window.addEventListener("keydown", e => onKey(e, true));
+    window.addEventListener("keyup", e => onKey(e, false));
+    overlay.addEventListener("pointerdown", () => startGame());
+    canvas.addEventListener("pointerdown", () => {
+      if (!started) startGame();
+      else if (!timeStopped && !victoryOpen && !paused && !whyOpen && !evoChoosing) fire();
+    });
     window.addEventListener("resize", resize);
+
+    syncSpiritFromStore();
+    loadSkills();
+    setLivesDisplay();
+    renderPack();
+    renderAmmo();
+    renderStacks();
     resize();
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(loop);
+
+    window.addEventListener("message", (ev) => {
+      if (ev.data && ev.data.type === "mtg-spirit-refresh") syncSpiritFromStore();
+    });
   </script>
 </body>
 </html>

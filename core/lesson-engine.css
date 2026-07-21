@@ -1,0 +1,112 @@
+/* 通用课程引擎 · 乐理/乐器等 MCQ 课程共用 */
+.le-module { max-width: 520px; margin: 0 auto; padding: 8px 0 24px; }
+
+.le-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.le-header h2 { margin: 0; font-size: 1.35rem; color: var(--primary); }
+
+.le-back {
+  font-family: inherit; font-size: 0.88rem; font-weight: 600;
+  color: var(--primary); background: #f5f0ff;
+  border: none; border-radius: 999px; padding: 8px 16px; cursor: pointer;
+}
+.le-back-inline { margin-top: 16px; }
+
+.le-intro {
+  font-size: 0.88rem; color: var(--text-light);
+  line-height: 1.55; margin-bottom: 14px;
+}
+
+.le-lesson-list { display: flex; flex-direction: column; gap: 10px; }
+
+.le-lesson-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-radius: 16px;
+  background: #fff; border: 2px solid #f0ebff;
+  cursor: pointer; text-align: left; font-family: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+  width: 100%;
+}
+.le-lesson-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+.le-lesson-card.done { border-color: #4cd964; }
+
+.le-lesson-emoji { font-size: 1.8rem; flex-shrink: 0; }
+.le-lesson-info { flex: 1; min-width: 0; }
+.le-lesson-info h3 { margin: 0 0 4px; font-size: 1.02rem; }
+.le-lesson-info p { margin: 0; font-size: 0.8rem; color: var(--text-light); }
+
+.le-badge {
+  font-size: 0.75rem; font-weight: 700; color: #4cd964;
+  background: #eaffea; padding: 4px 8px; border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.le-stage { display: none; }
+.le-stage.active { display: block; }
+.le-menu.hidden { display: none; }
+
+.le-intro-panel { margin-bottom: 16px; }
+.le-intro-panel h3 { font-size: 1.1rem; color: var(--primary); margin-bottom: 10px; }
+.le-intro-panel.hidden { display: none; }
+
+.le-intro-text {
+  font-size: 0.88rem; color: var(--text-light); line-height: 1.6;
+  background: #faf8ff; border-radius: 12px; padding: 14px;
+  border: 2px solid #ece6ff; margin-bottom: 12px;
+}
+.le-intro-text ul { margin: 8px 0 0 18px; }
+.le-intro-text li { margin-bottom: 4px; }
+
+.le-visual {
+  background: #fff; border: 2px solid #f0ebff;
+  border-radius: 14px; padding: 16px; margin-bottom: 12px;
+}
+
+.le-progress { font-size: 0.82rem; color: var(--text-light); margin-bottom: 8px; }
+.le-prompt { font-size: 1rem; font-weight: 600; line-height: 1.5; margin-bottom: 12px; }
+.le-hint { font-size: 0.82rem; color: var(--text-light); margin-bottom: 12px; }
+
+.le-options {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
+}
+.le-option {
+  font-family: inherit; font-size: 0.92rem; font-weight: 600;
+  padding: 12px 10px; border: 2.5px solid #e8e0ff; border-radius: 14px;
+  background: #fff; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+}
+.le-option:hover:not(:disabled) { border-color: var(--primary); }
+.le-option:disabled { cursor: default; opacity: 0.85; }
+.le-option.correct { border-color: #4cd964; background: #eaffef; color: #2a9d4e; }
+.le-option.wrong { border-color: #ff6b6b; background: #ffeaea; color: #d94040; }
+.le-option.reveal { border-color: #4cd964; background: #eaffef; }
+
+.le-feedback { min-height: 1.4em; font-weight: 600; font-size: 0.92rem; }
+.le-feedback.ok { color: #4cd964; }
+.le-feedback.err { color: #ff6b6b; }
+
+.le-result { text-align: center; padding: 20px 0; }
+.le-result .emoji { font-size: 3rem; display: block; margin-bottom: 8px; }
+.le-result h3 { color: var(--primary); margin-bottom: 8px; }
+.le-result p { color: var(--text-light); margin-bottom: 6px; }
+
+.le-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 16px; }
+.le-btn {
+  font-family: inherit; font-size: 0.92rem; font-weight: 600;
+  padding: 10px 20px; border-radius: 50px; cursor: pointer; border: none;
+}
+.le-btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+}
+.le-btn-secondary {
+  background: #fff; color: var(--primary); border: 2px solid var(--primary);
+}
+.le-btn-share {
+  background: #fff8ee; color: #e8650a; border: 2px solid #ffc87a;
+}
+.le-btn-practice {
+  background: linear-gradient(135deg, #e89420, #d47800);
+  color: #fff;
+}

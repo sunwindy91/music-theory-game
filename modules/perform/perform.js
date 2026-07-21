@@ -1,24 +1,31 @@
 /**
  * 演奏练习模块
  * 挂载：PerformModule.mount(container, { onBack })
+ * v1.1：WebAudioFont 钢琴采样 + 白键扩至高八度 C（K）
  */
 const PerformModule = (() => {
   const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  const WHITE_COUNT = 8;
 
   const PIANO_LAYOUT = [
     { key: "a", semi: 0,  black: false, keyLabel: "A" },
-    { key: "w", semi: 1,  black: true,  keyLabel: "W", left: "calc(1 * 100% / 7 - 1.2rem)" },
+    { key: "w", semi: 1,  black: true,  keyLabel: "W", left: `calc(1 * 100% / ${WHITE_COUNT} - 1.1rem)` },
     { key: "s", semi: 2,  black: false, keyLabel: "S" },
-    { key: "e", semi: 3,  black: true,  keyLabel: "E", left: "calc(2 * 100% / 7 - 1.2rem)" },
+    { key: "e", semi: 3,  black: true,  keyLabel: "E", left: `calc(2 * 100% / ${WHITE_COUNT} - 1.1rem)` },
     { key: "d", semi: 4,  black: false, keyLabel: "D" },
     { key: "f", semi: 5,  black: false, keyLabel: "F" },
-    { key: "t", semi: 6,  black: true,  keyLabel: "T", left: "calc(4 * 100% / 7 - 1.2rem)" },
+    { key: "t", semi: 6,  black: true,  keyLabel: "T", left: `calc(4 * 100% / ${WHITE_COUNT} - 1.1rem)` },
     { key: "g", semi: 7,  black: false, keyLabel: "G" },
-    { key: "y", semi: 8,  black: true,  keyLabel: "Y", left: "calc(5 * 100% / 7 - 1.2rem)" },
+    { key: "y", semi: 8,  black: true,  keyLabel: "Y", left: `calc(5 * 100% / ${WHITE_COUNT} - 1.1rem)` },
     { key: "h", semi: 9,  black: false, keyLabel: "H" },
-    { key: "u", semi: 10, black: true,  keyLabel: "U", left: "calc(6 * 100% / 7 - 1.2rem)" },
-    { key: "j", semi: 11, black: false, keyLabel: "J" }
+    { key: "u", semi: 10, black: true,  keyLabel: "U", left: `calc(6 * 100% / ${WHITE_COUNT} - 1.1rem)` },
+    { key: "j", semi: 11, black: false, keyLabel: "J" },
+    { key: "k", semi: 12, black: false, keyLabel: "K" }
   ];
+
+  const WAF_PLAYER_URL = "https://surikov.github.io/webaudiofont/npm/dist/WebAudioFontPlayer.js";
+  const WAF_PRESET_URL = "https://surikov.github.io/webaudiofontdata/sound/0000_FluidR3_GM_sf2_file.js";
+  const WAF_PRESET_NAME = "_tone_0000_FluidR3_GM_sf2_file";
 
   const GUITAR_CHORDS = [
     { digit: "1", name: "C",    label: "C 大三和弦",  notes: [48, 52, 55] },
@@ -49,15 +56,87 @@ const PerformModule = (() => {
   let practiceStartTime = 0;
   let noteCount = 0;
   let activeKeyEls = new Map();
+  let taskMode = false;
+  let taskScore = 0;
+  let taskTarget = null;
+  const TASK_WHITE_SEMIS = [0, 2, 4, 5, 7, 9, 11];
 
   const Audio = {
     ctx: null,
+    wafPlayer: null,
+    wafPreset: null,
+    wafReady: false,
+    wafLoading: null,
+    wafFailed: false,
 
     init() {
       if (!this.ctx) {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
       }
       if (this.ctx.state === "suspended") this.ctx.resume();
+      if (!this.wafReady && !this.wafFailed && !this.wafLoading) {
+        this.ensureWebAudioFont();
+      }
+    },
+
+    loadScript(src) {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[data-waf-src="${src}"]`)) {
+          resolve();
+          return;
+        }
+        const s = document.createElement("script");
+        s.src = src;
+        s.async = true;
+        s.dataset.wafSrc = src;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error("script load failed: " + src));
+        document.head.appendChild(s);
+      });
+    },
+
+    ensureWebAudioFont() {
+      if (this.wafReady) return Promise.resolve(true);
+      if (this.wafFailed) return Promise.resolve(false);
+      if (this.wafLoading) return this.wafLoading;
+      this.wafLoading = (async () => {
+        try {
+          if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (typeof WebAudioFontPlayer === "undefined") {
+            await this.loadScript(WAF_PLAYER_URL);
+          }
+          if (typeof WebAudioFontPlayer === "undefined") throw new Error("no player");
+          const player = new WebAudioFontPlayer();
+          const preset = await new Promise((resolve, reject) => {
+            const timer = setTimeout(() => reject(new Error("waf timeout")), 20000);
+            try {
+              player.loader.startLoad(this.ctx, WAF_PRESET_URL, WAF_PRESET_NAME);
+              player.loader.waitLoad(() => {
+                clearTimeout(timer);
+                const p = window[WAF_PRESET_NAME];
+                if (p) resolve(p);
+                else reject(new Error("no preset"));
+              });
+            } catch (err) {
+              clearTimeout(timer);
+              reject(err);
+            }
+          });
+          this.wafPlayer = player;
+          this.wafPreset = preset;
+          this.wafReady = true;
+          return true;
+        } catch {
+          this.wafFailed = true;
+          this.wafReady = false;
+          return false;
+        } finally {
+          this.wafLoading = null;
+        }
+      })();
+      return this.wafLoading;
     },
 
     freq(midi) {
@@ -65,7 +144,7 @@ const PerformModule = (() => {
     },
 
     noteName(midi) {
-      const name = NOTE_NAMES[midi % 12];
+      const name = NOTE_NAMES[((midi % 12) + 12) % 12];
       const oct = Math.floor(midi / 12) - 1;
       return `${name}${oct}`;
     },
@@ -87,7 +166,22 @@ const PerformModule = (() => {
     },
 
     playNote(midi, duration = 0.55, delay = 0) {
+      this.init();
+      if (this.wafReady && this.wafPlayer && this.wafPreset) {
+        const when = this.ctx.currentTime + delay;
+        this.wafPlayer.queueWaveTable(
+          this.ctx,
+          this.ctx.destination,
+          this.wafPreset,
+          when,
+          midi,
+          duration,
+          0.42
+        );
+        return;
+      }
       this.playTone(this.freq(midi), duration, "sine", 0.28, delay);
+      this.ensureWebAudioFont();
     },
 
     playChord(notes, arp = false) {
@@ -199,6 +293,22 @@ const PerformModule = (() => {
     if (el) el.textContent = text;
   }
 
+  function setSourceBadge(state) {
+    const el = $("#pfSourceBadge");
+    if (!el) return;
+    el.classList.remove("ok", "fallback", "loading");
+    if (state === "ok") {
+      el.classList.add("ok");
+      el.textContent = "音源：WebAudioFont 真采样（录音切片回放）";
+    } else if (state === "fallback") {
+      el.classList.add("fallback");
+      el.textContent = "音源：合成音回退（采样未加载成功）";
+    } else {
+      el.classList.add("loading");
+      el.textContent = "音源：正在加载钢琴采样…";
+    }
+  }
+
   function setInfo(main, sub) {
     const m = $("#pfInfoMain");
     const s = $("#pfInfoSub");
@@ -209,6 +319,49 @@ const PerformModule = (() => {
   function setModeLabel(text) {
     const el = $("#pfInfoMode");
     if (el) el.textContent = text;
+  }
+
+  function pickNewTask() {
+    const semi = TASK_WHITE_SEMIS[Math.floor(Math.random() * TASK_WHITE_SEMIS.length)];
+    const midi = (octave + 1) * 12 + semi;
+    taskTarget = { semi, midi, name: Audio.noteName(midi) };
+    const banner = $("#pfTaskBanner");
+    const scoreEl = $("#pfTaskScore");
+    if (banner) banner.textContent = `请弹出：${taskTarget.name}`;
+    if (scoreEl) scoreEl.textContent = String(taskScore);
+  }
+
+  function toggleTaskMode() {
+    taskMode = !taskMode;
+    const btn = $("#pfTaskToggle");
+    const box = $("#pfTaskBox");
+    if (btn) {
+      btn.classList.toggle("on", taskMode);
+      btn.textContent = taskMode ? "🎯 弹题中" : "🎯 弹题挑战";
+    }
+    if (box) box.classList.toggle("hidden", !taskMode);
+    if (taskMode) {
+      taskScore = 0;
+      pickNewTask();
+      setFeedback("听清目标音，在键盘上弹出");
+    } else {
+      taskTarget = null;
+      setFeedback("");
+    }
+  }
+
+  function checkTask(semi) {
+    if (!taskMode || !taskTarget) return;
+    const midi = (octave + 1) * 12 + semi;
+    if (midi === taskTarget.midi) {
+      taskScore++;
+      setFeedback(`✓ 正确！${taskTarget.name}`);
+      $("#pfTaskScore").textContent = String(taskScore);
+      pickNewTask();
+    } else {
+      const played = Audio.noteName(midi);
+      setFeedback(`再试试～ 目标是 ${taskTarget.name}，你弹了 ${played}`);
+    }
   }
 
   function highlightKey(keyCode, ms = 200) {
@@ -225,7 +378,11 @@ const PerformModule = (() => {
     const name = Audio.noteName(midi);
     Audio.playNote(midi, 0.55);
     setInfo(name, `${freq.toFixed(1)} Hz`);
-    setFeedback(`你弹了 ${name}`);
+    if (taskMode) {
+      checkTask(semi);
+    } else {
+      setFeedback(`你弹了 ${name}`);
+    }
     noteCount++;
     updateStats();
     if (fromKeyboard) highlightKey(`piano-${semi}`);
@@ -273,7 +430,7 @@ const PerformModule = (() => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "pf-key-white";
-      btn.innerHTML = `<span class="pf-key-note">${NOTE_NAMES[k.semi]}</span><span class="pf-key-label">${k.keyLabel}</span>`;
+      btn.innerHTML = `<span class="pf-key-note">${Audio.noteName(midi)}</span><span class="pf-key-label">${k.keyLabel}</span>`;
       btn.addEventListener("click", () => playPianoSemi(k.semi));
       activeKeyEls.set(`piano-${k.semi}`, btn);
       whiteWrap.appendChild(btn);
@@ -290,9 +447,10 @@ const PerformModule = (() => {
       blackWrap.appendChild(btn);
     });
 
-    $("#pfOctLabel").textContent = `八度 ${octave}`;
-    $("#pfOctDown").disabled = octave <= 3;
+    $("#pfOctLabel").textContent = `八度 ${octave}（${Audio.noteName((octave + 1) * 12)}–${Audio.noteName((octave + 1) * 12 + 12)}）`;
+    $("#pfOctDown").disabled = octave <= 2;
     $("#pfOctUp").disabled = octave >= 6;
+    if (taskMode) pickNewTask();
   }
 
   function switchInstrument(inst) {
@@ -306,8 +464,9 @@ const PerformModule = (() => {
 
     if (inst === "piano") {
       setModeLabel("🎹 钢琴模式");
-      setInfo("等待演奏…", "白键 A S D F G H J · 黑键 W E T Y U");
-      setFeedback("");
+      setInfo("等待演奏…", "白键 A S D F G H J K · 黑键 W E T Y U");
+      setSourceBadge(Audio.wafReady ? "ok" : (Audio.wafFailed ? "fallback" : "loading"));
+      setFeedback(Audio.wafReady ? "钢琴采样已就绪" : (Audio.wafFailed ? "采样加载失败，已用合成音" : "正在加载钢琴采样…"));
     } else if (inst === "guitar") {
       setModeLabel("🎸 吉他模式");
       setInfo("等待演奏…", "数字键 1–9 弹奏和弦");
@@ -357,23 +516,31 @@ const PerformModule = (() => {
         <div class="pf-info-bar">
           <div class="pf-info-mode" id="pfInfoMode">🎹 钢琴模式</div>
           <div class="pf-info-main" id="pfInfoMain">等待演奏…</div>
-          <div class="pf-info-sub" id="pfInfoSub">白键 A S D F G H J · 黑键 W E T Y U</div>
+          <div class="pf-info-sub" id="pfInfoSub">白键 A S D F G H J K · 黑键 W E T Y U</div>
           <div class="pf-info-feedback" id="pfFeedback"></div>
+          <div class="pf-source-badge loading" id="pfSourceBadge">音源：正在加载钢琴采样…</div>
         </div>
 
         <div class="pf-stats-bar" id="pfStats">⏱ 0:00 · 🎵 0 次</div>
 
         <div class="pf-panel active" data-panel="piano">
-          <div class="pf-piano-controls">
-            <button type="button" class="pf-oct-btn" id="pfOctDown" aria-label="降低八度">−</button>
-            <span class="pf-oct-label" id="pfOctLabel">八度 4</span>
-            <button type="button" class="pf-oct-btn" id="pfOctUp" aria-label="升高八度">+</button>
+          <div class="pf-piano-toolbar">
+            <div class="pf-piano-controls">
+              <button type="button" class="pf-oct-btn" id="pfOctDown" aria-label="降低八度">−</button>
+              <span class="pf-oct-label" id="pfOctLabel">八度 4</span>
+              <button type="button" class="pf-oct-btn" id="pfOctUp" aria-label="升高八度">+</button>
+            </div>
+            <button type="button" class="pf-toggle" id="pfTaskToggle">🎯 弹题挑战</button>
+          </div>
+          <div class="pf-task-box hidden" id="pfTaskBox">
+            <span class="pf-task-banner" id="pfTaskBanner">请弹出：C4</span>
+            <span class="pf-task-score">得分 <strong id="pfTaskScore">0</strong></span>
           </div>
           <div class="pf-keyboard">
             <div class="pf-keys-black" id="pfKeysBlack"></div>
             <div class="pf-keys-white" id="pfKeysWhite"></div>
           </div>
-          <p class="pf-hint">鼠标点击琴键，或使用键盘 A S D F G H J（白键）/ W E T Y U（黑键）</p>
+          <p class="pf-hint">鼠标点击琴键，或键盘 A–K（白键含高八度 C）/ W E T Y U（黑键）。上方「音源」条会标明：真采样 = 预制钢琴录音切片回放；合成音 = 振荡器模拟。「弹题挑战」随机出题，八度 ± 切换音区（2–6）</p>
         </div>
 
         <div class="pf-panel" data-panel="guitar">
@@ -432,7 +599,7 @@ const PerformModule = (() => {
     });
 
     $("#pfOctDown").addEventListener("click", () => {
-      if (octave > 3) { octave--; renderPiano(); }
+      if (octave > 2) { octave--; renderPiano(); }
     });
     $("#pfOctUp").addEventListener("click", () => {
       if (octave < 6) { octave++; renderPiano(); }
@@ -444,6 +611,8 @@ const PerformModule = (() => {
       btn.classList.toggle("on", arpeggio);
       btn.textContent = arpeggio ? "琶音（依次）" : "同时播放";
     });
+
+    $("#pfTaskToggle").addEventListener("click", toggleTaskMode);
   }
 
   function mount(container, options = {}) {
@@ -454,12 +623,24 @@ const PerformModule = (() => {
     practiceStartTime = Date.now();
     noteCount = 0;
     arpeggio = false;
+    taskMode = false;
+    taskScore = 0;
+    taskTarget = null;
     renderShell();
     renderPiano();
     switchInstrument("piano");
 
     keyHandler = onKeyDown;
     window.addEventListener("keydown", keyHandler);
+
+    setSourceBadge("loading");
+    Audio.ensureWebAudioFont().then((ok) => {
+      if (!root) return;
+      setSourceBadge(ok ? "ok" : "fallback");
+      if (instrument === "piano") {
+        setFeedback(ok ? "钢琴采样已就绪（WebAudioFont 录音切片）" : "采样不可用，已用合成音");
+      }
+    });
 
     const backBtn = $("#pfBackBtn");
     if (options.onBack) {
@@ -478,6 +659,9 @@ const PerformModule = (() => {
     activeKeyEls.clear();
     practiceStartTime = 0;
     noteCount = 0;
+    taskMode = false;
+    taskScore = 0;
+    taskTarget = null;
   }
 
   return { mount, unmount };

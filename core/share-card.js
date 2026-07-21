@@ -1,4 +1,9 @@
-const SHARE_APP_URL = "https://music-theory-game.vercel.app/";
+function getShareAppUrl() {
+  if (typeof window !== "undefined" && window.AppUrls && window.AppUrls.domestic) {
+    return window.AppUrls.domestic;
+  }
+  return "https://music-theory-game.vercel.app/";
+}
 const SHARE_CANVAS_WIDTH = 900;
 const SHARE_CANVAS_HEIGHT = 1200;
 
@@ -37,6 +42,19 @@ function getDailyHeadline(accuracy) {
   return { emoji: "📅", headline: "坚持就是胜利！" };
 }
 
+function getRhythmHeadline(grade, accuracy) {
+  if (grade === "S") return { emoji: "🏆", headline: "节奏大师！" };
+  if (grade === "A") return { emoji: "🥁", headline: "闯关成功！" };
+  if (accuracy >= 0.5) return { emoji: "🎵", headline: "继续加油！" };
+  return { emoji: "💪", headline: "再练一次！" };
+}
+
+function getSightHeadline(accuracy) {
+  if (accuracy >= 1) return { emoji: "🏆", headline: "识谱小达人！" };
+  if (accuracy >= 0.66) return { emoji: "🎼", headline: "课完成！" };
+  return { emoji: "📖", headline: "继续识谱！" };
+}
+
 function buildSharePayload(context) {
   const {
     sessionType,
@@ -47,7 +65,9 @@ function buildSharePayload(context) {
     streak = 0,
     difficulty,
     mode,
-    dateKey
+    dateKey,
+    levelTitle,
+    grade
   } = context;
 
   const total = Math.max(totalQuestions, 1);
@@ -58,6 +78,12 @@ function buildSharePayload(context) {
   if (sessionType === "daily") {
     ({ emoji, headline } = getDailyHeadline(accuracy));
     modeBadge = "每日挑战 · 中级";
+  } else if (sessionType === "rhythm") {
+    ({ emoji, headline } = getRhythmHeadline(grade, accuracy));
+    modeBadge = `节奏闯关 · ${levelTitle || "跟拍练习"}`;
+  } else if (sessionType === "sight") {
+    ({ emoji, headline } = getSightHeadline(accuracy));
+    modeBadge = `识谱教学 · ${levelTitle || "五线谱"}`;
   } else {
     ({ emoji, headline } = getQuizHeadline(ratio));
     const diffLabel = { 1: "初级", 2: "中级", 3: "高级" }[difficulty] || "中级";
@@ -77,7 +103,7 @@ function buildSharePayload(context) {
     modeBadge,
     dateLabel: formatDateLabel(dateKey),
     appName: "乐理小达人",
-    appUrl: SHARE_APP_URL,
+    appUrl: getShareAppUrl(),
     footerTag: "轻松练习，快乐学音乐",
     disclaimer: "仅供学习娱乐"
   };
@@ -91,9 +117,15 @@ function shareFilename(payload) {
 function shareText(payload) {
   const pct = Math.round(payload.accuracy * 100);
   if (payload.sessionType === "daily") {
-    return `我在乐理小达人完成了今日挑战，得了${payload.score}分（正确率${pct}%）！🔥连续${payload.streak}天。快来挑战：${SHARE_APP_URL}`;
+    return `我在乐理小达人完成了今日挑战，得了${payload.score}分（正确率${pct}%）！🔥连续${payload.streak}天。快来挑战：${getShareAppUrl()}`;
   }
-  return `我在乐理小达人得了${payload.score}分（正确率${pct}%）！快来挑战：${SHARE_APP_URL}`;
+  if (payload.sessionType === "rhythm") {
+    return `我在乐理小达人节奏闯关「${payload.modeBadge.replace("节奏闯关 · ", "")}」得了${payload.score}分（命中率${pct}%）！快来挑战：${getShareAppUrl()}`;
+  }
+  if (payload.sessionType === "sight") {
+    return `我在乐理小达人完成了识谱课「${payload.modeBadge.replace("识谱教学 · ", "")}」（正确率${pct}%）！快来学：${getShareAppUrl()}`;
+  }
+  return `我在乐理小达人得了${payload.score}分（正确率${pct}%）！快来挑战：${getShareAppUrl()}`;
 }
 
 const ShareCardRenderer = {
@@ -343,7 +375,7 @@ async function copyShareText(payload) {
 }
 
 if (typeof window !== "undefined") {
-  window.SHARE_APP_URL = SHARE_APP_URL;
+  window.getShareAppUrl = getShareAppUrl;
   window.buildSharePayload = buildSharePayload;
   window.ShareCardRenderer = ShareCardRenderer;
   window.downloadPng = downloadPng;

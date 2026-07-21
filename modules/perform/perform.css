@@ -65,6 +65,33 @@
   color: #7a7590;
 }
 
+.pf-source-badge {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1.5px solid transparent;
+}
+.pf-source-badge.loading {
+  color: #7a7590;
+  background: #f3f1fa;
+  border-color: #ddd6f3;
+}
+.pf-source-badge.ok {
+  color: #2f6b3a;
+  background: #e8f7ec;
+  border-color: #9fd5ab;
+}
+.pf-source-badge.fallback {
+  color: #8a5a12;
+  background: #fff4e0;
+  border-color: #f0c97a;
+}
+
 .pf-info-feedback {
   margin-top: 8px;
   font-size: 0.9rem;
@@ -77,12 +104,52 @@
 .pf-panel.active { display: block; }
 
 /* ── 钢琴 ── */
+.pf-piano-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
 .pf-piano-controls {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
+}
+
+.pf-task-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: linear-gradient(135deg, #fff5e8, #fff);
+  border: 2px solid #ffd699;
+  border-radius: 12px;
+  padding: 12px 16px;
   margin-bottom: 14px;
+}
+
+.pf-task-box.hidden { display: none; }
+
+.pf-task-banner {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #3d3a50;
+}
+
+.pf-task-score {
+  font-size: 0.9rem;
+  color: #7a7590;
+  font-weight: 600;
+}
+
+.pf-task-score strong {
+  font-size: 1.15rem;
+  color: #e89420;
 }
 
 .pf-oct-btn {
@@ -107,10 +174,10 @@
 .pf-oct-btn:disabled { opacity: 0.35; cursor: default; }
 
 .pf-oct-label {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #3d3a50;
-  min-width: 72px;
+  min-width: 140px;
   text-align: center;
 }
 
@@ -118,7 +185,7 @@
   position: relative;
   height: 140px;
   margin: 0 auto 12px;
-  max-width: 420px;
+  max-width: 480px;
   user-select: none;
 }
 
@@ -163,7 +230,7 @@
 
 .pf-key-black {
   position: absolute;
-  width: 9%;
+  width: 8%;
   height: 58%;
   background: #333;
   border: 2px solid #111;

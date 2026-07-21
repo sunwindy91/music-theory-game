@@ -1,0 +1,120 @@
+/* 学习路径 · 纵向节点 */
+.lp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+.lp-progress-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.lp-progress-count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: #f5f0ff;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.lp-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.lp-row { width: 100%; }
+
+.lp-node {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 2.5px solid #ece6ff;
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(124, 92, 255, 0.06);
+}
+.lp-node:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 0 6px 16px rgba(124, 92, 255, 0.12);
+}
+.lp-node.current {
+  border-color: var(--accent-dark);
+  background: linear-gradient(135deg, #fffaf0, #fff);
+  box-shadow: 0 4px 14px rgba(232, 148, 32, 0.15);
+}
+.lp-node.done {
+  border-color: #4cd964;
+  background: linear-gradient(135deg, #f0fff4, #fff);
+}
+.lp-node.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}
+.lp-node.practice {
+  border-style: dashed;
+  padding: 10px 14px;
+}
+.lp-node.practice .lp-emoji { font-size: 1.2rem; }
+
+.lp-emoji {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  width: 2.2rem;
+  text-align: center;
+}
+.lp-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.lp-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+.lp-sub { font-size: 0.75rem; color: var(--text-light); }
+
+.lp-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: #eaffea;
+  color: #2a9d4e;
+}
+.lp-badge.current {
+  background: #fff0d0;
+  color: #c67600;
+}
+.lp-badge.lock {
+  background: #f0f0f0;
+  color: #999;
+}
+
+.lp-connector {
+  width: 4px;
+  height: 14px;
+  margin: 2px auto;
+  border-radius: 4px;
+  background: #ddd0ff;
+}
+.lp-connector.done { background: #4cd964; }
+
+.lp-hint {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+.lp-node.side { border-style: dotted; border-color: #b8d4ff; }
+.lp-node.drill { border-style: dashed; border-color: #ffc87a; background: #fffaf5; }

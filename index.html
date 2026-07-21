@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>乐理小达人 · 练习游戏</title>
+  <title>乐理小达人 · 学练一体</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -87,11 +87,40 @@
       box-shadow: 0 4px 14px var(--shadow);
     }
     .chip-mode { flex: 1; min-width: 120px; text-align: center; }
+    .chip-learn { flex: 1; min-width: 110px; text-align: center; }
+
+    .chip-done {
+      border-color: #4cd964 !important;
+      background: linear-gradient(135deg, #eaffef, #fff) !important;
+    }
 
     .setup-hint {
       text-align: center; font-size: 0.8rem; color: var(--text-light);
       margin-top: 4px; min-height: 1.2em;
     }
+
+    .learn-recommend {
+      background: linear-gradient(135deg, #f0fff4, #fff8ee);
+      border: 2px solid #b8e6c8;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+    .learn-recommend.hidden { display: none; }
+    .learn-recommend-label {
+      font-size: 0.75rem; font-weight: 700; color: #2d8a5e;
+      margin-bottom: 8px; letter-spacing: 0.03em;
+    }
+    .learn-recommend-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .learn-rec-btn {
+      font-family: inherit; font-size: 0.82rem; font-weight: 600;
+      padding: 8px 12px; border-radius: 999px; border: 2px solid #7c5cff;
+      background: #fff; color: #5a3fd4; cursor: pointer;
+      transition: transform 0.12s, background 0.12s;
+    }
+    .learn-rec-btn:hover { transform: translateY(-1px); background: #f5f0ff; }
+    .learn-rec-btn.practice { border-color: #e89420; color: #c67600; }
+    .learn-rec-btn.practice:hover { background: #fff8ee; }
 
     .score-bar {
       display: flex; align-items: center; justify-content: space-between;
@@ -246,6 +275,24 @@
     #wrongBookRoot.active { display: block; }
     #dailyChallengeRoot { display: none; }
     #dailyChallengeRoot.active { display: block; }
+    #rhythmRoot { display: none; }
+    #rhythmRoot.active { display: block; }
+    #sightReadingRoot { display: none; }
+    #sightReadingRoot.active { display: block; }
+    #theoryLearnRoot { display: none; }
+    #theoryLearnRoot.active { display: block; }
+    #instrumentRoot { display: none; }
+    #instrumentRoot.active { display: block; }
+
+    .footer-links {
+      margin-top: 10px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+    }
+    .footer-link {
+      font-family: inherit; font-size: 0.78rem; font-weight: 600;
+      color: var(--primary); background: transparent; border: none;
+      cursor: pointer; text-decoration: underline; padding: 4px 8px;
+    }
+    .footer-link:hover { color: var(--primary-dark); }
 
     .app-footer {
       text-align: center; margin-top: 20px; padding-top: 14px;
@@ -258,6 +305,12 @@
       background: #f5f0ff; color: #9a8fc0; font-weight: 600;
     }
   </style>
+  <link rel="stylesheet" href="core/lesson-engine.css">
+  <link rel="stylesheet" href="core/learning-path.css">
+  <link rel="stylesheet" href="modules/theory-learn/theory-learn.css">
+  <link rel="stylesheet" href="modules/instrument-intro/instrument-intro.css">
+  <link rel="stylesheet" href="modules/sight-reading/sight-reading.css">
+  <link rel="stylesheet" href="modules/rhythm-game/rhythm-game.css">
   <link rel="stylesheet" href="modules/perform/perform.css">
   <link rel="stylesheet" href="modules/wrong-book/wrong-book.css">
   <link rel="stylesheet" href="modules/daily-challenge/daily-challenge.css">
@@ -274,7 +327,7 @@
     <header class="header">
       <span class="header-icon" aria-hidden="true">🎵</span>
       <h1>乐理小达人</h1>
-      <p>轻松练习，快乐学音乐</p>
+      <p>先学乐理，再练技巧 · 快乐学音乐</p>
     </header>
 
     <section class="score-bar hidden" id="scoreBar" aria-label="得分信息">
@@ -302,17 +355,39 @@
     <!-- 每日挑战模块挂载点 -->
     <div id="dailyChallengeRoot"></div>
 
+    <div id="rhythmRoot"></div>
+
+    <div id="sightReadingRoot"></div>
+
+    <div id="theoryLearnRoot"></div>
+
+    <div id="instrumentRoot"></div>
+
     <div class="quiz-shell" id="quizShell">
     <!-- 开始设置 -->
     <section class="setup-panel" id="setupPanel">
+      <div class="setup-group" id="learnGroup">
+        <div class="setup-label">📘 学习中心 · 学习路径</div>
+        <div id="learningPathRoot"></div>
+        <div class="chip-row lp-quick-fallback hidden" id="learnChipFallback" aria-hidden="true">
+          <button class="chip chip-learn" type="button" data-module="theory" id="chipTheory">📖 乐理入门<span class="chip-badge hidden" id="theoryProgressBadge"></span></button>
+          <button class="chip chip-learn" type="button" data-module="sight" id="chipSight">🎼 识谱教学<span class="chip-badge hidden" id="sightProgressBadge"></span></button>
+          <button class="chip chip-learn" type="button" data-module="piano" id="chipPiano">🎹 钢琴入门</button>
+          <button class="chip chip-learn" type="button" data-module="guitar" id="chipGuitar">🎸 吉他入门</button>
+        </div>
+      </div>
+      <div class="learn-recommend hidden" id="learnRecommend" aria-live="polite">
+        <div class="learn-recommend-label">💡 学练推荐</div>
+        <div class="learn-recommend-row" id="learnRecommendRow"></div>
+      </div>
       <div class="setup-group">
-        <div class="setup-label">练习模式</div>
+        <div class="setup-label">🎯 练习中心</div>
         <div class="chip-row">
           <button class="chip chip-mode selected" type="button" data-mode="quiz">📚 综合练习</button>
           <button class="chip chip-mode" type="button" data-mode="audio">🎧 听音识名</button>
           <button class="chip chip-mode" type="button" data-module="symbol">🃏 符号翻翻乐</button>
           <button class="chip chip-mode" type="button" data-module="perform">🎹 演奏练习</button>
-          <button class="chip chip-mode" type="button" data-module="spirit">✨ 灵气星图</button>
+          <button class="chip chip-mode" type="button" data-module="rhythm" id="chipRhythm">🥁 节奏闯关</button>
         </div>
       </div>
       <div class="setup-group" id="reviewGroup">
@@ -323,11 +398,10 @@
         </div>
         <p class="setup-hint" id="reviewHint">今日待复习 0 题 · 共 0 题</p>
       </div>
-      <div class="setup-group setup-group-future" aria-label="即将推出的功能">
+      <div class="setup-group setup-group-future hidden" aria-label="即将推出的功能">
         <div class="setup-label">即将推出</div>
         <div class="chip-row">
-          <button class="chip chip-soon" type="button" disabled title="Phase 3+">🥁 节奏闯关</button>
-          <button class="chip chip-soon" type="button" disabled title="Phase 3+">🎼 识谱教学</button>
+          <button class="chip chip-soon" type="button" disabled title="Phase 3+">🎹 扩展演奏</button>
         </div>
       </div>
       <div class="setup-group" id="difficultyGroup">
@@ -344,7 +418,7 @@
     <section class="question-area" id="questionArea" aria-live="polite">
       <div class="question-placeholder" id="questionPlaceholder">
         <span class="emoji">🎹</span>
-        选择模式与难度<br>点击「开始练习」吧！
+        选择模式与难度<br>先学后练，点击「开始练习」吧！
       </div>
       <div class="question-content hidden" id="questionContent">
         <span class="question-type" id="questionType"></span>
@@ -378,13 +452,21 @@
     </div><!-- /quiz-shell -->
 
     <footer class="app-footer" aria-label="版本信息">
-      乐理小达人 · demo · 仅供学习娱乐<span class="version" id="appVersionTag">v0.2</span>
+      乐理小达人 · demo · 仅供学习娱乐<span class="version" id="appVersionTag"></span>
+      <div class="footer-links">
+        <button class="footer-link" type="button" data-module="spirit" id="chipSpiritFooter">✨ 灵气星图</button>
+      </div>
     </footer>
   </main>
 
   <div id="spiritJourneyRoot" aria-hidden="true"></div>
 
   <script src="core/features.js"></script>
+  <script src="core/lesson-engine.js"></script>
+  <script src="core/learn-practice-bridge.js"></script>
+  <script src="core/spirit-progress.js"></script>
+  <script src="core/learning-path.js"></script>
+  <script src="core/quiz-bank.js"></script>
   <script src="core/wrong-book.js"></script>
   <script src="core/daily-challenge.js"></script>
   <script src="core/ux-simulator.js"></script>
@@ -397,13 +479,30 @@
   <script src="modules/symbol-match/symbol-match.js"></script>
   <script src="modules/perform/perform.js"></script>
   <script src="modules/spirit-journey/spirit-journey.js"></script>
+  <script src="modules/rhythm-game/rhythm-charts.js"></script>
+  <script src="modules/rhythm-game/rhythm-engine.js"></script>
+  <script src="modules/rhythm-game/rhythm-game.js"></script>
+  <script src="modules/sight-reading/staff-renderer.js"></script>
+  <script src="modules/sight-reading/sight-data.js"></script>
+  <script src="modules/sight-reading/sight-reading.js"></script>
+  <script src="modules/theory-learn/theory-data.js"></script>
+  <script src="modules/theory-learn/theory-learn.js"></script>
+  <script src="modules/instrument-intro/instrument-data.js"></script>
+  <script src="modules/instrument-intro/instrument-intro.js"></script>
   <script>
+    if (window.APP_VERSION && document.getElementById("appVersionTag")) {
+      document.getElementById("appVersionTag").textContent = APP_VERSION;
+    }
     /* ── 模块壳：Tab 切换（不侵入答题逻辑） ── */
     (function AppShell() {
       const symbolRoot = document.getElementById("symbolMatchRoot");
       const performRoot = document.getElementById("performRoot");
       const wrongBookRoot = document.getElementById("wrongBookRoot");
       const dailyChallengeRoot = document.getElementById("dailyChallengeRoot");
+      const rhythmRoot = document.getElementById("rhythmRoot");
+      const sightReadingRoot = document.getElementById("sightReadingRoot");
+      const theoryLearnRoot = document.getElementById("theoryLearnRoot");
+      const instrumentRoot = document.getElementById("instrumentRoot");
       const spiritRoot = document.getElementById("spiritJourneyRoot");
       const quizShell = document.getElementById("quizShell");
       const scoreBar = document.getElementById("scoreBar");
@@ -420,6 +519,10 @@
         performRoot.classList.remove("active");
         wrongBookRoot.classList.remove("active");
         dailyChallengeRoot.classList.remove("active");
+        rhythmRoot.classList.remove("active");
+        sightReadingRoot.classList.remove("active");
+        theoryLearnRoot.classList.remove("active");
+        instrumentRoot.classList.remove("active");
         spiritRoot.classList.remove("active");
         document.body.style.overflow = "";
         if (typeof ShareCardModule !== "undefined") ShareCardModule.close();
@@ -427,8 +530,62 @@
         PerformModule.unmount();
         WrongBookModule.unmount();
         DailyChallengeModule.unmount();
+        RhythmGameModule.unmount();
+        SightReadingModule.unmount();
+        if (typeof TheoryLearnModule !== "undefined") TheoryLearnModule.unmount();
+        if (typeof InstrumentIntroModule !== "undefined") InstrumentIntroModule.unmount();
         SpiritJourneyModule.unmount();
       }
+
+      function clearChipSelection() {
+        document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
+        document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+      }
+
+      function refreshLearnBadges() {
+        const theoryBadge = document.getElementById("theoryProgressBadge");
+        const sightBadge = document.getElementById("sightProgressBadge");
+        const theoryChip = document.getElementById("chipTheory");
+        const sightChip = document.getElementById("chipSight");
+
+        if (typeof TheoryLearnModule !== "undefined" && theoryBadge) {
+          const done = TheoryLearnModule.completedCount();
+          const total = TheoryLearnModule.totalCount();
+          if (done > 0 && done < total) {
+            theoryBadge.textContent = `${done}/${total}`;
+            theoryBadge.classList.remove("hidden");
+            theoryBadge.style.background = "#7c5cff";
+          } else if (done >= total && total > 0) {
+            theoryBadge.textContent = "✓";
+            theoryBadge.classList.remove("hidden");
+            theoryBadge.style.background = "#4cd964";
+            if (theoryChip) theoryChip.classList.add("chip-done");
+          } else {
+            theoryBadge.classList.add("hidden");
+            if (theoryChip) theoryChip.classList.remove("chip-done");
+          }
+        }
+
+        if (typeof SightProgressStore !== "undefined" && sightBadge) {
+          const total = (window.SIGHT_LESSONS || []).length;
+          const done = SightProgressStore.completedCount();
+          if (done > 0 && done < total) {
+            sightBadge.textContent = `${done}/${total}`;
+            sightBadge.classList.remove("hidden");
+            sightBadge.style.background = "#7c5cff";
+          } else if (done >= total && total > 0) {
+            sightBadge.textContent = "✓";
+            sightBadge.classList.remove("hidden");
+            sightBadge.style.background = "#4cd964";
+            if (sightChip) sightChip.classList.add("chip-done");
+          } else {
+            sightBadge.classList.add("hidden");
+            if (sightChip) sightChip.classList.remove("chip-done");
+          }
+        }
+      }
+
+      window.refreshLearnBadges = refreshLearnBadges;
 
       function showQuizModule() {
         activeModule = "quiz";
@@ -439,6 +596,11 @@
         btnStart.classList.remove("hidden");
         headerSub.textContent = defaultSub;
         if (typeof refreshReviewHint === "function") refreshReviewHint();
+        refreshLearnBadges();
+        if (typeof refreshLearnRecommend === "function") refreshLearnRecommend();
+        if (window.LearningPath) {
+          LearningPath.render(document.getElementById("learningPathRoot"));
+        }
         if (typeof state !== "undefined" && !state.playing) {
           scoreBar.classList.remove("hidden");
         }
@@ -460,6 +622,7 @@
           },
           onRefreshBadge: () => {
             if (typeof refreshReviewHint === "function") refreshReviewHint();
+            refreshLearnBadges();
           },
           onStartReview: (dueEntries) => {
             if (typeof startWrongBookReview === "function") {
@@ -494,7 +657,125 @@
         });
       }
 
-      window.AppShell = { showQuizModule, showWrongBookModule, showDailyChallengeModule };
+      window.AppShell = {
+        showQuizModule, showWrongBookModule, showDailyChallengeModule,
+        showRhythmModule, showSightReadingModule, showTheoryLearnModule,
+        showInstrumentModule, refreshLearnBadges,
+        openTheoryLesson(id) {
+          showTheoryLearnModule();
+          if (id && typeof TheoryLearnModule !== "undefined") {
+            setTimeout(() => TheoryLearnModule.startLesson(id), 30);
+          }
+        },
+        openInstrumentLesson(kind, id) {
+          showInstrumentModule(kind);
+          if (id && typeof InstrumentIntroModule !== "undefined") {
+            setTimeout(() => InstrumentIntroModule.startLesson(kind, id), 30);
+          }
+        },
+        openSightDrill() {
+          showSightReadingModule();
+          setTimeout(() => {
+            if (typeof SightReadingModule !== "undefined" && SightReadingModule.startDrill) {
+              SightReadingModule.startDrill();
+            }
+          }, 40);
+        }
+      };
+
+      window.refreshSpiritDisplay = function () {
+        if (window.LearningPath) {
+          LearningPath.render(document.getElementById("learningPathRoot"));
+        }
+      };
+
+      function showTheoryLearnModule() {
+        if (window.AppFeatures && !AppFeatures.theoryLearn) return;
+        activeModule = "theory";
+        quizShell.classList.add("hidden");
+        scoreBar.classList.add("hidden");
+        comboDisplay.classList.remove("show");
+        hideAllModules();
+        theoryLearnRoot.classList.add("active");
+        headerSub.textContent = "乐理入门 · 先学后练";
+        TheoryLearnModule.mount(theoryLearnRoot, {
+          onBack: () => {
+            clearChipSelection();
+            document.querySelector('[data-mode="quiz"]').classList.add("selected");
+            showQuizModule();
+          },
+          onProgressChange: () => {
+            refreshLearnBadges();
+            if (typeof refreshLearnRecommend === "function") refreshLearnRecommend();
+            if (window.LearningPath) LearningPath.render(document.getElementById("learningPathRoot"));
+          },
+          onPracticeTopic: (topicId) => {
+            if (typeof window.startTopicPractice === "function") window.startTopicPractice(topicId);
+          }
+        });
+      }
+
+      function showInstrumentModule(kind) {
+        if (window.AppFeatures && !AppFeatures.instrumentIntro) return;
+        activeModule = kind;
+        quizShell.classList.add("hidden");
+        scoreBar.classList.add("hidden");
+        comboDisplay.classList.remove("show");
+        hideAllModules();
+        instrumentRoot.classList.add("active");
+        headerSub.textContent = kind === "guitar" ? "吉他入门 · 六弦与和弦" : "钢琴入门 · 键盘与音名";
+        InstrumentIntroModule.mount(instrumentRoot, {
+          kind,
+          onBack: () => {
+            clearChipSelection();
+            document.querySelector('[data-mode="quiz"]').classList.add("selected");
+            showQuizModule();
+          },
+          onPracticeTopic: (topicId) => {
+            if (typeof window.startTopicPractice === "function") window.startTopicPractice(topicId);
+          }
+        });
+      }
+
+      function showRhythmModule() {
+        if (window.AppFeatures && !AppFeatures.rhythmGame) return;
+        activeModule = "rhythm";
+        quizShell.classList.add("hidden");
+        scoreBar.classList.add("hidden");
+        comboDisplay.classList.remove("show");
+        hideAllModules();
+        rhythmRoot.classList.add("active");
+        headerSub.textContent = "节奏天国式跟拍 · 练时值感";
+        RhythmGameModule.mount(rhythmRoot, {
+          onBack: () => {
+            document.querySelector('[data-mode="quiz"]').click();
+            showQuizModule();
+          }
+        });
+      }
+
+      function showSightReadingModule() {
+        if (window.AppFeatures && !AppFeatures.sightReading) return;
+        activeModule = "sight";
+        quizShell.classList.add("hidden");
+        scoreBar.classList.add("hidden");
+        comboDisplay.classList.remove("show");
+        hideAllModules();
+        sightReadingRoot.classList.add("active");
+        headerSub.textContent = "五线谱入门 · 看谱认音";
+        SightReadingModule.mount(sightReadingRoot, {
+          onBack: () => {
+            clearChipSelection();
+            document.querySelector('[data-mode="quiz"]').classList.add("selected");
+            showQuizModule();
+          },
+          onProgressChange: () => {
+            refreshLearnBadges();
+            if (typeof refreshLearnRecommend === "function") refreshLearnRecommend();
+            if (window.LearningPath) LearningPath.render(document.getElementById("learningPathRoot"));
+          }
+        });
+      }
 
       function showSymbolModule() {
         activeModule = "symbol";
@@ -528,8 +809,20 @@
         });
       }
 
+      function isSpiritPathUnlocked() {
+        if (typeof window.isDevUnlock === "function" && window.isDevUnlock()) return true;
+        if (!window.LearningPath) return false;
+        const node = LearningPath.NODES.find(n => n.id === "spirit-map");
+        return !!(node && LearningPath.getNodeState(node) !== "locked");
+      }
+
       function showSpiritModule() {
         if (window.AppFeatures && !AppFeatures.spiritJourney) return;
+        if (!isSpiritPathUnlocked()) {
+          headerSub.textContent = "完成识谱 7 课后解锁灵气星图";
+          window.alert("完成识谱 7 课后解锁灵气星图（测试可用 ?dev=1）");
+          return;
+        }
         activeModule = "spirit";
         quizShell.classList.add("hidden");
         scoreBar.classList.add("hidden");
@@ -538,7 +831,7 @@
         spiritRoot.classList.add("active");
         spiritRoot.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
-        headerSub.textContent = "吞噬光点 · 凝聚灵气 · 星图聆听";
+        headerSub.textContent = "WASD 捡音符 · 躲开暗影 · 灵气同步";
         SpiritJourneyModule.mount(spiritRoot, {
           onBack: () => {
             document.querySelector('[data-mode="quiz"]').click();
@@ -548,32 +841,75 @@
       }
 
       document.querySelector('[data-module="symbol"]').addEventListener("click", (e) => {
-        document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
-        document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+        clearChipSelection();
         e.currentTarget.classList.add("selected");
         showSymbolModule();
       });
 
       document.querySelector('[data-module="perform"]').addEventListener("click", (e) => {
-        document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
-        document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+        clearChipSelection();
         e.currentTarget.classList.add("selected");
         showPerformModule();
       });
 
-      document.querySelector('[data-module="spirit"]').addEventListener("click", (e) => {
-        document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
-        document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
-        e.currentTarget.classList.add("selected");
-        showSpiritModule();
-      });
+      const rhythmChip = document.getElementById("chipRhythm");
+      if (rhythmChip) {
+        rhythmChip.addEventListener("click", (e) => {
+          if (window.AppFeatures && !AppFeatures.rhythmGame) return;
+          clearChipSelection();
+          e.currentTarget.classList.add("selected");
+          showRhythmModule();
+        });
+      }
+
+      const theoryChip = document.getElementById("chipTheory");
+      if (theoryChip) {
+        theoryChip.addEventListener("click", (e) => {
+          if (window.AppFeatures && !AppFeatures.theoryLearn) return;
+          clearChipSelection();
+          e.currentTarget.classList.add("selected");
+          showTheoryLearnModule();
+        });
+      }
+
+      const sightChip = document.getElementById("chipSight");
+      if (sightChip) {
+        sightChip.addEventListener("click", (e) => {
+          if (window.AppFeatures && !AppFeatures.sightReading) return;
+          clearChipSelection();
+          e.currentTarget.classList.add("selected");
+          showSightReadingModule();
+        });
+      }
+
+      const pianoChip = document.getElementById("chipPiano");
+      if (pianoChip) {
+        pianoChip.addEventListener("click", (e) => {
+          clearChipSelection();
+          e.currentTarget.classList.add("selected");
+          showInstrumentModule("piano");
+        });
+      }
+
+      const guitarChip = document.getElementById("chipGuitar");
+      if (guitarChip) {
+        guitarChip.addEventListener("click", (e) => {
+          clearChipSelection();
+          e.currentTarget.classList.add("selected");
+          showInstrumentModule("guitar");
+        });
+      }
+
+      const spiritFooter = document.getElementById("chipSpiritFooter");
+      if (spiritFooter) {
+        spiritFooter.addEventListener("click", () => showSpiritModule());
+      }
 
       const wrongBookChip = document.getElementById("chipWrongBook");
       if (wrongBookChip) {
         wrongBookChip.addEventListener("click", (e) => {
           if (window.AppFeatures && !AppFeatures.wrongBook) return;
-          document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
-          document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+          clearChipSelection();
           e.currentTarget.classList.add("selected");
           showWrongBookModule();
         });
@@ -583,8 +919,7 @@
       if (dailyChip) {
         dailyChip.addEventListener("click", (e) => {
           if (window.AppFeatures && !AppFeatures.dailyChallenge) return;
-          document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
-          document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+          clearChipSelection();
           e.currentTarget.classList.add("selected");
           showDailyChallengeModule();
         });
@@ -592,65 +927,21 @@
 
       document.querySelectorAll("[data-mode]").forEach(btn => {
         btn.addEventListener("click", () => {
-          document.querySelectorAll("[data-module]").forEach(b => b.classList.remove("selected"));
+          clearChipSelection();
           btn.classList.add("selected");
           if (activeModule !== "quiz") showQuizModule();
         });
       });
+
+      refreshLearnBadges();
+      if (typeof refreshLearnRecommend === "function") refreshLearnRecommend();
+      if (window.LearningPath) LearningPath.render(document.getElementById("learningPathRoot"));
     })();
   </script>
 
   <script>
-    /**
-     * 题库：30 道题，5 类 × 6 道，每类含初级(1)/中级(2)/高级(3) 各 2 道
-     * 格式：{ type, difficulty, text, hint?, options, answer }
-     */
-    const QUESTIONS = [
-      // ── 音名识别 ×6 ──
-      { type: "音名识别", difficulty: 1, text: "高音谱号下，第一线是什么音？", hint: "线音从下到上：E G B D F", options: ["E（Mi）", "G（Sol）", "C（Do）", "F（Fa）"], answer: 0 },
-      { type: "音名识别", difficulty: 1, text: "低音谱号下，第二线是什么音？", options: ["G（Sol）", "B（Si）", "D（Re）", "A（La）"], answer: 2 },
-      { type: "音名识别", difficulty: 2, text: "下列哪个音名带升号？", options: ["F", "F♯", "G♭", "E♭"], answer: 1 },
-      { type: "音名识别", difficulty: 2, text: "C 大调中，B 音与 C 音之间相差几个半音？", hint: "B 到 C 是相邻音", options: ["0 个", "1 个", "2 个", "3 个"], answer: 1 },
-      { type: "音名识别", difficulty: 3, text: "下列哪组是等音（同音异名）关系？", options: ["C 与 D", "F♯ 与 G♭", "E 与 F", "G 与 A"], answer: 1 },
-      { type: "音名识别", difficulty: 3, text: "高音谱号下，下加二线是什么音？", hint: "下加线从中央 C 往下数", options: ["A（La）", "B（Si）", "G（Sol）", "D（Re）"], answer: 0 },
-
-      // ── 音程识别 ×6 ──
-      { type: "音程识别", difficulty: 1, text: "从 C 到 D 是什么音程？", options: ["纯一度", "大二度", "小三度", "纯四度"], answer: 1 },
-      { type: "音程识别", difficulty: 1, text: "从 C 到 E 是什么音程？", hint: "C→D→E 共 4 个半音", options: ["大二度", "小三度", "大三度", "纯四度"], answer: 2 },
-      { type: "音程识别", difficulty: 2, text: "从 C 到 F 是什么音程？", options: ["大三度", "纯四度", "纯五度", "大六度"], answer: 1 },
-      { type: "音程识别", difficulty: 2, text: "从 C 到 G 是什么音程？", options: ["纯四度", "增四度", "纯五度", "小六度"], answer: 2 },
-      { type: "音程识别", difficulty: 3, text: "从 C 到 A 是什么音程？", options: ["纯五度", "小六度", "大六度", "小七度"], answer: 2 },
-      { type: "音程识别", difficulty: 3, text: "从 C 到高八度 C 是什么音程？", options: ["小七度", "大七度", "纯八度", "增八度"], answer: 2 },
-
-      // ── 节奏型识别 ×6 ──
-      { type: "节奏型识别", difficulty: 1, text: "一个四分音符的时值等于几个八分音符？", options: ["1 个", "2 个", "3 个", "4 个"], answer: 1 },
-      { type: "节奏型识别", difficulty: 1, text: "一个全音符的时值等于几个四分音符？", options: ["2 个", "3 个", "4 个", "8 个"], answer: 2 },
-      { type: "节奏型识别", difficulty: 2, text: "附点四分音符的时值等于？", options: ["1 个四分 + 1 个八分", "2 个四分", "1 个二分", "2 个八分"], answer: 0 },
-      { type: "节奏型识别", difficulty: 2, text: "4/4 拍中，一小节最多能容纳几个四分音符？", options: ["2 个", "3 个", "4 个", "8 个"], answer: 2 },
-      { type: "节奏型识别", difficulty: 3, text: "三连音的含义是？", options: ["三个音占两拍的时值", "三个音占三拍的时值", "三个音占一拍", "三个音占四拍"], answer: 0 },
-      { type: "节奏型识别", difficulty: 3, text: "6/8 拍是以几分音符为一拍？", hint: "复合拍号：每拍含三个八分音符", options: ["四分音符", "八分音符", "附点四分音符", "二分音符"], answer: 2 },
-
-      // ── 调号识别 ×6 ──
-      { type: "调号识别", difficulty: 1, text: "C 大调有几个升降号？", options: ["0 个", "1 个升号", "1 个降号", "2 个升号"], answer: 0 },
-      { type: "调号识别", difficulty: 1, text: "G 大调的调号是什么？", hint: "G 大调只有一个升号", options: ["无升降号", "1 个升号（F♯）", "1 个降号（B♭）", "2 个升号"], answer: 1 },
-      { type: "调号识别", difficulty: 2, text: "F 大调的调号是什么？", options: ["1 个升号", "1 个降号（B♭）", "2 个降号", "3 个升号"], answer: 1 },
-      { type: "调号识别", difficulty: 2, text: "D 大调有几个升号？", options: ["1 个", "2 个", "3 个", "4 个"], answer: 1 },
-      { type: "调号识别", difficulty: 3, text: "E 大调有几个升号？", options: ["3 个", "4 个", "5 个", "6 个"], answer: 1 },
-      { type: "调号识别", difficulty: 3, text: "Bb 大调有几个降号？", options: ["1 个", "2 个", "3 个", "4 个"], answer: 1 },
-
-      // ── 和弦识别 ×6 ──
-      { type: "和弦识别", difficulty: 1, text: "C 大三和弦由哪三个音组成？", options: ["C D E", "C E G", "C F A", "C E A"], answer: 1 },
-      { type: "和弦识别", difficulty: 1, text: "G 大三和弦由哪三个音组成？", options: ["G B D", "G A B", "G C E", "G D F"], answer: 0 },
-      { type: "和弦识别", difficulty: 2, text: "A 小三和弦由哪三个音组成？", options: ["A C E", "A C♯ E", "A B D", "A D F"], answer: 0 },
-      { type: "和弦识别", difficulty: 2, text: "D 小三和弦的组成音是？", options: ["D F A", "D F♯ A", "D G B", "D E A"], answer: 0 },
-      { type: "和弦识别", difficulty: 3, text: "C 属七和弦（C7）包含哪个音？", options: ["B", "B♭", "E♭", "F♯"], answer: 1 },
-      { type: "和弦识别", difficulty: 3, text: "减三和弦的音程结构是？", hint: "根音 → 小三度 → 再小三度", options: ["大三度 + 小三度", "小三度 + 小三度", "小三度 + 大三度", "大三度 + 大三度"], answer: 1 }
-    ];
-
-    QUESTIONS.forEach((q, i) => {
-      q.id = `q${String(i + 1).padStart(2, "0")}`;
-    });
-    window.QUESTIONS = QUESTIONS;
+    /** 题库由 core/quiz-bank.js 提供（80+ 道） */
+    const QUESTIONS = window.QUIZ_BANK || window.QUESTIONS || [];
 
     const POINTS_PER_QUESTION = 20;
     const DIFF_LABELS = { 1: "初级", 2: "中级", 3: "高级" };
@@ -751,7 +1042,7 @@
     if (versionTag && window.APP_VERSION) versionTag.textContent = APP_VERSION;
 
     // ── 设置状态 ──
-    let settings = { mode: "quiz", difficulty: 1 };
+    let settings = { mode: "quiz", difficulty: 1, topicId: null };
 
     let state = {
       playing: false,
@@ -824,10 +1115,29 @@
         dailyChip.disabled = false;
         dailyChip.removeAttribute("title");
       }
+      const rhythmChip = document.getElementById("chipRhythm");
+      if (rhythmChip && !AppFeatures.rhythmGame) {
+        rhythmChip.classList.add("hidden");
+      }
+      const sightChipInit = document.getElementById("chipSight");
+      if (sightChipInit && !AppFeatures.sightReading) {
+        sightChipInit.classList.add("hidden");
+      }
+      const theoryChipInit = document.getElementById("chipTheory");
+      if (theoryChipInit && !AppFeatures.theoryLearn) {
+        theoryChipInit.classList.add("hidden");
+      }
+      const pianoChipInit = document.getElementById("chipPiano");
+      const guitarChipInit = document.getElementById("chipGuitar");
+      if (!AppFeatures.instrumentIntro) {
+        if (pianoChipInit) pianoChipInit.classList.add("hidden");
+        if (guitarChipInit) guitarChipInit.classList.add("hidden");
+      }
       if (reviewGroup && !AppFeatures.wrongBook && !AppFeatures.dailyChallenge) {
         reviewGroup.classList.add("hidden");
       }
       refreshReviewHint();
+      if (typeof refreshLearnBadges === "function") refreshLearnBadges();
     }
 
     initFeatureChips();
@@ -878,10 +1188,64 @@
     }
 
     function filterQuizQuestions(difficulty) {
-      const maxDiff = difficulty;
-      const pool = QUESTIONS.filter(q => q.difficulty <= maxDiff);
-      return shuffle(pool).slice(0, getQuestionCount(difficulty));
+      const maxCount = getQuestionCount(difficulty);
+      if (settings.topicId && window.LearnPracticeBridge) {
+        const filtered = LearnPracticeBridge.filterByTopic(settings.topicId, difficulty, maxCount);
+        if (filtered.length) return filtered;
+      }
+      const pool = QUESTIONS.filter(q => q.difficulty <= difficulty);
+      return shuffle(pool).slice(0, maxCount);
     }
+
+    function startTopicPractice(topicId) {
+      if (window.AppShell) AppShell.showQuizModule();
+      settings.mode = "quiz";
+      settings.topicId = topicId;
+      settings.difficulty = 1;
+      document.querySelectorAll("[data-mode]").forEach(b => {
+        b.classList.toggle("selected", b.dataset.mode === "quiz");
+      });
+      document.querySelectorAll("[data-difficulty]").forEach(b => {
+        b.classList.toggle("selected", Number(b.dataset.difficulty) === 1);
+      });
+      if (typeof ShareCardModule !== "undefined") ShareCardModule.reset();
+      updateSetupHint();
+      startGame();
+    }
+    window.startTopicPractice = startTopicPractice;
+
+    function refreshLearnRecommend() {
+      const box = document.getElementById("learnRecommend");
+      const row = document.getElementById("learnRecommendRow");
+      if (!box || !row || !window.LearnPracticeBridge) return;
+      const items = LearnPracticeBridge.getRecommendations();
+      if (!items.length) {
+        box.classList.add("hidden");
+        row.innerHTML = "";
+        return;
+      }
+      row.innerHTML = items.map(item => {
+        if (item.kind === "learn") {
+          return `<button type="button" class="learn-rec-btn" data-rec-kind="learn" data-module="${item.module}" data-lesson="${item.lessonId}">${item.emoji} ${item.label}</button>`;
+        }
+        return `<button type="button" class="learn-rec-btn practice" data-rec-kind="practice" data-topic="${item.topicId}">${item.emoji} ${item.label}（${item.count}题）</button>`;
+      }).join("");
+      box.classList.remove("hidden");
+      row.querySelectorAll("[data-rec-kind]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (btn.dataset.recKind === "learn") {
+            if (btn.dataset.module === "theory" && window.AppShell?.openTheoryLesson) {
+              AppShell.openTheoryLesson(btn.dataset.lesson);
+            } else if (btn.dataset.module === "sight") {
+              document.querySelector('[data-module="sight"]')?.click();
+            }
+          } else if (btn.dataset.recKind === "practice") {
+            startTopicPractice(btn.dataset.topic);
+          }
+        });
+      });
+    }
+    window.refreshLearnRecommend = refreshLearnRecommend;
 
     function pickDistractors(correctName, pool, count = 3) {
       const others = pool.filter(n => n !== correctName);
@@ -930,9 +1294,18 @@
     }
 
     function updateSetupHint() {
+      const diffLabel = DIFF_LABELS[settings.difficulty];
+      if (settings.topicId && window.LearnPracticeBridge) {
+        const meta = LearnPracticeBridge.getTopicMeta(settings.topicId);
+        const count = Math.min(
+          getQuestionCount(settings.difficulty),
+          LearnPracticeBridge.countForTopic(settings.topicId, settings.difficulty)
+        );
+        setupHint.textContent = `${diffLabel} · 专题巩固 · ${meta.title} · ${count} 道题（切换模式可退出专题）`;
+        return;
+      }
       const count = getQuestionCount(settings.difficulty);
       const modeLabel = settings.mode === "audio" ? "听音识名" : "综合练习";
-      const diffLabel = DIFF_LABELS[settings.difficulty];
       setupHint.textContent = `${diffLabel} · ${modeLabel} · ${count} 道题`;
     }
 
@@ -942,6 +1315,7 @@
         document.querySelectorAll("[data-mode]").forEach(b => b.classList.remove("selected"));
         btn.classList.add("selected");
         settings.mode = btn.dataset.mode;
+        settings.topicId = null;
         updateSetupHint();
       });
     });
@@ -956,6 +1330,7 @@
     });
 
     updateSetupHint();
+    refreshLearnRecommend();
 
     // ── 游戏逻辑 ──
     function updateScore() {
@@ -1177,6 +1552,9 @@
           diffBadge.textContent = reviewMode.type === "review" ? "错题复习" : "单题练习";
         }
         comboDisplay.classList.remove("show");
+      } else if (settings.topicId && window.LearnPracticeBridge) {
+        const meta = LearnPracticeBridge.getTopicMeta(settings.topicId);
+        diffBadge.textContent = `${DIFF_LABELS[settings.difficulty]} · 专题 · ${meta.title}`;
       } else {
         diffBadge.textContent = `${DIFF_LABELS[settings.difficulty]} · ${settings.mode === "audio" ? "听音识名" : "综合练习"}`;
       }
