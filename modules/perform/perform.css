@@ -12,11 +12,21 @@
   justify-content: center;
 }
 
+/* 双端 UX：点触类控件去掉移动端 300ms 延迟与双击缩放，点按即响 */
+.pf-tab,
+.pf-toggle,
+.pf-chord-btn,
+.pf-drum-pad,
+.pf-key-white,
+.pf-key-black {
+  touch-action: manipulation;
+}
+
 .pf-tab {
   font-family: inherit;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 10px 14px;
+  padding: 10px 12px;
   border: 2.5px solid #e8e0ff;
   border-radius: 50px;
   background: #fff;
@@ -24,7 +34,7 @@
   cursor: pointer;
   transition: transform 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
   flex: 1;
-  min-width: 100px;
+  min-width: 88px;
   text-align: center;
 }
 
@@ -102,6 +112,99 @@
 
 .pf-panel { display: none; }
 .pf-panel.active { display: block; }
+
+.pf-guide {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #f5f0ff 0%, #fff5e8 100%);
+  border: 2px solid #c9b8ff;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(124, 92, 255, 0.12);
+}
+
+.pf-guide.hidden { display: none; }
+
+.pf-guide-inner {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.pf-guide-tip {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5a3fd4;
+  line-height: 1.45;
+}
+
+.pf-guide-tip strong {
+  color: #e89420;
+  letter-spacing: 0.06em;
+}
+
+.pf-guide-tip kbd {
+  display: inline-block;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1.5px solid #ddd0ff;
+  color: #3d3a50;
+  margin: 0 2px;
+}
+
+.pf-guide-task {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #3d3a50;
+  line-height: 1.4;
+}
+
+.pf-guide-close {
+  flex-shrink: 0;
+  font-family: inherit;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(124, 92, 255, 0.12);
+  color: #5a3fd4;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.pf-guide-close:hover {
+  background: rgba(124, 92, 255, 0.22);
+  transform: scale(1.08);
+}
+
+.pf-guide-replay {
+  display: block;
+  margin: -4px auto 10px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #7c5cff;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.pf-guide-replay.hidden { display: none; }
+
+.pf-guide-replay:hover { color: #e89420; }
 
 /* ── 钢琴 ── */
 .pf-piano-toolbar {
@@ -271,48 +374,192 @@
   line-height: 1.5;
 }
 
-/* ── 吉他 ── */
+/* ── 吉他 · 横向琴颈指板 ── */
 .pf-guitar-neck {
-  background: #faf8ff;
-  border: 2px solid #ece6ff;
-  border-radius: 14px;
-  padding: 16px;
+  background: linear-gradient(180deg, #3d3528 0%, #2a241c 100%);
+  border: 3px solid #1f1a14;
+  border-radius: 16px;
+  padding: 12px 10px 14px;
   margin-bottom: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 18px rgba(45, 35, 25, 0.35);
 }
 
 .pf-guitar-neck h4 {
-  font-size: 0.85rem;
-  color: #7c5cff;
-  margin-bottom: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e8dcc8;
+  margin: 0 0 10px;
   text-align: center;
+  letter-spacing: 0.03em;
 }
 
-.pf-strings {
+.pf-fretboard {
+  --pf-neck-label: 46px;
+  --pf-fret-min: 54px;
+  touch-action: pan-x;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(
+    180deg,
+    #d4b896 0%,
+    #b8926a 18%,
+    #a67c52 42%,
+    #9a7048 50%,
+    #a67c52 58%,
+    #b8926a 82%,
+    #c9a67a 100%
+  );
+  border-radius: 4px 14px 14px 4px;
+  border: 2px solid #6b5340;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.12),
+    inset 0 -2px 6px rgba(255, 255, 255, 0.12);
+  padding: 6px 10px 8px 0;
 }
 
-.pf-string-row {
+.pf-fret-head,
+.pf-fret-row {
+  display: grid;
+  grid-template-columns: var(--pf-neck-label) repeat(6, minmax(var(--pf-fret-min), 1fr));
+  align-items: stretch;
+  min-width: min(100%, calc(var(--pf-neck-label) + 6 * var(--pf-fret-min)));
+}
+
+.pf-fret-head {
+  margin-bottom: 2px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(60, 45, 30, 0.25);
+}
+
+.pf-fret-row {
+  position: relative;
+  min-height: 46px;
+}
+
+.pf-fret-row::after {
+  content: "";
+  position: absolute;
+  left: var(--pf-neck-label);
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1.5px;
+  background: linear-gradient(90deg, #5a5a5a 0%, #d8d8d8 35%, #f0f0f0 50%, #d8d8d8 65%, #5a5a5a 100%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+}
+
+.pf-fret-row:nth-child(2)::after,
+.pf-fret-row:nth-child(3)::after { height: 2.5px; opacity: 0.9; }
+.pf-fret-row:nth-child(4)::after { height: 2px; }
+.pf-fret-row:nth-child(5)::after,
+.pf-fret-row:nth-child(6)::after { height: 1.5px; }
+.pf-fret-row:nth-child(7)::after { height: 1px; opacity: 0.75; }
+
+.pf-fret-corner {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: rgba(255, 248, 235, 0.75);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 2px;
+}
+
+.pf-fret-string-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 4px 2px;
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.pf-fret-str-num {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: rgba(255, 248, 235, 0.65);
+  line-height: 1;
+}
+
+.pf-fret-str-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff8eb;
+  line-height: 1;
+}
+
+.pf-fret-nut,
+.pf-fret-num {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(45, 35, 25, 0.75);
+  text-align: center;
+  padding: 2px 0 0;
+  z-index: 1;
+}
+
+.pf-fret-cell {
+  font-family: inherit;
+  position: relative;
+  z-index: 1;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  border-right: 2px solid rgba(235, 228, 215, 0.92);
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.35);
+  background: transparent;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.85rem;
-  color: #3d3a50;
+  justify-content: center;
+  transition: background 0.12s, box-shadow 0.12s;
 }
 
-.pf-string-name {
-  font-weight: 700;
-  color: #5a3fd4;
-  min-width: 28px;
+.pf-fret-cell.open {
+  border-right: 3px solid #f2ebe0;
+  box-shadow:
+    inset 5px 0 0 #e8dfd2,
+    inset 6px 0 0 rgba(255, 255, 255, 0.45),
+    1px 0 0 rgba(255, 255, 255, 0.25);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0%, transparent 45%);
 }
 
-.pf-string-line {
-  flex: 1;
-  height: 2px;
-  background: linear-gradient(90deg, #7c5cff, #ddd0ff);
-  border-radius: 2px;
+.pf-fret-cell:hover {
+  background: rgba(124, 92, 255, 0.14);
+  box-shadow: inset 0 0 0 2px rgba(124, 92, 255, 0.35), inset 1px 0 0 rgba(255, 255, 255, 0.35);
 }
+
+.pf-fret-cell.active {
+  background: rgba(232, 148, 32, 0.28);
+  box-shadow: inset 0 0 0 2px rgba(232, 148, 32, 0.55), inset 1px 0 0 rgba(255, 255, 255, 0.35);
+}
+
+.pf-fret-note {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #fff8eb;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+.pf-fret-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0%, #c4a574 55%, #7a6040 100%);
+  opacity: 0.55;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.pf-fret-cell:hover .pf-fret-dot { opacity: 0.95; }
 
 .pf-chord-grid {
   display: grid;
@@ -345,6 +592,120 @@
   border-color: #7c5cff;
   transform: scale(0.97);
 }
+
+.pf-chord-btn.pf-chord-jam-target {
+  background: linear-gradient(135deg, #fff5e8, #ffe8cc);
+  border-color: #e89420;
+  box-shadow: 0 0 0 3px rgba(232, 148, 32, 0.35), 0 4px 14px rgba(232, 148, 32, 0.22);
+  animation: pf-jam-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pf-jam-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(232, 148, 32, 0.35), 0 4px 14px rgba(232, 148, 32, 0.22); }
+  50% { box-shadow: 0 0 0 5px rgba(232, 148, 32, 0.45), 0 6px 18px rgba(232, 148, 32, 0.28); }
+}
+
+.pf-jam-start {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto 12px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 18px;
+  border: 2.5px solid #e89420;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #fff8ee, #fff);
+  color: #b56a08;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.pf-jam-start:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 14px rgba(232, 148, 32, 0.2);
+}
+
+.pf-jam-start.hidden { display: none; }
+
+.pf-jam {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 14px;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #fff5e8 0%, #f5f0ff 100%);
+  border: 2px solid #ffd699;
+  border-radius: 14px;
+}
+
+.pf-jam.hidden { display: none; }
+
+.pf-jam-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #7a7590;
+}
+
+.pf-jam-target {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e89420;
+  min-width: 2.5em;
+  text-align: center;
+}
+
+.pf-jam-progress {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #5a3fd4;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(124, 92, 255, 0.1);
+}
+
+.pf-jam-aside {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9a9588;
+}
+
+.pf-jam-exit {
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border: 1.5px solid #ddd0ff;
+  border-radius: 999px;
+  background: #fff;
+  color: #7c5cff;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.pf-jam-exit:hover {
+  background: #f5f0ff;
+  border-color: #7c5cff;
+}
+
+.pf-jam-toast {
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #2f6b3a;
+  background: #e8f7ec;
+  border: 1.5px solid #9fd5ab;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+
+.pf-jam-toast.hidden { display: none; }
 
 .pf-chord-btn kbd {
   display: block;
@@ -382,41 +743,102 @@
   color: #fff;
 }
 
-/* ── 架子鼓 ── */
-.pf-drum-grid {
+/* ── 架子鼓 · 舞台俯视（I45 实体感） ── */
+.pf-drum-kit {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 14px;
+  grid-template-columns: 1fr 1fr 1.1fr 1fr 1fr;
+  grid-template-rows: auto auto auto auto;
+  gap: 12px 10px;
+  max-width: 460px;
+  margin: 0 auto 14px;
+  padding: 16px 14px 18px;
+  background:
+    radial-gradient(ellipse at 50% 88%, rgba(40, 28, 18, 0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #3a3228 0%, #2a241c 40%, #1e1914 100%);
+  border-radius: 18px;
+  border: 2px solid #5a4a38;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 240, 210, 0.08),
+    0 8px 24px rgba(30, 20, 10, 0.35);
+  position: relative;
+}
+
+.pf-drum-kit::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 10%;
+  height: 28%;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.28));
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .pf-drum-pad {
   font-family: inherit;
-  aspect-ratio: 1;
-  border: none;
-  border-radius: 16px;
+  border: 3px solid #c8c0b0;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #2a241c;
   font-weight: 700;
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   position: relative;
+  z-index: 1;
   overflow: hidden;
   transition: transform 0.12s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.35),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.28),
+    0 4px 10px rgba(0, 0, 0, 0.28);
+  min-height: 64px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-.pf-drum-pad:hover { transform: scale(1.06); }
-.pf-drum-pad.hit { transform: scale(0.92); }
+.pf-drum-pos-crash { grid-column: 1; grid-row: 1; aspect-ratio: 1; max-width: 72px; justify-self: start; }
+.pf-drum-pos-ride { grid-column: 5; grid-row: 1; aspect-ratio: 1; max-width: 72px; justify-self: end; }
+.pf-drum-pos-hihat-cl { grid-column: 1; grid-row: 2; aspect-ratio: 1; max-width: 68px; }
+.pf-drum-pos-tom-hi { grid-column: 3; grid-row: 2; aspect-ratio: 1; max-width: 76px; justify-self: center; }
+.pf-drum-pos-hihat-op { grid-column: 5; grid-row: 2; aspect-ratio: 1; max-width: 68px; justify-self: end; }
+.pf-drum-pos-tom-mid { grid-column: 2; grid-row: 3; aspect-ratio: 1; max-width: 72px; justify-self: end; }
+.pf-drum-pos-snare { grid-column: 4; grid-row: 3; aspect-ratio: 1; max-width: 80px; justify-self: start; }
+.pf-drum-pos-tom-floor { grid-column: 2; grid-row: 4; aspect-ratio: 1; max-width: 78px; justify-self: end; }
+.pf-drum-pos-kick {
+  grid-column: 2 / 5;
+  grid-row: 4;
+  border-radius: 48% 48% 46% 46%;
+  min-height: 82px;
+  aspect-ratio: 1.4;
+  justify-self: center;
+  align-self: end;
+  font-size: 0.8rem;
+  border-width: 4px;
+  border-color: #d4ccc0;
+}
+
+.pf-drum-pad:hover { transform: scale(1.05); }
+.pf-drum-pad.hit { transform: scale(0.93); }
+
+.pf-drum-pad.pf-drum-jam-target {
+  box-shadow:
+    0 0 0 4px rgba(232, 180, 80, 0.65),
+    0 0 22px rgba(232, 160, 60, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.35);
+  animation: pf-jam-pulse 1.4s ease-in-out infinite;
+  z-index: 2;
+}
 
 .pf-drum-pad kbd {
-  font-size: 0.68rem;
-  opacity: 0.85;
-  margin-top: 4px;
-  font-weight: 500;
+  font-size: 0.66rem;
+  opacity: 0.8;
+  margin-top: 3px;
+  font-weight: 600;
+  color: inherit;
 }
 
 .pf-drum-pad::after {
@@ -424,7 +846,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle, rgba(255,255,255,0.45) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 65%);
   opacity: 0;
   transform: scale(0.3);
   pointer-events: none;
@@ -439,12 +861,56 @@
   100% { opacity: 0; transform: scale(1.4); }
 }
 
-.pf-drum-kick  { background: linear-gradient(145deg, #5a3fd4, #7c5cff); grid-column: span 1; }
-.pf-drum-snare { background: linear-gradient(145deg, #e8650a, #ffb347); }
-.pf-drum-hihat { background: linear-gradient(145deg, #4cd964, #2a9d4e); }
-.pf-drum-crash { background: linear-gradient(145deg, #ff6b6b, #d94040); }
-.pf-drum-ride  { background: linear-gradient(145deg, #e89420, #ffd080); color: #3d3a50; }
-.pf-drum-tom   { background: linear-gradient(145deg, #5a3fd4, #9b7cff); }
+/* 鼓皮 / 镲片材质 */
+.pf-drum-kick {
+  background:
+    radial-gradient(circle at 42% 32%, #f5f0e6 0%, #e0d8c8 38%, #c4b8a4 72%, #8a7a66 100%);
+  color: #3d3428;
+}
+.pf-drum-snare {
+  background:
+    radial-gradient(circle at 40% 30%, #fffdf8 0%, #f0ebe0 45%, #d8d0c0 80%, #a89880 100%);
+  border-color: #b8b0a0;
+  color: #3d3a50;
+}
+.pf-drum-hihat,
+.pf-drum-hihat_open,
+.pf-drum-crash,
+.pf-drum-ride {
+  border-color: #c9a86c;
+  color: #4a3a18;
+  box-shadow:
+    inset 0 2px 6px rgba(255, 240, 180, 0.45),
+    inset 0 -4px 10px rgba(80, 50, 10, 0.25),
+    0 3px 8px rgba(0, 0, 0, 0.25);
+}
+.pf-drum-hihat {
+  background: radial-gradient(circle at 35% 28%, #fff4c8 0%, #e8c878 40%, #c9a040 75%, #8a6a20 100%);
+}
+.pf-drum-hihat_open {
+  background: radial-gradient(circle at 35% 28%, #fff8d8 0%, #f0d890 38%, #d4b050 70%, #9a7828 100%);
+}
+.pf-drum-crash {
+  background: radial-gradient(circle at 38% 30%, #ffe8b0 0%, #e8b860 42%, #c99030 78%, #8a6018 100%);
+}
+.pf-drum-ride {
+  background: radial-gradient(circle at 38% 30%, #fff0c0 0%, #e0c070 40%, #b89038 76%, #7a5a18 100%);
+}
+.pf-drum-tom_hi,
+.pf-drum-tom_mid,
+.pf-drum-tom_floor {
+  border-color: #a89070;
+  color: #2a2010;
+}
+.pf-drum-tom_hi {
+  background: radial-gradient(circle at 38% 30%, #f8e8d0 0%, #e0b888 40%, #c47840 75%, #7a4820 100%);
+}
+.pf-drum-tom_mid {
+  background: radial-gradient(circle at 38% 30%, #f0dcc0 0%, #d4a070 42%, #b06030 76%, #6a3818 100%);
+}
+.pf-drum-tom_floor {
+  background: radial-gradient(circle at 38% 30%, #e8d0b0 0%, #c88858 42%, #984828 78%, #5a2810 100%);
+}
 
 .pf-actions {
   text-align: center;
@@ -471,7 +937,272 @@
 
 .pf-back-btn.hidden { display: none; }
 
+/* I52 和弦扫弦模式 */
+.pf-strum-hint {
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffe8b8;
+  background: rgba(232, 148, 12, 0.22);
+  border: 1px solid rgba(255, 200, 120, 0.4);
+  border-radius: 10px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  letter-spacing: 0.03em;
+}
+.pf-strum-hint.hidden { display: none; }
+.pf-fretboard.strum-mode {
+  position: relative;
+  cursor: ns-resize;
+  touch-action: none;
+  box-shadow: inset 0 0 0 2px rgba(232, 148, 12, 0.55);
+}
+.pf-fretboard.strum-mode .pf-fret-cell {
+  opacity: 0.45;
+  pointer-events: none;
+  filter: grayscale(0.35);
+}
+.pf-fretboard.strum-mode .pf-fret-string-label {
+  opacity: 0.7;
+}
+.pf-chord-btn.selected-chord {
+  background: linear-gradient(135deg, #ffd98a, #f0a840) !important;
+  border-color: #e8940c !important;
+  color: #5a2e00 !important;
+  box-shadow: 0 0 0 2px rgba(232, 148, 12, 0.5);
+}
+
+/* I57 引导目标高亮 */
+.pf-fret-cell.pf-guide-target,
+.pf-chord-btn.pf-guide-target {
+  outline: 3px solid #ffb020;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(255, 176, 32, 0.35) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  filter: none !important;
+  animation: pf-guide-pulse 1s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes pf-guide-pulse {
+  50% { box-shadow: 0 0 0 6px rgba(255, 176, 32, 0.15) !important; }
+}
+
+/* I47 尤克里里 / 多轨愿景 */
+.pf-uke-neck {
+  background: linear-gradient(180deg, #4a3a28 0%, #2e2418 100%);
+}
+.pf-uke-board {
+  --pf-neck-label: 42px;
+  --pf-fret-min: 52px;
+  background: linear-gradient(
+    180deg,
+    #e8c898 0%,
+    #d4a86a 40%,
+    #c49050 100%
+  );
+}
+/* 贝斯 · 深色宽指板 */
+.pf-bass-neck {
+  background: linear-gradient(180deg, #2b2b33 0%, #17171d 100%);
+}
+.pf-bass-board {
+  --pf-neck-label: 44px;
+  --pf-fret-min: 56px;
+  background: linear-gradient(
+    180deg,
+    #3a2a1a 0%,
+    #2a1d12 45%,
+    #1e150c 100%
+  );
+}
+
+/* I51 小提琴 · 指板 + 运弓区 */
+.pf-violin-neck {
+  background: linear-gradient(180deg, #3a2a1e 0%, #241812 100%);
+  border: 3px solid #1a120c;
+  border-radius: 16px;
+  padding: 12px 12px 14px;
+  margin-bottom: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 6px 18px rgba(30,20,12,0.4);
+}
+.pf-cello-neck {
+  background: linear-gradient(180deg, #2a2218 0%, #16120e 100%);
+  border-color: #0e0a08;
+}
+.pf-violin-neck h4 {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e8dcc8;
+  margin: 0 0 10px;
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+.pf-violin-strings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pf-violin-row {
+  display: grid;
+  grid-template-columns: 60px repeat(5, 1fr);
+  gap: 6px;
+  align-items: stretch;
+}
+.pf-violin-str-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #f0e0c0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.pf-violin-cell {
+  font-family: inherit;
+  border: 1.5px solid #6b5238;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #d8b888, #b8905c);
+  color: #2a1c10;
+  cursor: pointer;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
+  min-height: 48px;
+  justify-content: center;
+}
+.pf-violin-cell.open {
+  background: linear-gradient(180deg, #e8d4a8, #cfa870);
+}
+.pf-violin-cell:hover { transform: translateY(-1px); }
+.pf-violin-cell.active {
+  background: linear-gradient(180deg, #ffd98a, #f0a840);
+  border-color: #e8940c;
+  box-shadow: 0 0 0 2px rgba(232,148,12,0.5), 0 4px 10px rgba(180,110,20,0.35);
+}
+.pf-violin-cell.active .pf-violin-note { color: #5a2e00; }
+.pf-violin-note { font-size: 0.72rem; font-weight: 700; }
+.pf-violin-finger { font-size: 0.62rem; opacity: 0.7; }
+
+.pf-bow-wrap { margin-bottom: 14px; }
+.pf-bow-current {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #5a3fd4;
+  margin-bottom: 8px;
+}
+.pf-bow-zone {
+  position: relative;
+  height: 96px;
+  border-radius: 16px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 22px),
+    linear-gradient(180deg, #4a3a28 0%, #2e2418 100%);
+  border: 2px solid #6b5238;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ew-resize;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.pf-bow-hair {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 50%;
+  height: 5px;
+  transform: translateY(-50%);
+  border-radius: 3px;
+  background: linear-gradient(90deg, #b8b8b8, #f0ead8 45%, #fff 50%, #f0ead8 55%, #b8b8b8);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+  pointer-events: none;
+  transition: box-shadow 0.15s;
+}
+.pf-bow-label {
+  position: relative;
+  z-index: 1;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ffe8c0;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  pointer-events: none;
+}
+.pf-bow-zone.bowing {
+  border-color: #e8940c;
+  box-shadow: inset 0 0 26px rgba(232,148,12,0.3);
+}
+.pf-bow-zone.bowing .pf-bow-hair {
+  box-shadow: 0 0 14px rgba(255,200,120,0.8);
+}
+.pf-bow-zone.bowing .pf-bow-label { color: #fff2d8; }
+
+.pf-studio {
+  text-align: center;
+  padding: 18px 14px 8px;
+  background: linear-gradient(160deg, #f7f4ff 0%, #fff8f0 100%);
+  border: 2px solid #e0d8f5;
+  border-radius: 16px;
+}
+.pf-studio h3 {
+  font-size: 1.15rem;
+  color: #5a3fd4;
+  margin-bottom: 8px;
+}
+.pf-studio-lead {
+  font-size: 0.92rem;
+  color: #5a5670;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.pf-studio-tracks {
+  list-style: none;
+  text-align: left;
+  max-width: 360px;
+  margin: 0 auto 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pf-studio-tracks li {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #3d3a50;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1.5px solid #e8e0ff;
+}
+.pf-studio-tracks li span {
+  display: inline-block;
+  min-width: 42px;
+  color: #7c5cff;
+  margin-right: 8px;
+}
+.pf-studio-note {
+  font-size: 0.78rem;
+  color: #7a7590;
+  line-height: 1.55;
+}
+.pf-studio-note code {
+  font-size: 0.72rem;
+  background: #f0ebff;
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
 @media (max-width: 400px) {
   .pf-chord-grid { grid-template-columns: repeat(2, 1fr); }
   .pf-keyboard { height: 120px; }
+  .pf-drum-kit { grid-template-columns: 1fr 1fr 1fr; }
+  .pf-drum-pos-kick { grid-column: 1 / 4; }
+  .pf-fretboard { --pf-neck-label: 40px; --pf-fret-min: 48px; }
+  .pf-fret-row { min-height: 42px; }
 }

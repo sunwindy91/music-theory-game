@@ -68,6 +68,19 @@
 .le-prompt { font-size: 1rem; font-weight: 600; line-height: 1.5; margin-bottom: 12px; }
 .le-hint { font-size: 0.82rem; color: var(--text-light); margin-bottom: 12px; }
 
+.le-options-gated { opacity: 0.2; pointer-events: none; min-height: 4px; }
+.le-preview-gate {
+  margin-bottom: 12px; padding: 12px 14px; border-radius: 12px;
+  background: linear-gradient(135deg, #f5f0ff, #fff8ee);
+  border: 2px dashed #ddd0ff; text-align: center;
+}
+.le-preview-gate p { font-size: 0.86rem; color: var(--text-light); margin-bottom: 10px; }
+.le-preview-gate button {
+  font-family: inherit; font-weight: 700; font-size: 0.84rem;
+  padding: 8px 14px; border-radius: 999px; cursor: pointer; margin: 0 4px;
+  border: 2px solid var(--primary); background: #fff; color: var(--primary);
+}
+
 .le-options {
   display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
 }

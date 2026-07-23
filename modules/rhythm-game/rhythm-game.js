@@ -46,6 +46,7 @@ const RhythmProgressStore = (() => {
 
 const RhythmGameModule = (() => {
   const PRACTICE_LS_KEY = "mtg_rhythm_practice";
+  const FIRST_HINT_KEY = "mtg_rhythm_first_hint_v1";
   let root = null;
   let callbacks = {};
   let currentChart = null;
@@ -70,6 +71,14 @@ const RhythmGameModule = (() => {
     return g || "—";
   }
 
+  function consumeFirstHintHtml() {
+    try {
+      if (localStorage.getItem(FIRST_HINT_KEY)) return "";
+      localStorage.setItem(FIRST_HINT_KEY, "1");
+    } catch { /* ignore */ }
+    return `<p class="rg-first-hint">👋 首次来玩？建议开启下方「练习模式」，先跟 4 拍预备再找手感。</p>`;
+  }
+
   function renderMenu() {
     if (!root) return;
     const charts = window.RHYTHM_CHARTS || [];
@@ -87,19 +96,24 @@ const RhythmGameModule = (() => {
         </button>`;
     }).join("");
 
+    const levelList = charts.length
+      ? `<div class="rg-level-list">${cards}</div>`
+      : `<p class="rg-empty">暂无可用关卡。请刷新页面；若仍为空，检查是否已加载节奏谱面脚本。</p>`;
+
     root.innerHTML = `
       <div class="rg-module">
         <div class="rg-header">
           <h2>🥁 节奏闯关</h2>
           <button class="rg-back" type="button" id="rgBack">← 返回</button>
         </div>
-        <p class="rg-intro">节奏天国式跟拍练习 · 听节拍敲击 Space 或点击画面<br>练会了再去「综合练习」里的节奏型题目！<br><small>💡 完成关卡后点 <strong>📤 分享成绩</strong> 生成 PNG（公众号可用）</small></p>
+        <p class="rg-intro">跟着节拍跟拍练习 · 听节拍敲击 Space 或点击画面<br>练会了再去「综合练习」里的节奏型题目！<br><small>💡 完成关卡后点 <strong>📤 分享成绩</strong> 生成 PNG（公众号可用）</small></p>
+        ${consumeFirstHintHtml()}
         <label class="rg-practice-toggle">
           <input type="checkbox" id="rgPracticeToggle" ${isPracticeModeOn() ? "checked" : ""}>
           <span>练习模式：开始前先打 <strong>4 拍</strong>预备（推荐新手）</span>
         </label>
         <div class="rg-menu" id="rgMenu">
-          <div class="rg-level-list">${cards}</div>
+          ${levelList}
         </div>
         <div class="rg-play" id="rgPlay"></div>
       </div>`;

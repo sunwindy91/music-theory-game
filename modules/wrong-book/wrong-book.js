@@ -49,8 +49,9 @@ const WrongBookModule = (() => {
               <span class="wb-item-stage">${stageLabel(entry.stage)} · ${sourceLabel(entry.source)}</span>
             </div>
             <div class="wb-item-text">${q.text}</div>
+            ${q.why || q.hint ? `<div class="wb-item-why">💡 ${q.why || q.hint}</div>` : ""}
             <div class="wb-item-meta">
-              错 ${entry.wrongCount || 1} 次 · ${isDue ? "⏰ 待复习" : formatDueTime(entry.nextReviewAt)}
+              错 ${entry.wrongCount || 1} 次 · 正解「${(q.options && q.options[q.answer]) || "—"}」 · ${isDue ? "⏰ 待复习" : formatDueTime(entry.nextReviewAt)}
             </div>
             <div class="wb-item-actions">
               <button class="wb-btn-sm" type="button" data-action="practice" data-id="${entry.id}">再练这题</button>

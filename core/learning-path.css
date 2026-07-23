@@ -80,6 +80,13 @@
 .lp-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .lp-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
 .lp-sub { font-size: 0.75rem; color: var(--text-light); }
+.lp-spirit-hint {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #6b52d4;
+  line-height: 1.35;
+  margin-top: 1px;
+}
 
 .lp-badge {
   font-size: 0.7rem;
@@ -118,3 +125,122 @@
 
 .lp-node.side { border-style: dotted; border-color: #b8d4ff; }
 .lp-node.drill { border-style: dashed; border-color: #ffc87a; background: #fffaf5; }
+
+/* I14 MVP：PC 宽屏加宽路径与卡片，不改手机默认 */
+@media (min-width: 900px) {
+  .lp-track {
+    max-width: 520px;
+  }
+  .lp-node {
+    padding: 14px 18px;
+  }
+  .lp-title { font-size: 1.02rem; }
+  .lp-spirit-hint { font-size: 0.72rem; }
+}
+
+/* I41：路径节点完成 → 星图试练短卡 */
+.lp-bridge-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(40, 28, 90, 0.45);
+  backdrop-filter: blur(3px);
+  font-family: "Fredoka", system-ui, sans-serif;
+}
+.lp-bridge-card {
+  position: relative;
+  max-width: 340px;
+  width: 100%;
+  padding: 22px 20px 18px;
+  border-radius: 20px;
+  border: 2.5px solid #ece6ff;
+  background: linear-gradient(145deg, #fffaf0 0%, #fff 55%, #f8f4ff 100%);
+  box-shadow: 0 14px 40px rgba(124, 92, 255, 0.22);
+  text-align: center;
+}
+.lp-bridge-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: 0;
+  background: transparent;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #9988cc;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.lp-bridge-kicker {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--accent-dark, #c67600);
+  text-transform: none;
+}
+.lp-bridge-title {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary, #7c5cff);
+}
+.lp-bridge-suggest {
+  margin: 0 0 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #5a48b8;
+  line-height: 1.45;
+}
+.lp-bridge-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.lp-bridge-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.lp-bridge-btn.primary {
+  background: linear-gradient(135deg, #ff9f3a, #e89420);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(232, 148, 32, 0.35);
+}
+.lp-bridge-btn.secondary {
+  background: #f0ebff;
+  color: #6b52d4;
+}
+.lp-bridge-btn:hover { transform: translateY(-1px); }
+.lp-bridge-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  z-index: 12001;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: #5a48b8;
+  color: #fff;
+  font-family: "Fredoka", system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s;
+  pointer-events: none;
+  max-width: min(92vw, 360px);
+  text-align: center;
+}
+.lp-bridge-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}

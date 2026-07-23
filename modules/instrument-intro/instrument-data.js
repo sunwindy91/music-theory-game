@@ -87,7 +87,94 @@ const GUITAR_LESSONS = [
   }
 ];
 
+const UKULELE_LESSONS = [
+  {
+    id: "intro-ukulele",
+    title: "四弦与 gCEA",
+    emoji: "🪕",
+    intro: `
+      <p>尤克里里常见 <strong>4 根弦</strong>，高音 G 调弦（自上而下）：<strong>G C E A</strong>（口诀 gCEA）。</p>
+      <p>比吉他更短、音区更高，开放和弦 C、Am、F、G 最常用。</p>
+      <p>先认弦名，再去「演奏练习」尤克页弹一弹。</p>`,
+    visual: `
+      <div class="ii-strings">
+        <div class="ii-string"><span>④</span><strong>G</strong><small>高音 G</small></div>
+        <div class="ii-string"><span>③</span><strong>C</strong></div>
+        <div class="ii-string"><span>②</span><strong>E</strong></div>
+        <div class="ii-string hl"><span>①</span><strong>A</strong><small>最细</small></div>
+        <p class="ii-caption">口诀：gCEA（四到一弦）</p>
+      </div>`,
+    steps: [
+      {
+        prompt: "尤克里里高音 G 调弦的四弦音名是？",
+        options: ["G C E A", "E A D G", "C G E A", "A E C G"],
+        answer: 0
+      },
+      {
+        prompt: "尤克里里相对吉他，通常？",
+        options: ["弦更少、琴更短、音区偏高", "有 6 根弦", "只弹黑键", "不能弹和弦"],
+        answer: 0
+      },
+      {
+        prompt: "C 大三和弦的组成音是？",
+        options: ["C E G", "C D F", "A C E", "G B D"],
+        answer: 0
+      },
+      {
+        prompt: "入门最常用的四个开放和弦常指？",
+        options: ["C Am F G", "C# F# B E", "只弹空弦单音", "只用减和弦"],
+        answer: 0
+      }
+    ]
+  }
+];
+
+const VIOLIN_LESSONS = [
+  {
+    id: "intro-violin",
+    title: "四弦与运弓",
+    emoji: "🎻",
+    intro: `
+      <p>小提琴有 <strong>4 根弦</strong>，标准调弦（低→高）：<strong>G D A E</strong>，相邻两弦相差纯五度。</p>
+      <p>它<strong>没有品</strong>：靠手指按在指板不同位置改变音高，靠<strong>运弓</strong>（拉动弓毛擦弦）发声。</p>
+      <p>在「演奏练习 → 小提琴」里，选好弦与指位，再在运弓区按住来回拉动就能出声。</p>`,
+    visual: `
+      <div class="ii-strings">
+        <div class="ii-string"><span>Ⅳ</span><strong>G</strong><small>最粗 · 最低</small></div>
+        <div class="ii-string"><span>Ⅲ</span><strong>D</strong></div>
+        <div class="ii-string"><span>Ⅱ</span><strong>A</strong></div>
+        <div class="ii-string hl"><span>Ⅰ</span><strong>E</strong><small>最细 · 最高</small></div>
+        <p class="ii-caption">四弦相差纯五度：G–D–A–E</p>
+      </div>`,
+    steps: [
+      {
+        prompt: "小提琴四弦从低到高是？",
+        options: ["G D A E", "E A D G", "C G D A", "G C E A"],
+        answer: 0
+      },
+      {
+        prompt: "小提琴相邻两根弦的音程是？",
+        hint: "和大提琴一样",
+        options: ["纯五度", "纯四度", "大三度", "八度"],
+        answer: 0
+      },
+      {
+        prompt: "小提琴发声主要靠？",
+        options: ["运弓擦弦（也可拨弦）", "只能吹气", "敲击琴身", "踩踏板"],
+        answer: 0
+      },
+      {
+        prompt: "小提琴改变音高靠？",
+        options: ["手指按指板不同位置", "按不同的品", "换八度键", "转旋钮"],
+        answer: 0
+      }
+    ]
+  }
+];
+
 if (typeof window !== "undefined") {
   window.PIANO_LESSONS = PIANO_LESSONS;
   window.GUITAR_LESSONS = GUITAR_LESSONS;
+  window.UKULELE_LESSONS = UKULELE_LESSONS;
+  window.VIOLIN_LESSONS = VIOLIN_LESSONS;
 }

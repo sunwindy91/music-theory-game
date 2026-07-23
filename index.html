@@ -25,6 +25,108 @@
       --shadow: rgba(124, 92, 255, 0.18);
       --radius: 24px;
       --radius-sm: 14px;
+      --chip-radius: 50px;
+      --type-scale: 1;
+    }
+
+    /* I46 显示密度：标准 = 清爽略紧；儿童 = 大字少次要信息 */
+    body[data-density="std"] {
+      --bg-top: #f3f6fc;
+      --bg-bottom: #e8eef8;
+      --primary: #5f52d6;
+      --primary-dark: #4739b8;
+      --shadow: rgba(70, 90, 140, 0.14);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --chip-radius: 12px;
+      --type-scale: 0.96;
+    }
+    body[data-density="std"] .game-container {
+      border: 1px solid #d8e0ef;
+      box-shadow: 0 10px 32px rgba(60, 80, 120, 0.1), 0 1px 4px rgba(0,0,0,0.04);
+    }
+    body[data-density="std"] .header-icon { font-size: 2.4rem; }
+    body[data-density="std"] .header h1 { font-size: 1.55rem; letter-spacing: 0.04em; }
+    body[data-density="std"] .header p { font-size: 0.88rem; }
+    body[data-density="std"] .chip {
+      border-radius: var(--chip-radius);
+      font-size: 0.84rem;
+      padding: 8px 14px;
+      border-width: 1.5px;
+    }
+    body[data-density="std"] .setup-label { font-size: 0.78rem; letter-spacing: 0.04em; }
+    body[data-density="std"] .setup-hint { font-size: 0.74rem; }
+    body[data-density="std"] .btn-start { border-radius: 14px; font-size: 1.05rem; }
+    body[data-density="std"] .question-area {
+      background: #f7f9fd;
+      border-color: #dce4f2;
+    }
+
+    body[data-density="kid"] {
+      --bg-top: #fff3dc;
+      --bg-bottom: #ffe9f2;
+      --primary: #7c5cff;
+      --primary-dark: #5a3fd4;
+      --accent: #ff9f40;
+      --shadow: rgba(124, 92, 255, 0.22);
+      --radius: 28px;
+      --radius-sm: 18px;
+      --chip-radius: 18px;
+      --type-scale: 1.08;
+    }
+    body[data-density="kid"] .game-container {
+      border: 3px solid #ffe0a8;
+      padding: 40px 28px 36px;
+    }
+    body[data-density="kid"] .header-icon { font-size: 3.4rem; }
+    body[data-density="kid"] .header h1 { font-size: 2rem; }
+    body[data-density="kid"] .header p { font-size: 1.05rem; font-weight: 500; }
+    body[data-density="kid"] .chip {
+      border-radius: var(--chip-radius);
+      font-size: 1.05rem;
+      padding: 14px 18px;
+      border-width: 3px;
+    }
+    body[data-density="kid"] .setup-label { font-size: 0.95rem; color: var(--text); }
+    body[data-density="kid"] .btn-start {
+      font-size: 1.28rem;
+      padding: 18px 28px;
+      border-radius: 20px;
+    }
+    body[data-density="kid"] .density-advanced { display: none !important; }
+    body[data-density="kid"] .setup-hint { font-size: 0.92rem; }
+
+    .density-toggle {
+      display: inline-flex;
+      gap: 4px;
+      margin: 12px auto 0;
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1.5px solid #e0d8f5;
+      border-radius: 999px;
+    }
+    .density-toggle button {
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+    .density-toggle button.selected {
+      background: var(--primary);
+      color: #fff;
+    }
+    body[data-density="std"] .density-toggle {
+      border-radius: 10px;
+      border-color: #cfd8ea;
+    }
+    body[data-density="std"] .density-toggle button,
+    body[data-density="std"] .density-toggle button.selected {
+      border-radius: 8px;
     }
 
     body {
@@ -60,6 +162,113 @@
       padding: 36px 32px 32px; border: 3px solid #f0ebff;
     }
 
+    /* I61 壳双核入口：学 ‖ 玩 并行，非单列学习 */
+    .dual-gate {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 0 0 18px;
+    }
+    .dual-card {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+      text-align: left; cursor: pointer; touch-action: manipulation;
+      border-radius: 16px; padding: 14px 14px 12px;
+      border: 2px solid transparent; font-family: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .dual-card strong {
+      font-size: 1.35rem; letter-spacing: 0.12em; line-height: 1.1;
+    }
+    .dual-card span {
+      font-size: 0.78rem; line-height: 1.35; opacity: 0.88; font-weight: 500;
+    }
+    .dual-card:hover { transform: translateY(-2px); }
+    .dual-card:active { transform: translateY(0); }
+    .dual-learn {
+      background: linear-gradient(145deg, #f3eeff 0%, #e8f4ff 100%);
+      border-color: rgba(124, 92, 255, 0.35);
+      color: #4a35b0;
+      box-shadow: 0 6px 18px rgba(90, 60, 180, 0.12);
+    }
+    .dual-play {
+      background: linear-gradient(145deg, #fff4e8 0%, #ffe8f0 100%);
+      border-color: rgba(255, 140, 90, 0.4);
+      color: #a04020;
+      box-shadow: 0 6px 18px rgba(200, 90, 40, 0.12);
+    }
+    body[data-density="kid"] .dual-card strong { font-size: 1.55rem; }
+    body[data-density="kid"] .dual-card span { font-size: 0.9rem; }
+    body[data-density="std"] .dual-card { border-radius: 12px; }
+    @media (max-width: 420px) {
+      .dual-gate { grid-template-columns: 1fr; }
+    }
+    .dual-gate-pulse {
+      outline: 2px solid rgba(124, 92, 255, 0.55);
+      outline-offset: 3px;
+      animation: dual-pulse 0.9s ease 2;
+    }
+    @keyframes dual-pulse {
+      0%, 100% { outline-color: rgba(124, 92, 255, 0.25); }
+      50% { outline-color: rgba(124, 92, 255, 0.8); }
+    }
+    @media (min-width: 900px) {
+      .game-container { max-width: 720px; padding: 40px 40px 36px; }
+      body.hub-ready { overflow-x: hidden; }
+      #bubbleHub {
+        display: block;
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 40;
+      }
+      #bubbleHub .bubble {
+        pointer-events: auto;
+        position: absolute;
+        width: 72px; height: 72px;
+        border-radius: 50%;
+        border: 2.5px solid rgba(124, 92, 255, 0.35);
+        background: radial-gradient(circle at 30% 28%, #fff 0%, #f3eeff 45%, #e8dcff 100%);
+        box-shadow: 0 8px 24px rgba(90, 60, 180, 0.18);
+        font-family: inherit;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #5a3fd4;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1.2;
+        padding: 8px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        animation: bubble-float 4.5s ease-in-out infinite;
+      }
+      #bubbleHub .bubble:hover {
+        transform: translateY(-4px) scale(1.06);
+        box-shadow: 0 12px 28px rgba(90, 60, 180, 0.28);
+      }
+      #bubbleHub .bubble[data-hub="spirit"] {
+        border-color: rgba(255, 160, 80, 0.45);
+        background: radial-gradient(circle at 30% 28%, #fff 0%, #fff4e8 50%, #ffe0c0 100%);
+        color: #c67600;
+      }
+      #bubbleHub .b1 { top: 18%; left: 4%; animation-delay: 0s; }
+      #bubbleHub .b2 { top: 38%; left: 2.5%; animation-delay: 0.6s; }
+      #bubbleHub .b3 { top: 58%; left: 5%; animation-delay: 1.2s; }
+      #bubbleHub .b4 { top: 22%; right: 4%; animation-delay: 0.3s; }
+      #bubbleHub .b5 { top: 44%; right: 2.5%; animation-delay: 0.9s; }
+      #bubbleHub .b6 { top: 64%; right: 5%; animation-delay: 1.5s; }
+      @keyframes bubble-float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+    }
+    #bubbleHub { display: none; }
+    body.module-open #bubbleHub { display: none !important; }
+    @media (max-width: 899px) {
+      #bubbleHub { display: none !important; }
+    }
+
     .header { text-align: center; margin-bottom: 24px; }
     .header-icon { font-size: 3rem; line-height: 1; margin-bottom: 8px; display: block; }
     .header h1 { font-size: 1.75rem; font-weight: 700; color: var(--primary); letter-spacing: 0.02em; }
@@ -76,7 +285,7 @@
 
     .chip {
       font-family: inherit; font-size: 0.9rem; font-weight: 600;
-      padding: 10px 16px; border: 2.5px solid #e8e0ff; border-radius: 50px;
+      padding: 10px 16px; border: 2.5px solid #e8e0ff; border-radius: var(--chip-radius, 50px);
       background: #fff; color: var(--text); cursor: pointer;
       transition: transform 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
     }
@@ -176,6 +385,21 @@
 
     /* 听音区 */
     .audio-zone { margin-top: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .preview-gate {
+      margin-top: 14px; padding: 12px 14px; border-radius: 12px;
+      background: linear-gradient(135deg, #f5f0ff, #fff8ee);
+      border: 2px dashed #ddd0ff; text-align: center;
+    }
+    .preview-gate p { font-size: 0.88rem; color: var(--text-light); margin-bottom: 10px; line-height: 1.5; }
+    .preview-gate .btn-reveal {
+      font-family: inherit; font-weight: 700; font-size: 0.9rem;
+      padding: 10px 18px; border-radius: 999px; cursor: pointer;
+      border: 2.5px solid var(--primary); background: #fff; color: var(--primary);
+    }
+    .preview-gate .btn-reveal:hover { background: #f5f0ff; }
+    .preview-gate .btn-reveal:disabled { opacity: 0.5; cursor: wait; }
+    .options-grid.gated { opacity: 0.35; pointer-events: none; filter: blur(1px); }
+
     .audio-visual {
       width: 72px; height: 72px; border-radius: 50%;
       background: linear-gradient(135deg, #e8deff, #fff0d0);
@@ -328,6 +552,10 @@
       <span class="header-icon" aria-hidden="true">🎵</span>
       <h1>乐理小达人</h1>
       <p>先学乐理，再练技巧 · 快乐学音乐</p>
+      <div class="density-toggle" id="densityToggle" role="group" aria-label="显示密度">
+        <button type="button" data-density-btn="kid" aria-pressed="false">儿童</button>
+        <button type="button" data-density-btn="std" aria-pressed="false">标准</button>
+      </div>
     </header>
 
     <section class="score-bar hidden" id="scoreBar" aria-label="得分信息">
@@ -366,6 +594,17 @@
     <div class="quiz-shell" id="quizShell">
     <!-- 开始设置 -->
     <section class="setup-panel" id="setupPanel">
+    <!-- I61 双核入口：理论 ‖ 游戏并行（随 setup 显隐） -->
+    <section class="dual-gate" id="dualGate" aria-label="学与玩双核入口">
+      <button type="button" class="dual-card dual-learn" id="gateLearn">
+        <strong>学</strong>
+        <span>学习路径 · 乐理、识谱、乐器</span>
+      </button>
+      <button type="button" class="dual-card dual-play" id="gatePlay">
+        <strong>玩</strong>
+        <span>灵气星图 · 练习房 / 远征</span>
+      </button>
+    </section>
       <div class="setup-group" id="learnGroup">
         <div class="setup-label">📘 学习中心 · 学习路径</div>
         <div id="learningPathRoot"></div>
@@ -374,6 +613,8 @@
           <button class="chip chip-learn" type="button" data-module="sight" id="chipSight">🎼 识谱教学<span class="chip-badge hidden" id="sightProgressBadge"></span></button>
           <button class="chip chip-learn" type="button" data-module="piano" id="chipPiano">🎹 钢琴入门</button>
           <button class="chip chip-learn" type="button" data-module="guitar" id="chipGuitar">🎸 吉他入门</button>
+          <button class="chip chip-learn" type="button" data-module="ukulele" id="chipUkulele">🪕 尤克里里</button>
+          <button class="chip chip-learn" type="button" data-module="violin" id="chipViolin">🎻 小提琴</button>
         </div>
       </div>
       <div class="learn-recommend hidden" id="learnRecommend" aria-live="polite">
@@ -390,7 +631,7 @@
           <button class="chip chip-mode" type="button" data-module="rhythm" id="chipRhythm">🥁 节奏闯关</button>
         </div>
       </div>
-      <div class="setup-group" id="reviewGroup">
+      <div class="setup-group density-advanced" id="reviewGroup">
         <div class="setup-label">复习巩固</div>
         <div class="chip-row">
           <button class="chip chip-review chip-soon" type="button" disabled id="chipWrongBook" data-module="wrongbook" title="Phase 2">📖 错题本<span class="chip-badge hidden" id="wrongBookDueBadge">0</span></button>
@@ -398,7 +639,7 @@
         </div>
         <p class="setup-hint" id="reviewHint">今日待复习 0 题 · 共 0 题</p>
       </div>
-      <div class="setup-group setup-group-future hidden" aria-label="即将推出的功能">
+      <div class="setup-group setup-group-future density-advanced hidden" aria-label="即将推出的功能">
         <div class="setup-label">即将推出</div>
         <div class="chip-row">
           <button class="chip chip-soon" type="button" disabled title="Phase 3+">🎹 扩展演奏</button>
@@ -427,6 +668,10 @@
         <div class="audio-zone hidden" id="audioZone">
           <div class="audio-visual" aria-hidden="true">🔊</div>
           <button class="btn-replay" id="btnReplay" type="button">🔁 再听一次</button>
+        </div>
+        <div class="preview-gate hidden" id="previewGate" aria-live="polite">
+          <p id="previewGateText">先听 / 先想，再看选项</p>
+          <button class="btn-reveal" id="btnRevealOptions" type="button">我准备好了 · 看选项</button>
         </div>
       </div>
     </section>
@@ -459,9 +704,19 @@
     </footer>
   </main>
 
+  <nav id="bubbleHub" aria-label="快捷枢纽" hidden>
+    <button type="button" class="bubble b1" data-hub="theory">乐理</button>
+    <button type="button" class="bubble b2" data-hub="sight">识谱</button>
+    <button type="button" class="bubble b3" data-hub="rhythm">节奏</button>
+    <button type="button" class="bubble b4" data-hub="perform">演奏</button>
+    <button type="button" class="bubble b5" data-hub="symbol">翻翻乐</button>
+    <button type="button" class="bubble b6" data-hub="spirit">星图</button>
+  </nav>
+
   <div id="spiritJourneyRoot" aria-hidden="true"></div>
 
   <script src="core/features.js"></script>
+  <script src="core/ui-density.js"></script>
   <script src="core/lesson-engine.js"></script>
   <script src="core/learn-practice-bridge.js"></script>
   <script src="core/spirit-progress.js"></script>
@@ -477,7 +732,7 @@
   <script src="modules/share-card/share-card.js"></script>
   <script src="modules/symbol-match/symbol-data.js"></script>
   <script src="modules/symbol-match/symbol-match.js"></script>
-  <script src="modules/perform/perform.js"></script>
+  <script src="modules/perform/perform.js?v=1.7.14"></script>
   <script src="modules/spirit-journey/spirit-journey.js"></script>
   <script src="modules/rhythm-game/rhythm-charts.js"></script>
   <script src="modules/rhythm-game/rhythm-engine.js"></script>
@@ -511,7 +766,12 @@
       const reviewGroup = document.getElementById("reviewGroup");
       const btnStart = document.getElementById("btnStart");
       const headerSub = document.querySelector(".header p");
-      const defaultSub = headerSub.textContent;
+      function homeSub() {
+        if (window.UiDensity && UiDensity.get) {
+          return UiDensity.get() === "kid" ? "点下面开始学 · 边玩边会" : "先学乐理，再练技巧 · 快乐学音乐";
+        }
+        return "先学乐理，再练技巧 · 快乐学音乐";
+      }
       let activeModule = "quiz";
 
       function hideAllModules() {
@@ -524,10 +784,11 @@
         theoryLearnRoot.classList.remove("active");
         instrumentRoot.classList.remove("active");
         spiritRoot.classList.remove("active");
+        spiritRoot.setAttribute("aria-hidden", "true");
         document.body.style.overflow = "";
         if (typeof ShareCardModule !== "undefined") ShareCardModule.close();
         SymbolMatchModule.unmount();
-        PerformModule.unmount();
+        if (typeof PerformModule !== "undefined") PerformModule.unmount();
         WrongBookModule.unmount();
         DailyChallengeModule.unmount();
         RhythmGameModule.unmount();
@@ -535,6 +796,15 @@
         if (typeof TheoryLearnModule !== "undefined") TheoryLearnModule.unmount();
         if (typeof InstrumentIntroModule !== "undefined") InstrumentIntroModule.unmount();
         SpiritJourneyModule.unmount();
+      }
+
+      function syncBubbleHub() {
+        const hub = document.getElementById("bubbleHub");
+        if (!hub) return;
+        const onHome = activeModule === "quiz" && !quizShell.classList.contains("hidden");
+        document.body.classList.toggle("hub-ready", onHome);
+        document.body.classList.toggle("module-open", !onHome);
+        hub.hidden = !onHome;
       }
 
       function clearChipSelection() {
@@ -590,11 +860,12 @@
       function showQuizModule() {
         activeModule = "quiz";
         hideAllModules();
+        document.body.classList.remove("module-open");
         quizShell.classList.remove("hidden");
         difficultyGroup.classList.remove("hidden");
         if (reviewGroup) reviewGroup.classList.remove("hidden");
         btnStart.classList.remove("hidden");
-        headerSub.textContent = defaultSub;
+        headerSub.textContent = homeSub();
         if (typeof refreshReviewHint === "function") refreshReviewHint();
         refreshLearnBadges();
         if (typeof refreshLearnRecommend === "function") refreshLearnRecommend();
@@ -604,6 +875,7 @@
         if (typeof state !== "undefined" && !state.playing) {
           scoreBar.classList.remove("hidden");
         }
+        syncBubbleHub();
       }
 
       function showWrongBookModule() {
@@ -723,7 +995,13 @@
         comboDisplay.classList.remove("show");
         hideAllModules();
         instrumentRoot.classList.add("active");
-        headerSub.textContent = kind === "guitar" ? "吉他入门 · 六弦与和弦" : "钢琴入门 · 键盘与音名";
+        headerSub.textContent = kind === "guitar"
+          ? "吉他入门 · 六弦与和弦"
+          : kind === "ukulele"
+            ? "尤克里里入门 · 四弦 gCEA"
+            : kind === "violin"
+              ? "小提琴入门 · 四弦与运弓"
+              : "钢琴入门 · 键盘与音名";
         InstrumentIntroModule.mount(instrumentRoot, {
           kind,
           onBack: () => {
@@ -791,9 +1069,15 @@
             showQuizModule();
           }
         });
+        syncBubbleHub();
       }
 
       function showPerformModule() {
+        if (typeof PerformModule === "undefined") {
+          showToastSafe("演奏模块加载失败，请刷新页面重试");
+          showQuizModule();
+          return;
+        }
         activeModule = "perform";
         quizShell.classList.add("hidden");
         scoreBar.classList.add("hidden");
@@ -807,6 +1091,11 @@
             showQuizModule();
           }
         });
+        syncBubbleHub();
+      }
+
+      function showToastSafe(msg) {
+        try { window.alert(msg); } catch { /* */ }
       }
 
       function isSpiritPathUnlocked() {
@@ -838,6 +1127,7 @@
             showQuizModule();
           }
         });
+        syncBubbleHub();
       }
 
       document.querySelector('[data-module="symbol"]').addEventListener("click", (e) => {
@@ -900,9 +1190,67 @@
         });
       }
 
+      const ukeChip = document.getElementById("chipUkulele");
+      if (ukeChip) {
+        ukeChip.addEventListener("click", (e) => {
+          clearChipSelection();
+          e.currentTarget.classList.add("selected");
+          showInstrumentModule("ukulele");
+        });
+      }
+
+      const violinChip = document.getElementById("chipViolin");
+      if (violinChip) {
+        violinChip.addEventListener("click", (e) => {
+          clearChipSelection();
+          e.currentTarget.classList.add("selected");
+          showInstrumentModule("violin");
+        });
+      }
+
       const spiritFooter = document.getElementById("chipSpiritFooter");
       if (spiritFooter) {
         spiritFooter.addEventListener("click", () => showSpiritModule());
+      }
+
+      // I61 壳双核：学 → 路径；玩 → 星图（与页脚同入口，首页更显眼）
+      const gateLearn = document.getElementById("gateLearn");
+      const gatePlay = document.getElementById("gatePlay");
+      if (gateLearn) {
+        gateLearn.addEventListener("click", () => {
+          const learn = document.getElementById("learnGroup");
+          if (learn) {
+            learn.classList.add("dual-gate-pulse");
+            learn.scrollIntoView({ behavior: "smooth", block: "start" });
+            setTimeout(() => learn.classList.remove("dual-gate-pulse"), 1800);
+          }
+          if (window.LearningPath) {
+            LearningPath.render(document.getElementById("learningPathRoot"));
+          }
+        });
+      }
+      if (gatePlay) {
+        gatePlay.addEventListener("click", () => showSpiritModule());
+      }
+
+      const bubbleHub = document.getElementById("bubbleHub");
+      if (bubbleHub) {
+        const hubMap = {
+          theory: () => document.getElementById("chipTheory")?.click(),
+          sight: () => document.getElementById("chipSight")?.click(),
+          rhythm: () => document.getElementById("chipRhythm")?.click(),
+          perform: () => document.querySelector('[data-module="perform"]')?.click(),
+          symbol: () => document.querySelector('[data-module="symbol"]')?.click(),
+          spirit: () => showSpiritModule()
+        };
+        bubbleHub.querySelectorAll("[data-hub]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const key = btn.getAttribute("data-hub");
+            if (hubMap[key]) hubMap[key]();
+            syncBubbleHub();
+          });
+        });
+        syncBubbleHub();
       }
 
       const wrongBookChip = document.getElementById("chipWrongBook");
@@ -1010,6 +1358,9 @@
     const questionHint    = document.getElementById("questionHint");
     const audioZone       = document.getElementById("audioZone");
     const btnReplay       = document.getElementById("btnReplay");
+    const previewGate     = document.getElementById("previewGate");
+    const previewGateText = document.getElementById("previewGateText");
+    const btnRevealOptions = document.getElementById("btnRevealOptions");
     const optionsGrid     = document.getElementById("optionsGrid");
     const btnStart        = document.getElementById("btnStart");
     const btnRestart      = document.getElementById("btnRestart");
@@ -1129,9 +1480,13 @@
       }
       const pianoChipInit = document.getElementById("chipPiano");
       const guitarChipInit = document.getElementById("chipGuitar");
+      const ukeChipInit = document.getElementById("chipUkulele");
+      const violinChipInit = document.getElementById("chipViolin");
       if (!AppFeatures.instrumentIntro) {
         if (pianoChipInit) pianoChipInit.classList.add("hidden");
         if (guitarChipInit) guitarChipInit.classList.add("hidden");
+        if (ukeChipInit) ukeChipInit.classList.add("hidden");
+        if (violinChipInit) violinChipInit.classList.add("hidden");
       }
       if (reviewGroup && !AppFeatures.wrongBook && !AppFeatures.dailyChallenge) {
         reviewGroup.classList.add("hidden");
@@ -1366,6 +1721,28 @@
       questionArea.className = "question-area";
       feedbackMsg.textContent = "";
       feedbackMsg.className = "feedback-msg";
+      if (previewGate) previewGate.classList.add("hidden");
+      if (optionsGrid) optionsGrid.classList.remove("gated");
+      if (state) state.optionsRevealed = true;
+    }
+
+    function explainWhy(q) {
+      if (!q) return "";
+      if (q.why) return q.why;
+      const correct = q.options && q.options[q.answer] != null ? q.options[q.answer] : "";
+      if (q.hint) return `为什么：${q.hint} · 正解「${correct}」`;
+      const topicTips = {
+        "theory-notes": "对照五线谱线间口诀（线 EGBDF / 间 FACE）。",
+        "theory-intervals": "数半音：大二=2，小三=3，大三=4，纯四=5，纯五=7。",
+        "theory-triads": "大三=根+大三(+4)+纯五；小三=根+小三(+3)+纯五。",
+        "theory-keys": "升号序 FCGDAEB；降号序反过来 BEADGCF。",
+        "theory-accidentals": "♯ 升半音，♭ 降半音；E–F、B–C 本就半音。",
+        "theory-meter": "拍号上方=每小节几拍，下方=以什么音符为一拍。",
+        "intro-piano": "白键循环 CDEFGAB；相邻黑键多为半音。",
+        "intro-guitar": "六弦空弦从粗到细 EADGBE，每品半音。"
+      };
+      const tip = topicTips[q.topicId] || "先听/先想再选，比硬猜更稳。";
+      return `为什么：正确答案是「${correct}」。${tip}`;
     }
 
     function playCurrentNote() {
@@ -1373,27 +1750,11 @@
       if (q && q.isAudio) AudioEngine.playNote(q.midi);
     }
 
-    function showQuestion(index) {
-      const q = state.questions[index];
-      resetQuestionArea();
-
-      questionPlaceholder.classList.add("hidden");
-      questionContent.classList.remove("hidden");
-      optionsGrid.classList.remove("hidden");
-      questionArea.classList.add("active");
-
-      questionType.textContent = q.type;
-      questionText.textContent = q.text;
-      questionHint.textContent = q.hint || "";
-      questionHint.style.display = q.hint ? "block" : "none";
-
-      if (q.isAudio) {
-        audioZone.classList.remove("hidden");
-        setTimeout(playCurrentNote, 300);
-      } else {
-        audioZone.classList.add("hidden");
-      }
-
+    function revealOptions(q) {
+      if (!q) return;
+      state.optionsRevealed = true;
+      if (previewGate) previewGate.classList.add("hidden");
+      optionsGrid.classList.remove("hidden", "gated");
       optionsGrid.innerHTML = "";
       q.options.forEach((opt, i) => {
         const btn = document.createElement("button");
@@ -1403,9 +1764,76 @@
         btn.addEventListener("click", () => handleAnswer(i, btn));
         optionsGrid.appendChild(btn);
       });
-
       state.answered = false;
+    }
+
+    function showQuestion(index) {
+      const q = state.questions[index];
+      resetQuestionArea();
+      state.optionsRevealed = false;
+
+      questionPlaceholder.classList.add("hidden");
+      questionContent.classList.remove("hidden");
+      questionArea.classList.add("active");
+
+      questionType.textContent = q.type;
+      questionText.textContent = q.text;
+      // 提示先藏到揭晓后，减少「直接看提示选」
+      questionHint.textContent = "";
+      questionHint.style.display = "none";
+
+      optionsGrid.innerHTML = "";
+      optionsGrid.classList.add("hidden", "gated");
+
+      if (q.isAudio) {
+        audioZone.classList.remove("hidden");
+        setTimeout(playCurrentNote, 280);
+        if (previewGate) {
+          previewGate.classList.remove("hidden");
+          previewGateText.textContent = "先听音（可点「再听一次」）· 听清再选";
+          btnRevealOptions.disabled = true;
+          btnRevealOptions.textContent = "听完即可选…";
+          setTimeout(() => {
+            btnRevealOptions.disabled = false;
+            btnRevealOptions.textContent = "我听好了 · 看选项";
+          }, 900);
+        }
+      } else {
+        audioZone.classList.add("hidden");
+        if (previewGate) {
+          previewGate.classList.remove("hidden");
+          previewGateText.textContent = "先读题、想一想 · 再看选项（反刷题）";
+          btnRevealOptions.disabled = false;
+          btnRevealOptions.textContent = "想好了 · 看选项";
+        }
+      }
+
+      // 最长 2.8s 自动揭晓，避免卡死；听音题稍晚
+      const autoMs = q.isAudio ? 2800 : 1600;
+      clearTimeout(showQuestion._revealTimer);
+      showQuestion._revealTimer = setTimeout(() => {
+        if (!state.playing || state.currentIndex !== index || state.optionsRevealed) return;
+        if (q.hint) {
+          questionHint.textContent = q.hint;
+          questionHint.style.display = "block";
+        }
+        revealOptions(q);
+      }, autoMs);
+
       updateProgress();
+    }
+
+    if (btnRevealOptions) {
+      btnRevealOptions.addEventListener("click", () => {
+        const q = state.questions[state.currentIndex];
+        if (!q || state.optionsRevealed) return;
+        clearTimeout(showQuestion._revealTimer);
+        if (q.hint) {
+          questionHint.textContent = q.hint;
+          questionHint.style.display = "block";
+        }
+        revealOptions(q);
+      });
     }
 
     function handleAnswer(selectedIndex, btn) {
@@ -1441,8 +1869,9 @@
           btn.classList.add("selected-wrong");
           questionArea.classList.add("wrong");
           buttons[q.answer].classList.add("reveal-correct");
-          feedbackMsg.textContent = "再想想，正确答案是上方高亮的选项";
+          feedbackMsg.textContent = "再想想，正确答案是上方高亮的选项。 " + explainWhy(q);
           feedbackMsg.classList.add("wrong");
+          if (!q.why) q.why = explainWhy(q);
           WrongBookStore.recordWrong(q, "daily", wrongOption);
         }
         DailyChallengeStore.recordAnswer(isCorrect, points);
@@ -1473,7 +1902,7 @@
           } else {
             const entry = WrongBookStore.getById(entryId);
             WrongBookStore.recordWrong(q, entry ? entry.source : settings.mode, wrongOption);
-            feedbackMsg.textContent = "再想想，正确答案是上方高亮的选项";
+            feedbackMsg.textContent = "再想想，正确答案是上方高亮的选项。 " + explainWhy(q);
           }
           feedbackMsg.classList.add("wrong");
         }
@@ -1498,9 +1927,10 @@
         btn.classList.add("selected-wrong");
         questionArea.classList.add("wrong");
         buttons[q.answer].classList.add("reveal-correct");
-        feedbackMsg.textContent = "再想想，正确答案是上方高亮的选项";
+        feedbackMsg.textContent = "再想想，正确答案是上方高亮的选项。 " + explainWhy(q);
         feedbackMsg.classList.add("wrong");
         if (settings.mode === "quiz" || settings.mode === "audio") {
+          if (!q.why) q.why = explainWhy(q);
           WrongBookStore.recordWrong(q, settings.mode, wrongOption);
           refreshReviewHint();
         }

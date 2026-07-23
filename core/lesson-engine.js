@@ -71,7 +71,7 @@ const LessonEngine = (() => {
     function playWrong() {
       playMidi(58);
     }
-    return { init, playCorrect, playWrong };
+    return { init, playMidi, playCorrect, playWrong };
   })();
 
   function ensureStylesheet(href) {
@@ -192,21 +192,49 @@ const LessonEngine = (() => {
 
       const hintEl = stage.querySelector(".le-hint");
       if (hintEl) hintEl.remove();
-      if (step.hint) {
-        const hint = document.createElement("p");
-        hint.className = "le-hint";
-        hint.textContent = "💡 " + step.hint;
-        stage.querySelector("#lePrompt").after(hint);
-      }
 
       const optsEl = stage.querySelector("#leOptions");
-      optsEl.innerHTML = step.options.map((opt, i) =>
-        `<button class="le-option" type="button" data-idx="${i}">${opt}</button>`
-      ).join("");
+      optsEl.innerHTML = "";
+      optsEl.classList.add("le-options-gated");
 
-      optsEl.querySelectorAll(".le-option").forEach(btn => {
-        btn.addEventListener("click", () => onAnswer(parseInt(btn.getAttribute("data-idx"), 10), btn));
-      });
+      // I10：先想/先听再揭晓选项
+      let gate = stage.querySelector(".le-preview-gate");
+      if (!gate) {
+        gate = document.createElement("div");
+        gate.className = "le-preview-gate";
+        optsEl.before(gate);
+      }
+      gate.hidden = false;
+      const needsHear = step.previewMidi != null;
+      gate.innerHTML = needsHear
+        ? `<p>先听示范音，再选答案</p><button type="button" class="le-hear">再听一次</button> <button type="button" class="le-reveal">听好了 · 看选项</button>`
+        : `<p>先读题、想一想，再看选项</p><button type="button" class="le-reveal">想好了 · 看选项</button>`;
+
+      function revealLessonOptions() {
+        gate.hidden = true;
+        optsEl.classList.remove("le-options-gated");
+        if (step.hint) {
+          const hint = document.createElement("p");
+          hint.className = "le-hint";
+          hint.textContent = "💡 " + step.hint;
+          stage.querySelector("#lePrompt").after(hint);
+        }
+        optsEl.innerHTML = step.options.map((opt, i) =>
+          `<button class="le-option" type="button" data-idx="${i}">${opt}</button>`
+        ).join("");
+        optsEl.querySelectorAll(".le-option").forEach(btn => {
+          btn.addEventListener("click", () => onAnswer(parseInt(btn.getAttribute("data-idx"), 10), btn));
+        });
+      }
+
+      const hearBtn = gate.querySelector(".le-hear");
+      if (hearBtn) {
+        hearBtn.addEventListener("click", () => LessonAudio.playMidi(step.previewMidi));
+        LessonAudio.playMidi(step.previewMidi);
+      }
+      gate.querySelector(".le-reveal").addEventListener("click", revealLessonOptions);
+      clearTimeout(showStep._t);
+      showStep._t = setTimeout(revealLessonOptions, needsHear ? 2600 : 1500);
     }
 
     function onAnswer(idx, btnEl) {
@@ -228,7 +256,10 @@ const LessonEngine = (() => {
         LessonAudio.playWrong();
         btnEl.classList.add("wrong");
         opts[step.answer].classList.add("reveal");
-        fb.textContent = step.wrongMsg || `再想想～ 正确答案是：${step.options[step.answer]}`;
+        const why = step.wrongMsg || step.why || (step.hint ? `为什么：${step.hint}` : null);
+        fb.textContent = why
+          ? `${why} · 正解：${step.options[step.answer]}`
+          : `再想想～ 正确答案是：${step.options[step.answer]}`;
         fb.className = "le-feedback err";
       }
 
@@ -239,7 +270,7 @@ const LessonEngine = (() => {
         } else {
           showStep();
         }
-      }, idx === step.answer ? 700 : 1200);
+      }, idx === step.answer ? 700 : 1400);
     }
 
     function finishLesson() {

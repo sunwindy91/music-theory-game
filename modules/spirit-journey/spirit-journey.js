@@ -19,8 +19,16 @@ const SpiritJourneyModule = (() => {
     if (onBack) backBtn.addEventListener("click", onBack);
 
     msgHandler = (ev) => {
-      if (ev.data && ev.data.type === "mtg-spirit-exit" && typeof onBack === "function") {
+      if (!ev.data || typeof onBack !== "function") return;
+      if (ev.data.type === "mtg-spirit-exit") {
         onBack();
+        return;
+      }
+      if (ev.data.type === "mtg-spirit-open" && ev.data.module === "perform") {
+        onBack();
+        try {
+          document.querySelector('[data-module="perform"]')?.click();
+        } catch { /* */ }
       }
     };
     window.addEventListener("message", msgHandler);

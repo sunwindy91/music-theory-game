@@ -19,40 +19,180 @@
     #spirit span { font-size: 1.55rem; font-weight: 300; color: #fff; }
     #lives { position: absolute; top: 58px; left: 24px; font-size: 0.9rem; letter-spacing: 0.08em; opacity: 0.85; }
     #evo {
-      position: absolute; top: 82px; left: 24px; font-size: 0.75rem; letter-spacing: 0.06em;
-      line-height: 1.55; opacity: 0.92; color: #ffe8c0;
-      text-shadow: 0 0 12px rgba(255, 180, 100, 0.35);
+      position: absolute; top: 82px; left: 24px; font-size: 0.68rem; letter-spacing: 0.04em;
+      line-height: 1.45; opacity: 0.72; color: #ffe8c0;
+      text-shadow: 0 0 10px rgba(255, 180, 100, 0.28);
+      max-width: min(420px, 55vw);
     }
     #ammoHud {
-      position: absolute; top: 128px; left: 20px;
-      display: flex; flex-direction: column; gap: 8px;
-      pointer-events: auto; width: 168px;
+      position: absolute; top: 118px; left: 14px;
+      display: flex; flex-direction: column; gap: 5px;
+      pointer-events: auto; width: 118px;
     }
+    #ammoHud.collapsed .ammo-slot:not(.active) { display: none; }
+    #ammoHudToggle {
+      align-self: flex-start;
+      pointer-events: auto; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.18); border-radius: 8px;
+      background: rgba(12,10,28,0.4); color: rgba(255,255,255,0.7);
+      padding: 3px 8px; font-size: 0.62rem; letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+    #ammoHudToggle:hover { background: rgba(40,32,72,0.7); color: #fff; }
     .ammo-slot {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 12px; border-radius: 12px; cursor: pointer;
-      border: 1.5px solid rgba(255,255,255,0.22);
-      background: rgba(18,14,40,0.72); font-size: 0.78rem; letter-spacing: 0.04em;
-      color: rgba(255,255,255,0.85);
+      padding: 5px 9px; border-radius: 10px; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(12,10,28,0.38); font-size: 0.7rem; letter-spacing: 0.03em;
+      color: rgba(255,255,255,0.72); backdrop-filter: blur(4px);
     }
-    .ammo-slot .count { font-size: 1.15rem; font-weight: 600; }
-    .ammo-slot.major { border-color: rgba(255, 210, 120, 0.35); }
-    .ammo-slot.minor { border-color: rgba(160, 130, 255, 0.4); }
-    .ammo-slot.flat { border-color: rgba(180, 190, 210, 0.35); opacity: 0.9; }
-    .ammo-slot.super { border-color: rgba(255, 180, 220, 0.55); }
+    .ammo-slot .count { font-size: 0.95rem; font-weight: 600; opacity: 0.9; }
+    .ammo-slot.major { border-color: rgba(255, 210, 120, 0.22); }
+    .ammo-slot.minor { border-color: rgba(160, 130, 255, 0.28); }
+    .ammo-slot.flat { border-color: rgba(180, 190, 210, 0.22); opacity: 0.85; }
+    .ammo-slot.super { border-color: rgba(255, 180, 220, 0.35); }
     .ammo-slot.active {
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.35);
-      background: rgba(40, 32, 80, 0.9);
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.28);
+      background: rgba(36, 28, 70, 0.62);
+      color: rgba(255,255,255,0.95);
     }
-    .ammo-slot.major.active { background: rgba(80, 55, 20, 0.55); }
-    .ammo-slot.minor.active { background: rgba(45, 30, 90, 0.65); }
-    .ammo-slot.super.active { background: rgba(70, 30, 70, 0.7); }
+    .ammo-slot.major.active { background: rgba(80, 55, 20, 0.42); }
+    .ammo-slot.minor.active { background: rgba(45, 30, 90, 0.48); }
+    .ammo-slot.super.active { background: rgba(70, 30, 70, 0.5); }
     #evoPanel {
       position: fixed; inset: 0; z-index: 19; display: none; align-items: center; justify-content: center;
       background: radial-gradient(ellipse at center, rgba(24,14,40,0.55) 0%, rgba(4,4,14,0.9) 100%);
       pointer-events: none;
     }
     #evoPanel.show { display: flex; pointer-events: auto; }
+    #mutationPanel {
+      position: fixed; inset: 0; z-index: 19; display: none; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(32,10,48,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      pointer-events: none;
+    }
+    #mutationPanel.show { display: flex; pointer-events: auto; }
+    #mutationChoices { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+    #mutationChoices button {
+      width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px;
+      pointer-events: auto; cursor: pointer;
+      border: 1px solid rgba(200,140,255,0.35); background: rgba(80,40,120,0.12); color: #fff;
+      font-size: 0.82rem; letter-spacing: 0.04em; line-height: 1.45;
+    }
+    #mutationChoices button:hover { background: rgba(120,70,180,0.22); }
+    #mutationChoices button strong { color: #e8c0ff; }
+    #sectorPanel, #megaRewardPanel, #practicePanel, #defeatPanel, #nodeSettlePanel {
+      position: fixed; inset: 0; z-index: 19; display: none; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(24,14,40,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      pointer-events: none;
+    }
+    #sectorPanel.show, #megaRewardPanel.show, #practicePanel.show, #defeatPanel.show, #finalePanel.show, #nodeSettlePanel.show { display: flex; pointer-events: auto; }
+    #finalePanel {
+      position: fixed; inset: 0; z-index: 22; display: none; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(28,16,48,0.94) 0%, rgba(4,4,12,0.98) 100%);
+      pointer-events: none;
+    }
+    #finalePanel .panel-box { max-width: min(520px, 90vw); text-align: center; }
+    #finalePanel .finale-body { margin: 12px 0 18px; line-height: 1.65; font-size: 15px; color: #e8dcff; opacity: 0.95; }
+    #finalePanel .finale-step { font-size: 12px; opacity: 0.55; margin-bottom: 4px; letter-spacing: 1px; }
+    /* z>overlay：同层时 DOM 后写的 #overlay 会盖住星门点击 */
+    #campaignPanel {
+      position: fixed; inset: 0; z-index: 25; display: none; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(18,12,36,0.92) 0%, rgba(3,3,10,0.98) 100%);
+      pointer-events: none;
+    }
+    #campaignPanel.show { display: flex; pointer-events: auto; }
+    .campaign-box {
+      width: min(880px, 92vw); max-width: 92vw;
+      background: linear-gradient(160deg, rgba(30,20,54,0.9), rgba(12,10,26,0.92));
+      border: 1px solid rgba(150,120,220,0.35); border-radius: 18px;
+      padding: 22px 24px 18px; box-shadow: 0 18px 60px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    .campaign-box h2 { margin: 0 0 4px; font-size: 22px; letter-spacing: 2px; color: #e8dcff; }
+    .campaign-sub { margin: 0 0 8px; font-size: 13px; opacity: 0.82; }
+    .campaign-sub strong { color: #ffd27a; }
+    #campaignNav { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 4px 0 2px; }
+    .cmap-sector {
+      font-size: 12px; padding: 4px 12px; border-radius: 999px; cursor: pointer;
+      background: rgba(60,50,100,0.4); color: #cdbcff; border: 1px solid rgba(150,120,220,0.3);
+    }
+    .cmap-sector.active { background: linear-gradient(135deg, #8a6cff, #5a3fb0); color: #fff; border-color: rgba(200,180,255,0.6); }
+    .cmap-sector.locked { opacity: 0.45; cursor: not-allowed; }
+    #campaignMap {
+      position: relative; width: 100%; height: min(320px, 44vh); margin: 6px 0 14px;
+      background:
+        radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,0.35), transparent),
+        radial-gradient(1.5px 1.5px at 70% 20%, rgba(255,255,255,0.28), transparent),
+        radial-gradient(1.5px 1.5px at 45% 75%, rgba(255,255,255,0.25), transparent),
+        radial-gradient(1.5px 1.5px at 85% 65%, rgba(255,255,255,0.3), transparent),
+        radial-gradient(ellipse at 30% 40%, rgba(80,60,150,0.18), transparent 60%);
+      border: 1px solid rgba(120,100,190,0.22); border-radius: 14px; overflow: hidden;
+    }
+    #campaignMap svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .cmap-node {
+      position: absolute; transform: translate(-50%, -50%);
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer; padding: 0;
+      z-index: 2; touch-action: manipulation;
+    }
+    .cmap-dot {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 700; color: #fff;
+      border: 2px solid rgba(255,255,255,0.55);
+      box-shadow: 0 0 14px rgba(150,120,255,0.4);
+    }
+    .cmap-label { font-size: 11px; color: #d8ccff; white-space: nowrap; text-shadow: 0 1px 3px #000; }
+    .cmap-node.locked { cursor: not-allowed; }
+    .cmap-node.locked .cmap-dot { background: #2a2740; border-color: rgba(255,255,255,0.15); color: #8880a0; box-shadow: none; }
+    .cmap-node.locked .cmap-label { opacity: 0.5; }
+    .cmap-node.unlocked .cmap-dot { background: radial-gradient(circle at 35% 30%, #8a6cff, #4a2f9a); animation: cmap-pulse 1.6s ease-in-out infinite; }
+    .cmap-node.cleared .cmap-dot { background: radial-gradient(circle at 35% 30%, #ffd27a, #c88a2a); border-color: rgba(255,220,150,0.8); }
+    .cmap-node.lord .cmap-dot { border-color: #ff8080; }
+    .cmap-node.unlocked.lord .cmap-dot { background: radial-gradient(circle at 35% 30%, #ff7a9a, #a02f5a); }
+    .cmap-node:hover.unlocked .cmap-dot, .cmap-node:hover.cleared .cmap-dot { transform: scale(1.12); }
+    @keyframes cmap-pulse { 0%,100% { box-shadow: 0 0 10px rgba(150,120,255,0.4); } 50% { box-shadow: 0 0 22px rgba(180,150,255,0.85); } }
+
+    /* I65 台词交互 · 非模态回应钮 */
+    #bossReply {
+      position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%) translateY(12px);
+      z-index: 15; display: none; flex-direction: column; align-items: center; gap: 8px;
+      pointer-events: none; opacity: 0; transition: opacity .22s ease, transform .22s ease;
+    }
+    #bossReply.show { display: flex; opacity: 1; transform: translateX(-50%) translateY(0); }
+    .br-line {
+      max-width: min(560px, 88vw); padding: 6px 16px; border-radius: 999px;
+      background: rgba(30,10,28,0.78); border: 1px solid rgba(255,120,150,0.45);
+      color: #ffc4d4; font-size: 14px; text-shadow: 0 1px 4px #000; text-align: center;
+    }
+    .br-opts { display: flex; gap: 10px; pointer-events: auto; }
+    .br-opt {
+      display: flex; flex-direction: column; align-items: center; line-height: 1.2;
+      padding: 7px 16px; border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 700;
+      color: #fff; background: linear-gradient(150deg, rgba(70,50,120,0.92), rgba(40,26,70,0.92));
+      border: 1px solid rgba(170,140,230,0.5); box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      touch-action: manipulation;
+    }
+    .br-opt small { font-size: 10px; font-weight: 400; opacity: 0.75; margin-top: 2px; }
+    .br-opt:hover { transform: translateY(-2px); border-color: rgba(210,180,255,0.9); }
+    .br-opt[data-reply="provoke"] { border-color: rgba(255,150,120,0.55); }
+    .br-opt[data-reply="soothe"] { border-color: rgba(120,220,180,0.55); }
+    #sectorChoices, #megaRewardChoices { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+    #sectorChoices button, #megaRewardChoices button {
+      width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px;
+      pointer-events: auto; cursor: pointer;
+      border: 1px solid rgba(255,200,140,0.35); background: rgba(80,50,20,0.12); color: #fff;
+      font-size: 0.82rem; letter-spacing: 0.04em; line-height: 1.45;
+    }
+    #sectorChoices button:hover, #megaRewardChoices button:hover { background: rgba(120,80,30,0.22); }
+    #sectorStatus { margin-top: 12px; min-height: 1.4em; font-size: 0.85rem; color: #ffe8a0; }
+    #recruitPanel {
+      position: fixed; inset: 0; z-index: 19; display: none; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(12,28,40,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      pointer-events: none;
+    }
+    #recruitPanel.show { display: flex; pointer-events: auto; }
+    #recruitStatus { margin-top: 12px; min-height: 1.4em; font-size: 0.85rem; color: #b8ffe8; }
     #evoChoices { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
     #evoChoices button {
       width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px;
@@ -76,8 +216,9 @@
     #pack .chip.empty { opacity: 0.35; font-weight: 400; font-size: 0.7rem; }
     #hint {
       position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
-      font-size: 0.82rem; letter-spacing: 0.1em; opacity: 0.88; text-align: center;
-      max-width: min(520px, 90vw);
+      font-size: 0.78rem; letter-spacing: 0.08em; opacity: 0.78; text-align: center;
+      max-width: min(460px, 70vw);
+      text-shadow: 0 1px 8px rgba(0,0,0,0.65);
     }
     #toast {
       position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
@@ -87,15 +228,58 @@
     }
     #toast.show { opacity: 1; }
     #keys {
-      position: absolute; bottom: 28px; left: 24px; font-size: 0.72rem; opacity: 0.55; line-height: 1.7;
-      letter-spacing: 0.06em;
+      position: absolute; bottom: 18px; left: 18px; font-size: 0.62rem; opacity: 0.28; line-height: 1.55;
+      letter-spacing: 0.04em; max-width: 220px; pointer-events: none;
+    }
+    #hurtFlash {
+      position: fixed; inset: 0; z-index: 8; pointer-events: none;
+      opacity: 0; transition: opacity 0.12s ease-out;
+      box-shadow:
+        inset 0 0 0 3px rgba(255, 48, 72, 0.85),
+        inset 0 0 90px 48px rgba(220, 20, 50, 0.42),
+        inset 0 0 160px 24px rgba(120, 0, 20, 0.28);
+    }
+    #hurtFlash.show { opacity: 1; }
+    #breathBanner {
+      position: absolute; top: 52px; left: 50%; transform: translateX(-50%);
+      display: none; align-items: center; gap: 10px;
+      padding: 7px 14px; border-radius: 999px;
+      background: rgba(20, 40, 70, 0.55); border: 1px solid rgba(140, 200, 255, 0.35);
+      font-size: 0.78rem; letter-spacing: 0.06em; color: #c8e8ff;
+      pointer-events: auto; cursor: pointer; backdrop-filter: blur(6px);
+      box-shadow: 0 0 20px rgba(80, 140, 220, 0.2);
+      z-index: 11;
+    }
+    #breathBanner.show { display: flex; }
+    #breathBanner kbd {
+      font-size: 0.68rem; padding: 2px 7px; border-radius: 6px;
+      border: 1px solid rgba(180,220,255,0.4); background: rgba(255,255,255,0.08);
+    }
+    #stageBanner {
+      position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%);
+      display: none; flex-direction: column; align-items: center; gap: 8px;
+      padding: 16px 28px; border-radius: 16px; text-align: center;
+      background: rgba(16, 12, 40, 0.55); border: 1px solid rgba(200, 180, 255, 0.3);
+      backdrop-filter: blur(8px); pointer-events: none; z-index: 12;
+      opacity: 0; transition: opacity 0.35s;
+    }
+    #stageBanner.show { display: flex; opacity: 1; }
+    #stageBanner .stage-title {
+      font-size: 1.15rem; letter-spacing: 0.18em; font-weight: 300; color: #ffe8c0;
+    }
+    #stageBanner .stage-lesson {
+      font-size: 0.82rem; letter-spacing: 0.06em; opacity: 0.88; max-width: min(360px, 80vw); line-height: 1.55;
     }
     #overlay {
       position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
       background: radial-gradient(ellipse at center, rgba(12,10,36,0.55) 0%, rgba(5,5,20,0.94) 100%);
       transition: opacity 0.7s; cursor: pointer;
     }
-    #overlay.hidden { opacity: 0; pointer-events: none; }
+    /* visibility 防止透明层仍参与命中/焦点（战役星门被底栏按钮「假挡」） */
+    #overlay.hidden {
+      opacity: 0; pointer-events: none; visibility: hidden;
+      transition: opacity 0.7s, visibility 0s linear 0.7s;
+    }
     #overlay h1 {
       font-weight: 200; font-size: 2rem; letter-spacing: 0.35em;
       color: rgba(255,255,255,0.88); text-shadow: 0 0 40px rgba(140,100,255,0.55);
@@ -193,33 +377,57 @@
     }
     #pausePanel.show { display: flex; pointer-events: auto; }
     #pausePanel .teach strong { color: #ffe8c0; }
+    #teachTip, #bossTeach {
+      position: fixed; inset: 0; z-index: 17; display: none; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, rgba(20,12,48,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      pointer-events: none;
+    }
+    #teachTip.show, #bossTeach.show { display: flex; pointer-events: auto; }
+    #bossTeachChoices { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+    #bossTeachChoices button {
+      width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px;
+      pointer-events: auto; cursor: pointer;
+      border: 1px solid rgba(255, 180, 120, 0.35); background: rgba(80, 45, 20, 0.15); color: #fff;
+      font-size: 0.82rem; letter-spacing: 0.04em; line-height: 1.45;
+    }
+    #bossTeachChoices button:hover { background: rgba(120, 70, 40, 0.28); }
+    #bossTeachStatus { margin-top: 12px; min-height: 1.4em; font-size: 0.85rem; color: #ffe8a0; }
   </style>
 </head>
 <body>
   <canvas id="c"></canvas>
+  <div id="hurtFlash" aria-hidden="true"></div>
   <div id="ui">
     <div id="spirit">灵气 <span id="spiritCount">0</span> / 30</div>
     <div id="lives">生命 ●●●</div>
     <div id="evo">叠层 0 · 下一阶 10</div>
     <div id="ammoHud" aria-label="弹药">
+      <button type="button" id="ammoHudToggle" title="折叠/展开弹药栏">收起 ▴</button>
       <button type="button" class="ammo-slot major active" data-ammo="major" id="slotMajor">
-        <span>1 大三·明快穿透</span><span class="count" id="ammoMajorCount">0</span>
+        <span>1 大三</span><span class="count" id="ammoMajorCount">0</span>
       </button>
       <button type="button" class="ammo-slot minor" data-ammo="minor" id="slotMinor">
-        <span>2 小三·阴郁冰冻</span><span class="count" id="ammoMinorCount">0</span>
+        <span>2 小三</span><span class="count" id="ammoMinorCount">0</span>
       </button>
       <button type="button" class="ammo-slot flat" data-ammo="flat" id="slotFlat">
         <span>3 平击</span><span class="count">∞</span>
       </button>
       <button type="button" class="ammo-slot super" data-ammo="super" id="slotSuper">
-        <span>4 超级·合弦</span><span class="count" id="ammoSuperCount">0</span>
+        <span>4 合弦</span><span class="count" id="ammoSuperCount">0</span>
       </button>
     </div>
-    <div id="hint">WASD 移动 · 凑和弦入库 · 1/2/3/4 切弹 · R 合成超级弹</div>
+    <div id="hint">WASD 移动 · 凑和弦入库 · 1/2/3/4 切弹 · R 切弹 · T 合成</div>
+    <div id="breathBanner" aria-live="polite">
+      清场整备 · <span id="breathSec">2</span>s · 可移动捡音 · <kbd>Enter</kbd> 下一波
+    </div>
+    <div id="stageBanner" aria-live="polite">
+      <div class="stage-title" id="stageTitle">关卡</div>
+      <div class="stage-lesson" id="stageLesson">本关学什么</div>
+    </div>
     <button type="button" id="pauseBtn" aria-label="暂停">暂停 P</button>
     <div id="pack" aria-label="音符背包"></div>
     <div id="toast"></div>
-    <div id="keys">1/2/3/4 切弹 · R 大小三合成超级弹<br>E 撞击 · P 暂停 · 清场喘息 · Boss 波</div>
+    <div id="keys">操作说明见暂停 P</div>
   </div>
 
   <div id="evoPanel" aria-hidden="true">
@@ -230,6 +438,35 @@
     </div>
   </div>
 
+  <div id="mutationPanel" aria-hidden="true">
+    <div class="panel-box">
+      <h2>突变 · 三选一</h2>
+      <p id="mutationHint">变化音叠满 · 选一条战斗增益</p>
+      <div id="mutationChoices"></div>
+    </div>
+  </div>
+
+  <div id="megaRewardPanel" aria-hidden="true">
+    <div class="panel-box">
+      <h2>君主击破 · 成长</h2>
+      <p id="megaRewardHint">选择一项本局强化</p>
+      <div id="megaRewardChoices"></div>
+    </div>
+  </div>
+
+  <div id="sectorPanel" aria-hidden="true">
+    <div class="panel-box">
+      <h2 id="sectorTitle">星区结算</h2>
+      <div class="teach" id="sectorSummary">本区要点</div>
+      <p id="sectorPrompt">回顾一题</p>
+      <div id="sectorChoices"></div>
+      <div id="sectorStatus"></div>
+      <div class="actions" style="margin-top:14px">
+        <button type="button" class="primary" id="sectorContinue">进入下一星区</button>
+      </div>
+    </div>
+  </div>
+
   <div id="pausePanel" aria-hidden="true">
     <div class="panel-box">
       <h2>暂停 · 想一想</h2>
@@ -237,12 +474,49 @@
         <strong>明快大三</strong>：根音 + 大三度(+4) + 纯五度 → 穿透，克刚石<br>
         <strong>阴郁小三</strong>：根音 + 小三度(+3) + 纯五度 → 冰冻，克雾灵<br>
         掉落不全是音符：刚盾挡伤 · 闪速加速 · 弹药直接补给<br>
+        <strong>清场整备</strong>：怪清完后短休息（可移动、捡音、合成），倒计时后下一波；<kbd>Enter</kbd> 可立刻进入<br>
         看左下背包构成，再决定用哪一槽开火。
       </div>
       <p>世界已冻结 · 适合对照抗性与和弦色彩</p>
       <div class="actions">
         <button type="button" class="primary" id="pauseResume">继续探索</button>
       </div>
+    </div>
+  </div>
+
+  <div id="recruitPanel" aria-hidden="true">
+    <div class="panel-box">
+      <h2>听辨收编</h2>
+      <p id="recruitPrompt">先听弱点音色，再选色彩</p>
+      <div class="actions">
+        <button type="button" class="primary" id="recruitHear">再听一遍</button>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <button type="button" id="recruitMajor">明快 · 大三</button>
+        <button type="button" id="recruitMinor">阴郁 · 小三</button>
+        <button type="button" id="recruitSkip">放过</button>
+      </div>
+      <div id="recruitStatus"></div>
+    </div>
+  </div>
+
+  <div id="teachTip" aria-hidden="true">
+    <div class="panel-box">
+      <h2 id="teachTipTitle">战斗提示</h2>
+      <div class="teach" id="teachTipBody"></div>
+      <div class="actions">
+        <button type="button" class="primary" id="teachTipOk">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="bossTeach" aria-hidden="true">
+    <div class="panel-box">
+      <h2 id="bossTeachTitle">领主战术</h2>
+      <div class="teach" id="bossTeachBody">领主各有招式：<strong>磐岳·刚石领主</strong>会<strong>蓄力重装·重砸</strong>（亮预警圈时拉开距离），<strong>幽岚·雾灵领主</strong>射不和谐弹。只有终局<strong>噬律·失谐君主</strong>会吞音蓄成<strong>聚能激光</strong>——见「聚能」预警线用 <strong>Shift/E 闪避</strong>。合弦超级弹（T）更稳。</div>
+      <p id="bossTeachPrompt">小测 · 选一项</p>
+      <div id="bossTeachChoices"></div>
+      <div id="bossTeachStatus"></div>
     </div>
   </div>
 
@@ -284,19 +558,96 @@
     </div>
   </div>
 
-  <div id="overlay">
-    <div>
-      <h1>灵 气 星 图</h1>
-      <p>捡音入背包 → 凑<strong>大三/小三</strong>自动装入弹药包（+6）<br>
-        <strong>1 / 2 / 3</strong> 切换弹药 · <strong>空格</strong> 自动瞄准开火<br>
-        明快弹可<strong>穿透</strong> · 阴郁弹可<strong>冰冻</strong><br>
-        怪有抗性：刚石怕大三 · 雾灵怕小三 · 影刺都行<br>
-        击散掉落<strong>音符 / 弹药 / 属性碎片</strong> · <strong>波次制</strong>清场后喘息<br>
-        第 3/5/7… 波出现 <strong>Boss</strong> · <strong>R</strong> 合成超级弹 · 进化<strong>三选一</strong><br>
-        <span style="opacity:0.8">点击或按空格开始</span></p>
+  <div id="practicePanel" aria-hidden="true">
+    <div class="panel-box">
+      <h2>练习房 · 通关</h2>
+      <p>首星区 6 波已清完。可再刷巩固，或改走远征推进更深星区。</p>
+      <div class="actions">
+        <button type="button" class="primary" id="practiceReplay">再刷练习房</button>
+        <button type="button" id="practiceToExpedition">改去远征</button>
+        <button type="button" id="practiceExit">返回</button>
+      </div>
     </div>
   </div>
 
+  <div id="defeatPanel" aria-hidden="true">
+    <div class="panel-box">
+      <h2>灵光消散</h2>
+      <p id="defeatSummary">星图暂时黯淡了。整备心神，再战一次。</p>
+      <div class="actions">
+        <button type="button" class="primary" id="defeatRestart">重新开始</button>
+        <button type="button" id="defeatExit">返回星图</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="nodeSettlePanel" aria-hidden="true">
+    <div class="panel-box">
+      <h2 id="nodeSettleTitle">关卡清场</h2>
+      <p id="nodeSettleBody">本关清空了。可继续清剿巩固，或回星图推进（首次通关可升级）。</p>
+      <div class="actions" id="nodeSettleActions">
+        <button type="button" class="primary" id="nodeSettleFarm">继续清剿本关</button>
+        <button type="button" id="nodeSettleMap">回星图并升级</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="finalePanel" aria-hidden="true">
+    <div class="panel-box">
+      <div class="finale-step" id="finaleStep">终局 · 1/4</div>
+      <h2 id="finaleTitle">星海将息</h2>
+      <div class="finale-body" id="finaleBody"></div>
+      <div class="actions" id="finaleActions">
+        <button type="button" class="primary" id="finaleNext">继续</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="campaignPanel" aria-hidden="true">
+    <div class="campaign-box">
+      <h2 id="campaignTitle">首星区 · 战役星图</h2>
+      <p class="campaign-sub">选择星门进入。远征局内<strong>养成会保留</strong>；清场可选继续清剿或回星图升级。已通关可反复刷。</p>
+      <div id="campaignNav"></div>
+      <div id="campaignMap"></div>
+      <div class="actions">
+        <button type="button" id="campaignBack">返回菜单</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="bossReply" aria-hidden="true">
+    <div class="br-line" id="bossReplyLine"></div>
+    <div class="br-opts">
+      <button type="button" class="br-opt" data-reply="provoke">挑衅<small>斗志·提速</small></button>
+      <button type="button" class="br-opt" data-reply="soothe">安抚<small>压制片刻</small></button>
+      <button type="button" class="br-opt" data-reply="silence">沉默<small>凝神</small></button>
+    </div>
+  </div>
+
+  <div id="overlay">
+    <div>
+      <h1>灵 气 星 图</h1>
+      <p>全屏探险世界 · <strong>坑</strong>坠落 · <strong>雾</strong>减速 · <strong>晶石</strong>灵气 · <strong>柱</strong>挡路（E 可撞碎）<br>
+        捡音入背包 → 凑<strong>大三/小三</strong>自动装入弹药包（+6）· 两音<strong>纯五</strong>得刚盾稳固<br>
+        <strong>1–4 / R</strong> 切弹 · <strong>T</strong> 合成超级弹 · <strong>空格</strong> 开火 · <strong>Shift</strong> 闪避/冲刺<br>
+        Boss「聚能」预警线亮起时 <strong>Shift/E 闪避</strong>躲激光 · 明快穿透 · 阴郁冰冻融化 · 一关一主题怪 · 节奏偏慢好学</p>
+      <div class="actions" id="modePick" style="margin-top:20px">
+        <button type="button" class="primary" id="modePractice" data-mode="practice">练习房<br><small style="opacity:.85;font-weight:400">首星区 1–6 · 可反复刷</small></button>
+        <button type="button" id="modeExpedition" data-mode="expedition">远征<br><small style="opacity:.85;font-weight:400">星区推进 · 君主与成长</small></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="spirit-data.js?v=1.7.14"></script>
+  <script src="spirit-drones.js?v=1.7.14"></script>
+  <script src="spirit-waves.js"></script>
+  <script src="spirit-loot.js"></script>
+  <script src="spirit-evo.js?v=1.7.14"></script>
+  <script src="spirit-mutation.js"></script>
+  <script src="spirit-sectors.js"></script>
+  <script src="spirit-hazards.js?v=1.7.14"></script>
+  <script src="spirit-boss.js?v=1.7.14"></script>
+  <script src="spirit-campaign.js?v=1.7.14"></script>
   <script>
     const canvas = document.getElementById("c");
     const ctx = canvas.getContext("2d");
@@ -304,6 +655,9 @@
     const livesEl = document.getElementById("lives");
     const evoEl = document.getElementById("evo");
     const hintEl = document.getElementById("hint");
+    const breathBannerEl = document.getElementById("breathBanner");
+    const breathSecEl = document.getElementById("breathSec");
+    const hurtFlashEl = document.getElementById("hurtFlash");
     const toastEl = document.getElementById("toast");
     const packEl = document.getElementById("pack");
     const overlay = document.getElementById("overlay");
@@ -317,6 +671,24 @@
     const ammoMajorEl = document.getElementById("ammoMajorCount");
     const ammoMinorEl = document.getElementById("ammoMinorCount");
     const slotMajor = document.getElementById("slotMajor");
+    const ammoHudEl = document.getElementById("ammoHud");
+    const ammoHudToggle = document.getElementById("ammoHudToggle");
+    const LS_AMMO_HUD = "mtg_ammo_hud_collapsed_v1";
+    function applyAmmoHudCollapsed(collapsed) {
+      if (!ammoHudEl || !ammoHudToggle) return;
+      ammoHudEl.classList.toggle("collapsed", !!collapsed);
+      ammoHudToggle.textContent = collapsed ? "弹药 ▾" : "收起 ▴";
+      try { localStorage.setItem(LS_AMMO_HUD, collapsed ? "1" : "0"); } catch { /* */ }
+    }
+    try {
+      applyAmmoHudCollapsed(localStorage.getItem(LS_AMMO_HUD) === "1");
+    } catch { /* */ }
+    if (ammoHudToggle) {
+      ammoHudToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        applyAmmoHudCollapsed(!ammoHudEl.classList.contains("collapsed"));
+      });
+    }
     const slotMinor = document.getElementById("slotMinor");
     const slotFlat = document.getElementById("slotFlat");
     const slotSuper = document.getElementById("slotSuper");
@@ -332,107 +704,128 @@
     const evoPanelEl = document.getElementById("evoPanel");
     const evoTierLabel = document.getElementById("evoTierLabel");
     const evoChoicesEl = document.getElementById("evoChoices");
+    const mutationPanelEl = document.getElementById("mutationPanel");
+    const mutationHintEl = document.getElementById("mutationHint");
+    const mutationChoicesEl = document.getElementById("mutationChoices");
+    const megaRewardPanelEl = document.getElementById("megaRewardPanel");
+    const megaRewardHintEl = document.getElementById("megaRewardHint");
+    const megaRewardChoicesEl = document.getElementById("megaRewardChoices");
+    const sectorPanelEl = document.getElementById("sectorPanel");
+    const sectorTitleEl = document.getElementById("sectorTitle");
+    const sectorSummaryEl = document.getElementById("sectorSummary");
+    const sectorPromptEl = document.getElementById("sectorPrompt");
+    const sectorChoicesEl = document.getElementById("sectorChoices");
+    const sectorStatusEl = document.getElementById("sectorStatus");
+    const sectorContinueBtn = document.getElementById("sectorContinue");
+    const practicePanelEl = document.getElementById("practicePanel");
+    const practiceReplayBtn = document.getElementById("practiceReplay");
+    const practiceToExpeditionBtn = document.getElementById("practiceToExpedition");
+    const practiceExitBtn = document.getElementById("practiceExit");
+    const defeatPanelEl = document.getElementById("defeatPanel");
+    const defeatSummaryEl = document.getElementById("defeatSummary");
+    const defeatRestartBtn = document.getElementById("defeatRestart");
+    const defeatExitBtn = document.getElementById("defeatExit");
+    const nodeSettlePanelEl = document.getElementById("nodeSettlePanel");
+    const nodeSettleTitleEl = document.getElementById("nodeSettleTitle");
+    const nodeSettleBodyEl = document.getElementById("nodeSettleBody");
+    const nodeSettleFarmBtn = document.getElementById("nodeSettleFarm");
+    const nodeSettleMapBtn = document.getElementById("nodeSettleMap");
+    const finalePanelEl = document.getElementById("finalePanel");
+    const finaleStepEl = document.getElementById("finaleStep");
+    const finaleTitleEl = document.getElementById("finaleTitle");
+    const finaleBodyEl = document.getElementById("finaleBody");
+    const finaleActionsEl = document.getElementById("finaleActions");
+    const finaleNextBtn = document.getElementById("finaleNext");
+    const campaignPanelEl = document.getElementById("campaignPanel");
+    const campaignMapEl = document.getElementById("campaignMap");
+    const campaignNavEl = document.getElementById("campaignNav");
+    const campaignTitleEl = document.getElementById("campaignTitle");
+    const campaignBackBtn = document.getElementById("campaignBack");
+    const bossReplyEl = document.getElementById("bossReply");
+    const bossReplyLineEl = document.getElementById("bossReplyLine");
+    let bossReplyTimer = 0;
+    const modePracticeBtn = document.getElementById("modePractice");
+    const modeExpeditionBtn = document.getElementById("modeExpedition");
+    const LS_RUN_MODE = "mtg_spirit_run_mode_v1";
+    let runMode = "expedition";
+    let practiceClearOpen = false;
+    let defeatOpen = false;
+    let finaleOpen = false;
+    let finalePage = 0;
+    let campaignOpen = false;
+    let campaignMode = false;
+    let currentNode = null;
+    let currentSectorIdx = 0;
+    let pendingStartWave = 0;
+    /** I66 远征局：跨节点养成 */
+    let campaignRunActive = false;
+    let campaignRunSnap = null;
+    let nodeSettleOpen = false;
+    let pendingAfterEvo = null; // () => void · 升级选完后回调（回星图）
+    let farmWaveCount = 0;
+    try {
+      const savedMode = sessionStorage.getItem(LS_RUN_MODE) || localStorage.getItem(LS_RUN_MODE);
+      if (savedMode === "practice" || savedMode === "expedition") runMode = savedMode;
+    } catch { /* */ }
+    const recruitPanelEl = document.getElementById("recruitPanel");
+    const recruitPrompt = document.getElementById("recruitPrompt");
+    const recruitStatus = document.getElementById("recruitStatus");
+    const recruitHearBtn = document.getElementById("recruitHear");
+    const recruitMajorBtn = document.getElementById("recruitMajor");
+    const recruitMinorBtn = document.getElementById("recruitMinor");
+    const recruitSkipBtn = document.getElementById("recruitSkip");
+    const teachTipEl = document.getElementById("teachTip");
+    const teachTipTitle = document.getElementById("teachTipTitle");
+    const teachTipBody = document.getElementById("teachTipBody");
+    const teachTipOk = document.getElementById("teachTipOk");
+    const bossTeachEl = document.getElementById("bossTeach");
+    const bossTeachTitle = document.getElementById("bossTeachTitle");
+    const bossTeachBody = document.getElementById("bossTeachBody");
+    const bossTeachPrompt = document.getElementById("bossTeachPrompt");
+    const bossTeachChoices = document.getElementById("bossTeachChoices");
+    const bossTeachStatus = document.getElementById("bossTeachStatus");
 
-    const NOTE_DEFS = [
-      { letter: "C", solfege: "do", pc: 0, color: "#5a8cff" },
-      { letter: "D", solfege: "re", pc: 2, color: "#6a9cff" },
-      { letter: "E", solfege: "mi", pc: 4, color: "#7a6cff" },
-      { letter: "F", solfege: "fa", pc: 5, color: "#a06cff" },
-      { letter: "G", solfege: "sol", pc: 7, color: "#c078e8" },
-      { letter: "A", solfege: "la", pc: 9, color: "#e078c0" },
-      { letter: "B", solfege: "si", pc: 11, color: "#ff9a7a" }
-    ];
-    const OCTAVE_SHIFTS = [-12, 0, 12];
-    const BASE_MIDI = 60;
-    const PACK_MAX = 5;
-    const AMMO_PER_CHORD = 6;
-    const AMMO_CAP = 30;
-    const MAX_NOTES = 6;
-    const MAX_NOTES_HARD = 9; // 击杀掉落可短暂超出场上上限
-    const MAX_ENEMIES = 5;
-    const BREATH_MS_EARLY = 3200;
-    const BREATH_MS_LATER = 2400;
-    const DEATH_BREATH_MS = 3800;
-    const PLAYER_SPEED = 220;
-    const INVULN_MS = 1200;
-    const FIRE_COOLDOWN_MS = 220;
-    const STACK_T1 = 10;
-    const STACK_T2 = 20;
-    const RAM_COOLDOWN_MS = 1400;
-    const RAM_DURATION_MS = 300;
-
-    /** 抗性怪谱 + 成长掉落表（音符只是其中一种） */
-    const ENEMY_TYPES = [
-      {
-        id: "shadow", name: "影刺", tag: "平",
-        color: "#3a2048", eye: "rgba(255,120,140,0.9)",
-        hp: 1, speedMul: 1, r: 13,
-        mult: { major: 1, minor: 1, flat: 1 },
-        dropPcs: null,
-        loot: [
-          { kind: "note", w: 55 },
-          { kind: "ammo_flat", w: 25 },
-          { kind: "heart", w: 20 }
-        ],
-        tip: "三种弹都行"
-      },
-      {
-        id: "stone", name: "刚石", tag: "刚",
-        color: "#6a4830", eye: "rgba(255,200,120,0.95)",
-        hp: 2.2, speedMul: 0.38, r: 16,
-        mult: { major: 1.6, minor: 0.12, flat: 0.55 },
-        dropPcs: [0, 4, 7],
-        loot: [
-          { kind: "armor", w: 42 },
-          { kind: "ammo_major", w: 38 },
-          { kind: "note", w: 20 }
-        ],
-        tip: "怕明快大三 · 移速慢"
-      },
-      {
-        id: "mist", name: "雾灵", tag: "雾",
-        color: "#3a3470", eye: "rgba(170,150,255,0.95)",
-        hp: 1.4, speedMul: 1.05, r: 12,
-        mult: { major: 0.2, minor: 1.65, flat: 0.55 },
-        dropPcs: [9, 0, 4],
-        loot: [
-          { kind: "ammo_minor", w: 42 },
-          { kind: "note", w: 38 },
-          { kind: "heart", w: 20 }
-        ],
-        tip: "怕阴郁小三"
-      },
-      {
-        id: "dart", name: "闪鼠", tag: "闪",
-        color: "#204858", eye: "rgba(120,230,210,0.95)",
-        hp: 1, speedMul: 2.15, r: 10,
-        mult: { major: 0.85, minor: 1.25, flat: 1.15 },
-        dropPcs: [2, 5, 9],
-        loot: [
-          { kind: "swift", w: 48 },
-          { kind: "ammo_minor", w: 27 },
-          { kind: "note", w: 25 }
-        ],
-        tip: "敏捷极快 · 阴郁更好控"
-      }
-    ];
-
-    const LOOT_META = {
-      note: { label: "♪", color: "#c8b0ff", r: 11 },
-      ammo_major: { label: "大", color: "#ffb060", r: 10 },
-      ammo_minor: { label: "小", color: "#90b0ff", r: 10 },
-      ammo_flat: { label: "弹", color: "#d0d0e8", r: 10 },
-      armor: { label: "刚", color: "#c89050", r: 10 },
-      swift: { label: "闪", color: "#50e0c8", r: 10 },
-      heart: { label: "♥", color: "#ff8090", r: 10 }
-    };
-    const MAX_LOOT = 10;
-    const AMMO_DROP = 2;
-    const SWIFT_MS = 4500;
+    const SD = window.SpiritData || {};
+    const NOTE_DEFS = SD.NOTE_DEFS;
+    const OCTAVE_SHIFTS = SD.OCTAVE_SHIFTS || [-12, 0, 12];
+    const BASE_MIDI = SD.BASE_MIDI || 60;
+    const PACK_MAX = SD.PACK_MAX || 5;
+    const AMMO_PER_CHORD = SD.AMMO_PER_CHORD || 6;
+    const AMMO_CAP = SD.AMMO_CAP || 30;
+    const MAX_NOTES = SD.MAX_NOTES || 6;
+    const MAX_NOTES_HARD = SD.MAX_NOTES_HARD || 9;
+    const MAX_ENEMIES = SD.MAX_ENEMIES || 4;
+    const BREATH_MS_EARLY = SD.BREATH_MS_EARLY || 3400;
+    const BREATH_MS_LATER = SD.BREATH_MS_LATER || 2600;
+    const DEATH_BREATH_MS = SD.DEATH_BREATH_MS || 3200;
+    const PACE_ENEMY = SD.PACE_ENEMY != null ? SD.PACE_ENEMY : 0.78;
+    const PACE_BULLET = SD.PACE_BULLET != null ? SD.PACE_BULLET : 0.9;
+    const STAGE_EXCLUSIVE_DEFAULT = SD.STAGE_EXCLUSIVE !== false;
+    const STAGGER_MS = SD.STAGGER_MS != null ? SD.STAGGER_MS : 700;
+    const PLAYER_SPEED = (SD.PLAYER_SPEED || 200) * (SD.PACE_PLAYER != null ? SD.PACE_PLAYER : 0.92);
+    const INVULN_MS = SD.INVULN_MS || 1300;
+    const FIRE_COOLDOWN_MS = Math.round((SD.FIRE_COOLDOWN_MS || 280) * (SD.PACE_FIRE != null ? SD.PACE_FIRE : 1.25));
+    const STACK_T1 = SD.STACK_T1 || 10;
+    const STACK_T2 = SD.STACK_T2 || 20;
+    const RAM_COOLDOWN_MS = SD.RAM_COOLDOWN_MS || 1400;
+    const RAM_DURATION_MS = SD.RAM_DURATION_MS || 300;
+    const DODGE_COOLDOWN_MS = SD.DODGE_COOLDOWN_MS || 1600;
+    const DODGE_DURATION_MS = SD.DODGE_DURATION_MS || 160;
+    const DODGE_BOOST = SD.DODGE_BOOST || 480;
+    const ENEMY_TYPES = SD.ENEMY_TYPES || [];
+    const LOOT_META = SD.LOOT_META || {};
+    const MAX_LOOT = SD.MAX_LOOT || 10;
+    const AMMO_DROP = SD.AMMO_DROP || 2;
+    const SWIFT_MS = SD.SWIFT_MS || 4500;
+    const MUTATION_STACK_PER_PICK = SD.MUTATION_STACK_PER_PICK || 1;
+    const MUTATION_CHOICE_EVERY = SD.MUTATION_CHOICE_EVERY || 3;
+    const PERFECT_FIFTH_WAVE_MAX = SD.PERFECT_FIFTH_WAVE_MAX || 2;
+    const OCTAVE_WAVE_MAX = SD.OCTAVE_WAVE_MAX || 2;
 
     let W = 0, H = 0, started = false, lastTs = 0, toastTimer = 0;
     let spiritGoal = 30, spiritTotal = 0, sessionPicks = 0, lives = 3;
     let invulnUntil = 0, goalShown = false, victoryOpen = false, timeStopped = false;
+    let pendingVictory = false;
     let paused = false;
     let schoolTriggered = false, schoolStep = 0, schoolAnswer = null;
     let facing = { x: 1, y: 0 };
@@ -446,12 +839,47 @@
     let correctKills = 0;
     let lastRamAt = 0;
     let ramUntil = 0;
+    let lastDodgeAt = 0;
+    let dodgeUntil = 0;
     let wave = 1;
     let breathUntil = 0;
+    let sessionBreathTaught = false;
     let waveLive = false;
     let evoChoosing = false;
+    let mutationChoosing = false;
+    let megaRewardOpen = false;
+    let sectorFlowOpen = false;
+    let firstSectorReviewed = false;
+    let sectorFireBonus = 0;
+    let sectorResistBonus = 0;
+    let sectorReviewAnswered = false;
+    let pendingSectorIdx = 0;
+    let mutationStacks = 0;
+    let sessionAccidentalTaught = false;
+    let teachOpen = false;
+    let bossTeachOpen = false;
+    let sessionResistTaught = false;
+    let sessionBossTaught = false;
+    let sessionPitTaught = false;
+    let sessionFogTaught = false;
+    let sessionChordHintTaught = false;
+    let sessionAutoSwitchTaught = false;
+    let sessionPerfectFifthTaught = false;
+    let sessionOctaveTaught = false;
+    let wavePerfectFifthCount = 0;
+    let waveOctaveCount = 0;
+    let bossSpawnDeferred = null;
+    let bossTeachAnswered = false;
+    let mutationLevels = (window.SpiritMutation && SpiritMutation.emptyLevels)
+      ? SpiritMutation.emptyLevels()
+      : { crit: 0, armorBreak: 0, resist: 0 };
+    let recruitOpen = false;
+    let recruitPending = null;
+    let recruitQueue = [];
     let traitLifeSteal = 0;
     let traitCraftMaster = false;
+    let traitSwiftStacks = 0;
+    let hitStopUntil = 0;
     const keys = Object.create(null);
     const player = { x: 0, y: 0, r: 14, baseR: 14, maxLives: 3, ramVx: 0, ramVy: 0 };
     let notes = [], loot = [], enemies = [], particles = [], floatTexts = [], bullets = [];
@@ -507,22 +935,32 @@
       const label = kind === "major" ? "大三·明快穿透"
         : kind === "minor" ? "小三·阴郁冰冻"
         : kind === "super" ? "超级合弦" : "平击";
-      if (started && !timeStopped && !whyOpen && !paused && !evoChoosing) {
-        hintEl.textContent = `当前弹药：${label} · R 可合成超级弹`;
+      if (started && !timeStopped && !whyOpen && !paused && !evoChoosing && !mutationChoosing && !recruitOpen && !teachOpen && !bossTeachOpen && !megaRewardOpen && !sectorFlowOpen) {
+        hintEl.textContent = `当前弹药：${label} · R 切弹 · T 合成超级弹`;
       }
     }
 
+    /** 滚轮 / R：跳过空仓，平击永可用 */
     function cycleAmmo(dir) {
-      const order = ammoSuper > 0 || selectedAmmo === "super"
-        ? ["major", "minor", "flat", "super"]
-        : ["major", "minor", "flat"];
+      const order = ["major", "minor", "flat", "super"];
       let i = order.indexOf(selectedAmmo);
       if (i < 0) i = 0;
-      i = (i + dir + order.length) % order.length;
-      selectAmmo(order[i]);
+      for (let n = 0; n < order.length; n++) {
+        i = (i + dir + order.length) % order.length;
+        const k = order[i];
+        if (k === "flat") { selectAmmo(k); break; }
+        if (k === "major" && ammoMajor > 0) { selectAmmo(k); break; }
+        if (k === "minor" && ammoMinor > 0) { selectAmmo(k); break; }
+        if (k === "super" && ammoSuper > 0) { selectAmmo(k); break; }
+      }
       const names = { major: "明快穿透", minor: "阴郁冰冻", flat: "平击", super: "超级合弦" };
-      showToast(names[order[i]] || order[i]);
+      showToast(names[selectedAmmo] || selectedAmmo);
       if (paused) refreshPauseTeach();
+    }
+
+    function cycleAmmoCf() {
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen) return;
+      cycleAmmo(1);
     }
 
     function renderAmmo() {
@@ -533,15 +971,18 @@
     }
 
     function tryCraftSuper() {
-      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing) return;
-      const cost = traitCraftMaster ? 1 : 1;
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen) return;
+      const cost = 1;
       if (ammoMajor < cost || ammoMinor < cost) {
-        showToast("合成需要：大三 + 小三 各至少 1");
+        showToast("合成需要：大三 + 小三 各至少 1 · 键位 T");
         return;
       }
+      const yieldN = (window.SpiritEvo && SpiritEvo.craftYield)
+        ? SpiritEvo.craftYield(traitCraftMaster)
+        : (traitCraftMaster ? 2 : 1);
       ammoMajor -= cost;
       ammoMinor -= cost;
-      ammoSuper = Math.min(AMMO_CAP, ammoSuper + (traitCraftMaster ? 2 : 1));
+      ammoSuper = Math.min(AMMO_CAP, ammoSuper + yieldN);
       renderAmmo();
       selectAmmo("super");
       showToast(traitCraftMaster ? "精通合成 · 超级弹 +2" : "合成超级弹 · 明快×阴郁");
@@ -560,13 +1001,13 @@
       pauseTeach.innerHTML =
         `<strong>明快大三</strong>：根音 + 大三度(+4) + 纯五度 → 穿透，克刚石<br>` +
         `<strong>阴郁小三</strong>：根音 + 小三度(+3) + 纯五度 → 冰冻，克雾灵<br>` +
-        `<strong>超级合弦</strong>：R 合成（大+小）→ 高伤兼控<br>` +
+        `<strong>超级合弦</strong>：T 合成（大+小）→ 高伤兼控 · R 切弹<br>` +
         `当前背包：<strong>${pack}</strong><br>${ammoLine}<br>` +
         `Boss 波看清抗性；想不清楚就按 P。`;
     }
 
     function setPaused(on) {
-      if (!started || victoryOpen || timeStopped || whyOpen || evoChoosing) return;
+      if (!started || victoryOpen || timeStopped || whyOpen || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen) return;
       paused = !!on;
       pausePanelEl.classList.toggle("show", paused);
       pausePanelEl.setAttribute("aria-hidden", paused ? "false" : "true");
@@ -629,6 +1070,117 @@
       renderPack();
     }
 
+    /** 背包两音纯五（0–7），且未凑成大小三和弦 */
+    function detectPerfectFifth() {
+      if (detectChordQuality("major") || detectChordQuality("minor")) return null;
+      const pcs = [...new Set(backpack.map(b => b.pc))];
+      if (pcs.length < 2) return null;
+      for (const root of pcs) {
+        const fifthPc = (root + 7) % 12;
+        if (!pcs.includes(fifthPc)) continue;
+        const letters = [letterOfPc(root), letterOfPc(fifthPc)];
+        if (letters.some(l => l === "?")) continue;
+        return { root, letters };
+      }
+      return null;
+    }
+
+    function consumePerfectFifth(pf) {
+      const need = new Set(pf.letters);
+      backpack = backpack.filter(b => {
+        if (need.has(b.letter)) {
+          need.delete(b.letter);
+          return false;
+        }
+        return true;
+      });
+      renderPack();
+    }
+
+    /** I20：纯五两音 → +1 刚盾层（无新弹药槽） */
+    function tryPerfectFifthStability() {
+      if (whyOpen) return false;
+      if (wavePerfectFifthCount >= PERFECT_FIFTH_WAVE_MAX) return false;
+      const pf = detectPerfectFifth();
+      if (!pf) return false;
+      consumePerfectFifth(pf);
+      wavePerfectFifthCount++;
+      armorCharges = Math.min(3, armorCharges + 1);
+      try {
+        Sfx.playSung(BASE_MIDI + pf.root, 0.2, 0.1);
+        setTimeout(() => {
+          try { Sfx.playSung(BASE_MIDI + pf.root + 7, 0.24, 0.12); } catch { /* */ }
+        }, 75);
+      } catch { /* */ }
+      burst(player.x, player.y, "#c8a858");
+      floatTexts.push({
+        x: player.x, y: player.y - 26,
+        text: "纯五·稳固",
+        life: 1.05, color: "#e8c878"
+      });
+      showToast("纯五·稳固");
+      if (!sessionPerfectFifthTaught) {
+        sessionPerfectFifthTaught = true;
+        setTimeout(() => {
+          showToast("纯五 = 根音往上 7 个半音 · 听感稳");
+        }, 900);
+      }
+      return true;
+    }
+
+    function detectOctavePair() {
+      for (let i = 0; i < backpack.length; i++) {
+        for (let j = i + 1; j < backpack.length; j++) {
+          const a = backpack[i];
+          const b = backpack[j];
+          if (Math.abs(a.midi - b.midi) === 12) {
+            const lo = a.midi <= b.midi ? a : b;
+            const hi = a.midi <= b.midi ? b : a;
+            return { i, j, lo, hi };
+          }
+        }
+      }
+      return null;
+    }
+
+    function consumeOctavePair(pair) {
+      const rm = pair.i < pair.j ? [pair.j, pair.i] : [pair.i, pair.j];
+      backpack.splice(rm[0], 1);
+      backpack.splice(rm[1], 1);
+      renderPack();
+    }
+
+    /** I20：八度两音 → 短暂加速（swiftUntil） */
+    function tryOctaveResonance() {
+      if (whyOpen) return false;
+      if (waveOctaveCount >= OCTAVE_WAVE_MAX) return false;
+      const pair = detectOctavePair();
+      if (!pair) return false;
+      consumeOctavePair(pair);
+      waveOctaveCount++;
+      swiftUntil = Math.max(swiftUntil, Date.now() + SWIFT_MS);
+      try {
+        Sfx.playSung(pair.lo.midi, 0.2, 0.1);
+        setTimeout(() => {
+          try { Sfx.playSung(pair.hi.midi, 0.24, 0.12); } catch { /* */ }
+        }, 75);
+      } catch { /* */ }
+      burst(player.x, player.y, "#50e0c8");
+      floatTexts.push({
+        x: player.x, y: player.y - 26,
+        text: "八度·共鸣",
+        life: 1.05, color: "#70f0d8"
+      });
+      showToast("八度·共鸣");
+      if (!sessionOctaveTaught) {
+        sessionOctaveTaught = true;
+        setTimeout(() => {
+          showToast("八度 = 高八度同名音 · 听感开阔");
+        }, 900);
+      }
+      return true;
+    }
+
     function letterOfPc(pc) {
       const d = NOTE_DEFS.find(n => n.pc === pc);
       return d ? d.letter : "?";
@@ -676,6 +1228,166 @@
       const kind = pendingSchoolKind;
       pendingSchoolKind = null;
       if (kind) maybeTriggerSchool(kind);
+      else flushPendingVictory();
+    }
+
+    function openResistTeach(e) {
+      teachOpen = true;
+      teachTipTitle.textContent = `抗性 · ${e.name}`;
+      teachTipBody.innerHTML =
+        `<strong>${e.name}</strong> 不吃你这发弹药。<br>${e.tip}`;
+      teachTipEl.classList.add("show");
+      teachTipEl.setAttribute("aria-hidden", "false");
+      hintEl.textContent = "对照提示换弹 · 点「知道了」继续";
+    }
+
+    function dismissResistTeach() {
+      if (!teachOpen) return;
+      teachOpen = false;
+      teachTipEl.classList.remove("show");
+      teachTipEl.setAttribute("aria-hidden", "true");
+      hintEl.textContent = "换弹再试 · 1/2/3/4 切弹 · P 可暂停";
+    }
+
+    const BOSS_TEACH_QUIZZES = [
+      {
+        prompt: "领主吞音时，更稳妥的做法是？",
+        choices: [
+          { id: "rush", label: "冲进音符堆抢拾" },
+          { id: "super", label: "用超级弹 / 先远离被吞的音符" },
+          { id: "wait", label: "站着不动等它吞完" }
+        ],
+        answer: "super",
+        wrong: "吞音会壮大领主 · 超级弹（T 合成）伤害更稳，也可先拉开距离。"
+      },
+      {
+        prompt: "超级弹怎么获得？",
+        choices: [
+          { id: "t", label: "T 合成：大三 + 小三 各至少 1" },
+          { id: "flat", label: "平击连开三次" },
+          { id: "same", label: "背包里三枚相同音" }
+        ],
+        answer: "t",
+        wrong: "超级弹 = 明快大三 + 阴郁小三各 1 发，按 T 合成。"
+      }
+    ];
+
+    function grantBossTeachReward() {
+      if (ammoMajor >= 1 && ammoMinor >= 1) {
+        ammoMajor -= 1;
+        ammoMinor -= 1;
+        ammoSuper = Math.min(AMMO_CAP, ammoSuper + 1);
+        renderAmmo();
+        bossTeachStatus.textContent = "答对 · 奖励：超级弹 +1（已替你合成）";
+        showToast("小测奖励 · 超级弹 +1");
+      } else if (lives < (player.maxLives || 3)) {
+        lives++;
+        setLivesDisplay();
+        bossTeachStatus.textContent = "答对 · 奖励：整备回灵 +1";
+        showToast("小测奖励 · 生命 +1");
+      } else {
+        ammoSuper = Math.min(AMMO_CAP, ammoSuper + 1);
+        renderAmmo();
+        bossTeachStatus.textContent = "答对 · 奖励：超级弹 +1";
+        showToast("小测奖励 · 超级弹 +1");
+      }
+    }
+
+    function flushBossSpawnDeferred() {
+      if (!bossSpawnDeferred) return;
+      const { w, plan, mega, ann } = bossSpawnDeferred;
+      bossSpawnDeferred = null;
+      spawnBoss(w, { mega, typeIndex: plan.bossTypeIndex });
+      for (let i = 0; i < (plan.escort || 0); i++) spawnEnemy();
+      const name = (ann && ann.announce && ann.announce.name) || "领主";
+      showToast(`${name} 降临！`);
+      hintEl.textContent = `${name} · 吞音放技能 · 看抗性开火`;
+      showBossReply((ann && ann.announce && ann.announce.line) || "");
+    }
+
+    function closeBossTeach() {
+      if (!bossTeachOpen) return;
+      bossTeachOpen = false;
+      bossTeachAnswered = false;
+      bossTeachEl.classList.remove("show");
+      bossTeachEl.setAttribute("aria-hidden", "true");
+      bossTeachChoices.innerHTML = "";
+      flushBossSpawnDeferred();
+    }
+
+    function openBossTeach(bossName, deferred) {
+      bossSpawnDeferred = deferred;
+      bossTeachOpen = true;
+      bossTeachAnswered = false;
+      const quiz = BOSS_TEACH_QUIZZES[Math.floor(Math.random() * BOSS_TEACH_QUIZZES.length)];
+      bossTeachTitle.textContent = `${bossName} · 战术速记`;
+      bossTeachBody.innerHTML =
+        "领主会<strong>吞附近音符</strong>并释放技能。<br>合弦<strong>超级弹（T）</strong>更稳、伤害更高。";
+      bossTeachPrompt.textContent = quiz.prompt;
+      bossTeachStatus.textContent = "";
+      bossTeachChoices.innerHTML = quiz.choices.map(c =>
+        `<button type="button" data-boss-choice="${c.id}">${c.label}</button>`
+      ).join("");
+      bossTeachEl.dataset.quizAnswer = quiz.answer;
+      bossTeachEl.dataset.quizWrong = quiz.wrong;
+      bossTeachEl.classList.add("show");
+      bossTeachEl.setAttribute("aria-hidden", "false");
+    }
+
+    function answerBossTeach(choiceId) {
+      if (!bossTeachOpen || bossTeachAnswered) return;
+      const answer = bossTeachEl.dataset.quizAnswer;
+      const wrong = bossTeachEl.dataset.quizWrong || "";
+      if (choiceId === answer) {
+        bossTeachAnswered = true;
+        grantBossTeachReward();
+        setTimeout(closeBossTeach, 900);
+      } else {
+        bossTeachAnswered = true;
+        bossTeachStatus.textContent = wrong + " · 继续战斗吧";
+        showToast("再记一下 · 不扣分");
+        setTimeout(closeBossTeach, 1400);
+      }
+    }
+
+    /** 背包≥3 且差一音可成大三/小三时返回提示文案 */
+    function chordNearMissLine() {
+      if (backpack.length < 3) return null;
+      if (detectChordQuality("major") || detectChordQuality("minor")) return null;
+      const pcs = [...new Set(backpack.map(b => b.pc))];
+      if (pcs.length < 2) return null;
+      for (const root of pcs) {
+        for (const kind of ["major", "minor"]) {
+          const third = kind === "major" ? 4 : 3;
+          const need = [root, (root + third) % 12, (root + 7) % 12];
+          const have = need.filter(p => pcs.includes(p)).length;
+          if (have === 2) {
+            const missing = need.find(p => !pcs.includes(p));
+            const missL = letterOfPc(missing);
+            return kind === "major"
+              ? `差 ${missL} 就成大三：根 + 大三(+4) + 纯五`
+              : `差 ${missL} 就成小三：根 + 小三(+3) + 纯五`;
+          }
+        }
+      }
+      return null;
+    }
+
+    function maybeChordComposeHint(afterPick) {
+      if (whyOpen || teachOpen || bossTeachOpen) return;
+      if (backpack.length < 3) return;
+      const near = chordNearMissLine();
+      if (near) {
+        if (!sessionChordHintTaught || (afterPick && Math.random() < 0.22)) {
+          sessionChordHintTaught = true;
+          showToast(near);
+          return;
+        }
+      }
+      if (!sessionChordHintTaught && backpack.length >= 3) {
+        sessionChordHintTaught = true;
+        showToast("再听构成：大三 = 根 + 大三(+4) + 纯五");
+      }
     }
 
     /** Bank one ready chord into ammo pack (+6). Returns kind or null. */
@@ -715,20 +1427,26 @@
     }
 
     function fire() {
-      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing) return;
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen) return;
       const now = Date.now();
       if (now - lastFireAt < FIRE_COOLDOWN_MS) return;
       lastFireAt = now;
 
       let kind = selectedAmmo;
       if (kind === "major" && ammoMajor <= 0) {
-        showToast("大三弹药空 · 改用平击");
-        kind = "flat";
+        if (ammoMinor > 0) { selectAmmo("minor"); kind = "minor"; toastAutoSwitchAmmo("自动切到小三"); }
+        else if (ammoSuper > 0) { selectAmmo("super"); kind = "super"; toastAutoSwitchAmmo("自动切到超级弹"); }
+        else { kind = "flat"; showToast("大三空 · 平击"); }
       } else if (kind === "minor" && ammoMinor <= 0) {
-        showToast("小三弹药空 · 改用平击");
-        kind = "flat";
+        if (ammoMajor > 0) { selectAmmo("major"); kind = "major"; toastAutoSwitchAmmo("自动切到大三"); }
+        else if (ammoSuper > 0) { selectAmmo("super"); kind = "super"; toastAutoSwitchAmmo("自动切到超级弹"); }
+        else { kind = "flat"; showToast("小三空 · 平击"); }
       } else if (kind === "super" && ammoSuper <= 0) {
-        showToast("超级弹空 · 按 R 合成");
+        if (ammoMajor > 0) { selectAmmo("major"); kind = "major"; }
+        else if (ammoMinor > 0) { selectAmmo("minor"); kind = "minor"; }
+        else { kind = "flat"; showToast("超级弹空 · 平击"); }
+      } else if (kind === "super" && ammoSuper <= 0) {
+        showToast("超级弹空 · 按 T 合成");
         kind = "flat";
       }
 
@@ -766,6 +1484,12 @@
         r = 7;
         pierce = 1 + Math.floor(lv / 2);
         Sfx.playChord("major", 60);
+        // I05b：明快穿透气质反馈
+        floatTexts.push({
+          x: player.x + dirX * 28, y: player.y + dirY * 28,
+          text: pierce > 1 ? "明快穿透+" : "明快穿透",
+          life: 0.55, color: "#ffe08a"
+        });
       } else if (kind === "minor") {
         ammoMinor--;
         speed = 320 + lv * 22;
@@ -785,6 +1509,7 @@
         Sfx.playSung(BASE_MIDI + 7, 0.18, 0.1);
       }
 
+      speed *= PACE_BULLET;
       bullets.push({
         x: player.x, y: player.y,
         vx: dirX * speed, vy: dirY * speed,
@@ -796,22 +1521,97 @@
     }
 
     function openVictory(fromSync) {
+      // fromSync=true：仅同步达标标记，绝不弹窗（避免进关/读档时「成就」卡死世界）
+      if (fromSync) {
+        goalShown = true;
+        return;
+      }
+      // 其他模态打开时延后弹出，防止叠层假死
+      if (evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen
+          || megaRewardOpen || sectorFlowOpen || campaignOpen || defeatOpen || finaleOpen || whyOpen) {
+        goalShown = true;
+        pendingVictory = true;
+        showToast("✦ 灵气已满 · 当前面板关闭后可查看");
+        return;
+      }
       victoryOpen = true;
       goalShown = true;
+      pendingVictory = false;
       victoryEl.classList.add("show");
       victoryEl.setAttribute("aria-hidden", "false");
       victoryReward.textContent =
         `解锁奖励：称号「星图探索者」· 弹药 大三×${ammoMajor} / 小三×${ammoMinor}`;
-      hintEl.textContent = fromSync ? "✦ 灵气已满 · 可继续探索或返回" : "✦ 灵气圆满 · 星图已成";
-      if (!fromSync) showToast("奖励已解锁");
+      hintEl.textContent = "✦ 灵气圆满 · 星图已成";
+      showToast("奖励已解锁");
     }
 
     function dismissVictory() {
       victoryOpen = false;
-      victoryEl.classList.remove("show");
-      victoryEl.setAttribute("aria-hidden", "true");
+      if (victoryEl) {
+        victoryEl.classList.remove("show");
+        victoryEl.setAttribute("aria-hidden", "true");
+      }
       hintEl.textContent = "继续探索 · 1/2/3 切弹 · 空格开火";
       showToast("继续探索");
+    }
+
+    /** 强制关掉所有结算/教学模态，防止进关或清场后假死 */
+    function forceCloseAllPanels(opts) {
+      opts = opts || {};
+      const keepCampaign = !!opts.keepCampaign;
+      whyOpen = false;
+      teachOpen = false;
+      bossTeachOpen = false;
+      bossSpawnDeferred = null;
+      bossTeachAnswered = false;
+      evoChoosing = false;
+      mutationChoosing = false;
+      recruitOpen = false;
+      recruitPending = null;
+      recruitQueue = [];
+      megaRewardOpen = false;
+      sectorFlowOpen = false;
+      practiceClearOpen = false;
+      defeatOpen = false;
+      finaleOpen = false;
+      nodeSettleOpen = false;
+      pendingAfterEvo = null;
+      timeStopped = false;
+      victoryOpen = false;
+      paused = false;
+      if (!keepCampaign) campaignOpen = false;
+      hideBossReply();
+      clearTimeout(whyAutoTimer);
+      const hide = (el) => {
+        if (!el) return;
+        el.classList.remove("show");
+        el.setAttribute("aria-hidden", "true");
+      };
+      hide(whyChordEl);
+      hide(teachTipEl);
+      hide(bossTeachEl);
+      hide(evoPanelEl);
+      hide(mutationPanelEl);
+      hide(recruitPanelEl);
+      hide(megaRewardPanelEl);
+      hide(sectorPanelEl);
+      hide(practicePanelEl);
+      hide(defeatPanelEl);
+      hide(finalePanelEl);
+      hide(nodeSettlePanelEl);
+      hide(victoryEl);
+      hide(timestopEl);
+      hide(pausePanelEl);
+      if (!keepCampaign) hide(campaignPanelEl);
+      if (pauseBtn) pauseBtn.textContent = "暂停 P";
+    }
+
+    function flushPendingVictory() {
+      if (!pendingVictory || victoryOpen) return;
+      if (evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen
+          || megaRewardOpen || sectorFlowOpen || campaignOpen || defeatOpen || finaleOpen || nodeSettleOpen || whyOpen) return;
+      pendingVictory = false;
+      openVictory(false);
     }
 
     function requestExit() {
@@ -822,6 +1622,15 @@
       } catch { /* ignore */ }
     }
 
+    function requestOpenPerform() {
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: "mtg-spirit-open", module: "perform" }, "*");
+        }
+      } catch { /* ignore */ }
+      requestExit();
+    }
+
     function syncSpiritFromStore() {
       const store = getStore();
       if (store) {
@@ -829,7 +1638,8 @@
         spiritGoal = store.GOAL || 30;
       }
       spiritEl.textContent = String(spiritTotal);
-      if (spiritTotal >= spiritGoal && !goalShown) openVictory(true);
+      // 已达标只记标记，不弹窗（进关/重开时弹「星图已成」会卡住操作）
+      if (spiritTotal >= spiritGoal) goalShown = true;
     }
 
     function awardNote(letter) {
@@ -904,6 +1714,14 @@
       toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1100);
     }
 
+    function toastAutoSwitchAmmo(msg) {
+      showToast(msg);
+      if (!sessionAutoSwitchTaught) {
+        sessionAutoSwitchTaught = true;
+        hintEl.textContent = "空仓会跳过 · R 手动切弹 · T 合成超级弹";
+      }
+    }
+
     function setLivesDisplay() {
       const maxL = player.maxLives || 3;
       livesEl.textContent =
@@ -911,102 +1729,19 @@
     }
 
     function getEvoTier() {
+      if (window.SpiritEvo) return SpiritEvo.tierFromKills(correctKills);
       if (correctKills >= STACK_T2) return 2;
       if (correctKills >= STACK_T1) return 1;
       return 0;
     }
 
-    function renderStacks() {
-      if (!evoEl) return;
-      const tier = getEvoTier();
-      const next = tier >= 2 ? "已满阶" : `下一阶 ${tier === 0 ? STACK_T1 : STACK_T2}`;
-      const ramHint = tier >= 1 ? " · E 可撞击" : "";
-      const breath = Date.now() < breathUntil ? " · 喘息中" : "";
-      evoEl.textContent = `叠层 ${correctKills} · ${next}${ramHint}` +
-        (tier === 1 ? " · 进化I" : tier === 2 ? " · 龙鳞II" : "") +
-        ` · 第${wave}波${breath}`;
-    }
-
-    function waveEnemyCount(w) {
-      if (w <= 1) return 2;
-      if (w <= 3) return 3;
-      if (w <= 5) return 4;
-      return Math.min(MAX_ENEMIES, 5);
-    }
-
-    function isBossWave(w) {
-      return w === 3 || w === 5 || w === 7 || (w >= 9 && w % 3 === 0);
-    }
-
-    function spawnBoss(w) {
-      const type = (w % 2 === 1) ? ENEMY_TYPES[1] : ENEMY_TYPES[2];
-      const p = randEdge();
-      const hp = 5.5 + w * 0.85;
-      const speed = (38 + Math.min(24, w * 2)) * type.speedMul;
-      enemies.push({
-        id: `boss_${type.id}_${Date.now()}`,
-        typeId: type.id,
-        name: type.id === "stone" ? "刚石领主" : "雾灵领主",
-        tag: "Boss",
-        tip: type.id === "stone" ? "Boss·怕明快大三 / 超级弹" : "Boss·怕阴郁小三 / 超级弹",
-        color: type.color,
-        eye: type.eye,
-        mult: type.mult,
-        x: p.x, y: p.y,
-        r: type.r * 1.75,
-        hp, maxHp: hp,
-        speed, baseSpeed: speed,
-        slowUntil: 0,
-        freezeDeep: false,
-        wobble: Math.random() * Math.PI * 2,
-        isBoss: true
-      });
-    }
-
-    function spawnWave(w, opts = {}) {
-      if (isBossWave(w)) {
-        spawnBoss(w);
-        if (w >= 5) spawnEnemy();
-        waveLive = true;
-        breathUntil = 0;
-        renderStacks();
-        if (!opts.silent) {
-          showToast(`Boss 波 · 第 ${w} 波`);
-          hintEl.textContent = `Boss：看抗性 · 超级弹（R）克制更稳`;
-        }
-        return;
-      }
-      const count = waveEnemyCount(w);
-      for (let i = 0; i < count; i++) spawnEnemy();
-      waveLive = true;
-      breathUntil = 0;
-      renderStacks();
-      if (!opts.silent) {
-        showToast(`第 ${w} 波 · ${count} 只`);
-        hintEl.textContent = `第 ${w} 波 · 清场后可喘息捡音`;
-      }
-    }
-
-    function startBreath(ms, msg) {
-      breathUntil = Date.now() + ms;
-      waveLive = false;
-      renderStacks();
-      showToast(msg);
-      hintEl.textContent = "喘息中 · 整理背包 / R 合成 / P 思考";
-    }
-
     function applyEvolutionStats() {
       const tier = getEvoTier();
-      if (tier === 0) {
-        player.baseR = 14;
-        player.maxLives = 3;
-      } else if (tier === 1) {
-        player.baseR = 18;
-        player.maxLives = 4;
-      } else {
-        player.baseR = 22;
-        player.maxLives = 5;
-      }
+      const stats = (window.SpiritEvo && SpiritEvo.baseStats)
+        ? SpiritEvo.baseStats(tier)
+        : (tier === 0 ? { baseR: 14, maxLives: 3 } : tier === 1 ? { baseR: 18, maxLives: 4 } : { baseR: 22, maxLives: 5 });
+      player.baseR = stats.baseR;
+      player.maxLives = stats.maxLives;
       player.r = player.baseR;
       if (lives > player.maxLives) lives = player.maxLives;
       renderStacks();
@@ -1014,18 +1749,24 @@
     }
 
     function openEvoChoice(tier) {
+      if (victoryOpen) dismissVictory();
+      if (whyOpen) dismissWhyChord();
       evoChoosing = true;
       if (paused) setPaused(false);
       evoPanelEl.classList.add("show");
       evoPanelEl.setAttribute("aria-hidden", "false");
-      evoTierLabel.textContent = tier === 1
-        ? "进化 I · 选一条成长（体型与撞击已解锁）"
-        : "龙鳞 II · 再选一条强化";
-      const opts = [
-        { id: "life", title: "生命上限 +1", desc: "更耐打，适合稳扎稳打学和弦" },
-        { id: "steal", title: "生命偷取", desc: "正确击杀时有机会回 1 命（土豆兄弟感）" },
-        { id: "craft", title: "合弦精通", desc: "立即 +2 超级弹；之后 R 合成多得 1 发" }
-      ];
+      evoTierLabel.textContent = (window.SpiritEvo && SpiritEvo.tierLabel)
+        ? SpiritEvo.tierLabel(tier)
+        : (tier === 1 ? "进化 I · 选一条成长" : "龙鳞 II · 再选一条强化");
+      const opts = (window.SpiritEvo && SpiritEvo.pickThree)
+        ? SpiritEvo.pickThree()
+        : ((window.SpiritEvo && SpiritEvo.choices)
+          ? SpiritEvo.choices().slice(0, 3)
+          : [
+            { id: "life", title: "生命上限 +1", desc: "更耐打" },
+            { id: "steal", title: "生命偷取", desc: "正确击杀回血" },
+            { id: "craft", title: "合弦精通", desc: "超级弹强化" }
+          ]);
       evoChoicesEl.innerHTML = "";
       opts.forEach(o => {
         const btn = document.createElement("button");
@@ -1039,31 +1780,348 @@
 
     function pickEvoChoice(id, tier) {
       if (!evoChoosing) return;
-      if (id === "life") {
-        player.maxLives += 1;
-        lives = Math.min(player.maxLives, lives + 1);
+      const result = (window.SpiritEvo && SpiritEvo.applyChoice)
+        ? SpiritEvo.applyChoice(id)
+        : { toast: "已选择", patch: {} };
+      const p = result.patch || {};
+      if (p.maxLivesDelta) {
+        player.maxLives += p.maxLivesDelta;
+        lives = Math.min(player.maxLives, lives + (p.livesDelta || 0));
         setLivesDisplay();
-        showToast("生命上限提升");
-      } else if (id === "steal") {
-        traitLifeSteal = Math.min(2, traitLifeSteal + 1);
-        showToast(`生命偷取 ×${traitLifeSteal}`);
-      } else if (id === "craft") {
-        traitCraftMaster = true;
-        ammoSuper = Math.min(AMMO_CAP, ammoSuper + 2);
-        renderAmmo();
-        selectAmmo("super");
-        showToast("合弦精通 · 超级弹 +2");
       }
+      if (p.lifeStealDelta) {
+        traitLifeSteal = Math.min(2, traitLifeSteal + p.lifeStealDelta);
+      }
+      if (p.craftMaster) {
+        traitCraftMaster = true;
+      }
+      if (p.ammoSuperDelta) {
+        ammoSuper = Math.min(AMMO_CAP, ammoSuper + p.ammoSuperDelta);
+      }
+      if (p.ammoMajorDelta) {
+        ammoMajor = Math.min(AMMO_CAP, ammoMajor + p.ammoMajorDelta);
+      }
+      if (p.ammoMinorDelta) {
+        ammoMinor = Math.min(AMMO_CAP, ammoMinor + p.ammoMinorDelta);
+      }
+      if (p.armorDelta) {
+        armorCharges = Math.min(6, armorCharges + p.armorDelta);
+      }
+      if (p.swiftStack) {
+        traitSwiftStacks = Math.min(3, traitSwiftStacks + p.swiftStack);
+      }
+      if (p.selectAmmo) selectAmmo(p.selectAmmo);
+      renderAmmo();
+      setLivesDisplay();
+      showToast(result.toast || "已选择");
       evoChoosing = false;
       evoPanelEl.classList.remove("show");
       evoPanelEl.setAttribute("aria-hidden", "true");
       floatTexts.push({
         x: player.x, y: player.y - 28,
-        text: tier === 1 ? "进化 I" : "龙鳞 II",
+        text: tier === 1 ? "进化 I" : (pendingAfterEvo ? "关卡成长" : "龙鳞 II"),
         life: 1.2, color: "#ffe08a"
       });
       burst(player.x, player.y, "#ffe08a");
       hintEl.textContent = "成长已选 · 继续战斗";
+      const after = pendingAfterEvo;
+      pendingAfterEvo = null;
+      if (typeof after === "function") {
+        after();
+        return;
+      }
+      flushPendingVictory();
+    }
+
+    function openMutationChoice() {
+      mutationChoosing = true;
+      if (paused) setPaused(false);
+      mutationPanelEl.classList.add("show");
+      mutationPanelEl.setAttribute("aria-hidden", "false");
+      const every = MUTATION_CHOICE_EVERY;
+      mutationHintEl.textContent = `变化音叠满 ${every} 层 · 选一条突变增益（可重复叠级）`;
+      const opts = (window.SpiritMutation && SpiritMutation.choices)
+        ? SpiritMutation.choices()
+        : [];
+      mutationChoicesEl.innerHTML = "";
+      opts.forEach(o => {
+        const lv = mutationLevels[o.id] || 0;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerHTML = `<strong>${o.title}${lv ? ` Lv${lv + 1}` : ""}</strong><br>${o.desc}`;
+        btn.addEventListener("click", () => pickMutationChoice(o.id));
+        mutationChoicesEl.appendChild(btn);
+      });
+      showToast("突变就绪 · 三选一");
+    }
+
+    function pickMutationChoice(id) {
+      if (!mutationChoosing) return;
+      if (window.SpiritMutation && SpiritMutation.applyLevel) {
+        mutationLevels = SpiritMutation.applyLevel(mutationLevels, id);
+      } else if (id in mutationLevels) {
+        mutationLevels[id]++;
+      }
+      mutationChoosing = false;
+      mutationPanelEl.classList.remove("show");
+      mutationPanelEl.setAttribute("aria-hidden", "true");
+      const label = (window.SpiritMutation && SpiritMutation.shortLabel)
+        ? SpiritMutation.shortLabel(mutationLevels)
+        : id;
+      showToast(`已选 · ${label || id}`);
+      floatTexts.push({
+        x: player.x, y: player.y - 32,
+        text: "突变+",
+        life: 1.1, color: "#d0a0ff"
+      });
+      burst(player.x, player.y, "#b080ff");
+      renderStacks();
+      hintEl.textContent = "突变已叠 · 继续战斗";
+    }
+
+    function renderStacks() {
+      if (!evoEl) return;
+      const tier = getEvoTier();
+      const next = tier >= 2 ? "已满阶" : `下一阶 ${tier === 0 ? STACK_T1 : STACK_T2}`;
+      const ramHint = tier >= 1 ? " · E 可撞击" : "";
+      const left = isBreathing() ? Math.max(0, (breathUntil - Date.now()) / 1000) : 0;
+      const breath = left > 0 ? ` · 整备${left.toFixed(1)}s` : "";
+      const mutTag = (window.SpiritMutation && SpiritMutation.shortLabel)
+        ? SpiritMutation.shortLabel(mutationLevels)
+        : "";
+      const mutProg = mutationStacks > 0
+        ? ` · 突变层 ${mutationStacks}/${MUTATION_CHOICE_EVERY}`
+        : "";
+      evoEl.textContent = `叠层 ${correctKills} · ${next}${ramHint}` +
+        (tier === 1 ? " · 进化I" : tier === 2 ? " · 龙鳞II" : "") +
+        (mutTag ? ` · ${mutTag}` : "") + mutProg +
+        ` · 第${wave}波${breath}`;
+    }
+
+    function waveEnemyCount(w) {
+      if (SD.waveEnemyCount) return SD.waveEnemyCount(w);
+      if (w <= 1) return 2;
+      if (w <= 3) return 3;
+      if (w <= 5) return 4;
+      return Math.min(MAX_ENEMIES, 5);
+    }
+
+    function isBossWave(w) {
+      if (SD.isBossWave) return SD.isBossWave(w);
+      const n = SD.SECTOR_WAVES || 6;
+      const slot = ((Math.max(1, w) - 1) % n) + 1;
+      const sector = Math.floor((Math.max(1, w) - 1) / n);
+      if (slot === 6 && sector >= 1) return false;
+      return slot === 3 || slot === 6;
+    }
+
+    function spawnBoss(w, opts = {}) {
+      const mega = !!opts.mega;
+      const typeIdx = opts.typeIndex != null ? opts.typeIndex : (w % 2 === 1 ? 1 : 2);
+      const type = ENEMY_TYPES[typeIdx] || ENEMY_TYPES[1];
+      const p = randEdge();
+      const boss = (window.SpiritBoss && SpiritBoss.buildBoss)
+        ? SpiritBoss.buildBoss(w, type, p, { mega })
+        : {
+          id: `boss_${type.id}_${Date.now()}`,
+          typeId: type.id,
+          name: mega ? "噬律·失谐君主" : (type.id === "stone" ? "磐岳·刚石领主" : "幽岚·雾灵领主"),
+          tag: mega ? "君" : "Boss",
+          tip: type.tip,
+          color: type.color,
+          eye: type.eye,
+          mult: type.mult,
+          x: p.x, y: p.y,
+          r: type.r * 1.75,
+          hp: 5.5 + w * 0.85,
+          maxHp: 5.5 + w * 0.85,
+          speed: (38 + Math.min(24, w * 2)) * type.speedMul,
+          baseSpeed: (38 + Math.min(24, w * 2)) * type.speedMul,
+          slowUntil: 0,
+          freezeDeep: false,
+          wobble: Math.random() * Math.PI * 2,
+          isBoss: true,
+          isMega: mega
+        };
+      enemies.push(boss);
+      if (window.SpiritBoss) {
+        const eaten = SpiritBoss.devourNear(boss, notes, {
+          radius: mega ? 260 : 200,
+          onEat(n) {
+            burst(n.x, n.y, "#c070ff");
+            floatTexts.push({ x: n.x, y: n.y - 10, text: "被吞噬", life: 0.8, color: "#e0a0ff" });
+          }
+        });
+        if (eaten > 0) {
+          showToast(`吞噬 ${eaten} 枚音符 · 不和谐壮大`);
+          SpiritBoss.playDissonance(Sfx, BASE_MIDI - 3);
+        }
+      }
+      return boss;
+    }
+
+    let bossAnnouncePending = null;
+    let wavePreferred = null;
+    let waveExclusive = false;
+    let spawnStaggerTimer = null;
+    let pendingSpawns = 0; // I43：错开刷怪尚未刷完的数量；>0 时禁止开喘息
+    const stageBannerEl = document.getElementById("stageBanner");
+    const stageTitleEl = document.getElementById("stageTitle");
+    const stageLessonEl = document.getElementById("stageLesson");
+
+    function showStageBanner(plan) {
+      if (!stageBannerEl || !plan) return;
+      const title = plan.title || plan.toast || `第 ${wave} 波`;
+      const lesson = plan.lesson || plan.hint || "";
+      if (stageTitleEl) stageTitleEl.textContent = `关卡 · ${title}`;
+      if (stageLessonEl) stageLessonEl.textContent = lesson;
+      stageBannerEl.classList.add("show");
+      clearTimeout(showStageBanner._t);
+      showStageBanner._t = setTimeout(() => stageBannerEl.classList.remove("show"), 2200);
+    }
+
+    function clearSpawnStagger() {
+      if (spawnStaggerTimer) {
+        clearInterval(spawnStaggerTimer);
+        spawnStaggerTimer = null;
+      }
+      pendingSpawns = 0;
+    }
+
+    function spawnWave(w, opts = {}) {
+      wavePerfectFifthCount = 0;
+      waveOctaveCount = 0;
+      clearSpawnStagger();
+      if (window.SpiritHazards) SpiritHazards.ensureForWave(w, W, H, player);
+      if (!opts.silent && window.SpiritHazards && SpiritHazards.objectiveHint) {
+        const oh = SpiritHazards.objectiveHint();
+        if (oh) {
+          setTimeout(() => {
+            if (started && !defeatOpen && !nodeSettleOpen) showToast(`地形目标 · ${oh}`);
+          }, 900);
+        }
+      }
+      const plan = (window.SpiritWaves && SpiritWaves.plan)
+        ? SpiritWaves.plan(w)
+        : null;
+      wavePreferred = plan && plan.preferred ? plan.preferred : null;
+      waveExclusive = plan && plan.exclusive != null
+        ? !!plan.exclusive
+        : (STAGE_EXCLUSIVE_DEFAULT && !!(wavePreferred && wavePreferred.length));
+      if (!opts.silent) showStageBanner(plan);
+      if (plan && (plan.kind === "boss" || plan.kind === "mega")) {
+        const type = ENEMY_TYPES[plan.bossTypeIndex != null ? plan.bossTypeIndex : (w % 2 === 1 ? 1 : 2)] || ENEMY_TYPES[1];
+        waveLive = true;
+        breathUntil = 0;
+        renderStacks();
+        if (window.SpiritBoss) {
+          SpiritBoss.beginAnnounce(w, type, Date.now(), { mega: plan.kind === "mega" });
+          SpiritBoss.playDissonance(Sfx, BASE_MIDI - (plan.kind === "mega" ? 5 : 0));
+          bossAnnouncePending = { w, plan, type, mega: plan.kind === "mega" };
+          showToast(plan.toast || "关卡 · Boss");
+          hintEl.textContent = (plan.hint || "Boss 来袭") + " · 准备超级弹";
+        } else {
+          spawnBoss(w, { mega: plan.kind === "mega", typeIndex: plan.bossTypeIndex });
+          for (let i = 0; i < (plan.escort || 0); i++) spawnEnemy();
+        }
+        return;
+      }
+      const count = plan && plan.count != null ? plan.count : waveEnemyCount(w);
+      const stagger = (plan && plan.staggerMs != null) ? plan.staggerMs : STAGGER_MS;
+      waveLive = true;
+      breathUntil = 0;
+      renderStacks();
+      // I43：逐只刷出；pendingSpawns 未清完前不算清场
+      pendingSpawns = Math.max(0, count);
+      const trySpawnOne = () => {
+        if (pendingSpawns <= 0) return;
+        const before = enemies.length;
+        spawnEnemy();
+        if (enemies.length > before) pendingSpawns--;
+        else pendingSpawns--; // 场上已满也消耗名额，避免永远卡喘息
+      };
+      trySpawnOne();
+      if (pendingSpawns > 0) {
+        spawnStaggerTimer = setInterval(() => {
+          if (!waveLive || victoryOpen) {
+            clearSpawnStagger();
+            return;
+          }
+          trySpawnOne();
+          if (pendingSpawns <= 0) clearSpawnStagger();
+        }, Math.max(400, stagger));
+      }
+      if (!opts.silent) {
+        showToast((plan && plan.toast) || `关卡 · 第 ${w} 波`);
+        hintEl.textContent = ((plan && plan.hint) || `第 ${w} 波`) + " · 清场后短整备，WASD 仍可动";
+      }
+    }
+
+    function isBreathing() {
+      return started && !waveLive && !victoryOpen && enemies.length === 0
+        && pendingSpawns <= 0 && !spawnStaggerTimer
+        && Date.now() < breathUntil;
+    }
+
+    function updateBreathUi() {
+      if (!breathBannerEl) return;
+      // 硬保险：场上有任何单位时，整备 UI 必须消失（防残留 / 缓存旧逻辑错觉）
+      if (enemies.length > 0 || pendingSpawns > 0 || spawnStaggerTimer
+          || bossAnnouncePending || bossTeachOpen || bossSpawnDeferred) {
+        breathUntil = 0;
+        if (!waveLive && enemies.length > 0) waveLive = true;
+        breathBannerEl.classList.remove("show");
+        return;
+      }
+      if (!isBreathing()) {
+        breathBannerEl.classList.remove("show");
+        return;
+      }
+      const left = Math.max(0, (breathUntil - Date.now()) / 1000);
+      if (breathSecEl) breathSecEl.textContent = left.toFixed(1);
+      breathBannerEl.classList.add("show");
+      renderStacks();
+    }
+
+    function skipBreath() {
+      if (!isBreathing()) return false;
+      breathUntil = 0;
+      if (breathBannerEl) breathBannerEl.classList.remove("show");
+      showToast("进入下一波");
+      hintEl.textContent = "整备结束 · 下一波来袭";
+      return true;
+    }
+
+    function flashHurt() {
+      if (!hurtFlashEl) return;
+      hurtFlashEl.classList.add("show");
+      clearTimeout(flashHurt._t);
+      flashHurt._t = setTimeout(() => hurtFlashEl.classList.remove("show"), 420);
+    }
+
+    function startBreath(ms, msg) {
+      // 场上还有怪 / 还在刷怪：绝不进入整备
+      if (enemies.length > 0 || pendingSpawns > 0 || spawnStaggerTimer) return;
+      clearSpawnStagger();
+      breathUntil = Date.now() + ms;
+      waveLive = false;
+      renderStacks();
+      showToast(msg);
+      if (!sessionBreathTaught) {
+        sessionBreathTaught = true;
+        hintEl.textContent = "清场整备：不是定身！可移动捡音/合成 · Enter 立刻下一波";
+        showToast("清场整备 · 能走能动 · Enter 跳过");
+      } else {
+        hintEl.textContent = `整备 ${Math.round(ms / 1000)}s · 可移动 · Enter 下一波`;
+      }
+      if (breathBannerEl) breathBannerEl.classList.add("show");
+      if (lives < (player.maxLives || 3) && Math.random() < 0.5) {
+        lives++;
+        setLivesDisplay();
+        floatTexts.push({ x: player.x, y: player.y - 20, text: "整备回灵", life: 1, color: "#ff8090" });
+        showToast("整备回灵 · 生命 +1");
+      }
+      flushRecruitQueue();
     }
 
     function registerCorrectKill(mult) {
@@ -1086,7 +2144,7 @@
     }
 
     function tryRam() {
-      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing) return;
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen) return;
       if (getEvoTier() < 1) {
         showToast(`正确击杀再叠 ${STACK_T1 - correctKills} 次可撞击`);
         return;
@@ -1106,6 +2164,21 @@
       enemies.forEach(e => { e.ramHitToken = null; });
       showToast(getEvoTier() >= 2 ? "龙鳞重击！" : "龙鳞撞击！");
       Sfx.playSung(BASE_MIDI - 7, 0.22, 0.14);
+    }
+
+    function tryDodge() {
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen) return;
+      const now = Date.now();
+      if (now - lastDodgeAt < DODGE_COOLDOWN_MS) return; // 冷却中静默，便于按住冲刺
+      lastDodgeAt = now;
+      dodgeUntil = now + DODGE_DURATION_MS;
+      invulnUntil = Math.max(invulnUntil, dodgeUntil + 120);
+      const len = Math.hypot(facing.x, facing.y) || 1;
+      player.dodgeVx = (facing.x / len) * DODGE_BOOST;
+      player.dodgeVy = (facing.y / len) * DODGE_BOOST;
+      showToast("闪避！");
+      burst(player.x, player.y, "#70f0d8");
+      try { Sfx.playSung(BASE_MIDI + 12, 0.12, 0.08); } catch { /* */ }
     }
 
     function resize() {
@@ -1128,7 +2201,10 @@
 
     function spawnNote() {
       if (notes.length >= MAX_NOTES) return;
-      const def = NOTE_DEFS[Math.floor(Math.random() * NOTE_DEFS.length)];
+      const natural = SD.NOTE_DEFS_NATURAL || NOTE_DEFS.filter(d => !d.accidental);
+      // 高波次偶尔刷变化音（I24→星图）；前期只白键，保护教学节奏
+      const pool = (wave >= 6 && Math.random() < 0.22) ? NOTE_DEFS : natural;
+      const def = pool[Math.floor(Math.random() * pool.length)];
       const octShift = OCTAVE_SHIFTS[Math.floor(Math.random() * OCTAVE_SHIFTS.length)];
       const midi = BASE_MIDI + def.pc + octShift;
       let x, y, tries = 0;
@@ -1136,7 +2212,11 @@
         x = 60 + Math.random() * (W - 120);
         y = 80 + Math.random() * (H - 160);
         tries++;
-      } while (Math.hypot(x - player.x, y - player.y) < 100 && tries < 30);
+      } while (
+        (Math.hypot(x - player.x, y - player.y) < 100 ||
+          (window.SpiritHazards && SpiritHazards.blocksSpawn(x, y, 40))) &&
+        tries < 40
+      );
       notes.push({
         x, y, r: 15, def, midi,
         pulse: Math.random() * Math.PI * 2,
@@ -1147,13 +2227,22 @@
     function spawnEnemy() {
       if (enemies.length >= MAX_ENEMIES) return;
       const p = randEdge();
-      // 随进度混入抗性怪
+      // I43：关卡 exclusive 时只出本关怪种；否则 preferred 加权
       let pool;
-      if (sessionPicks < 4) pool = [ENEMY_TYPES[0], ENEMY_TYPES[0], ENEMY_TYPES[1]];
+      if (wavePreferred && wavePreferred.length) {
+        pool = [];
+        wavePreferred.forEach((idx) => {
+          const t = ENEMY_TYPES[idx];
+          if (t) { pool.push(t, t, t); }
+        });
+        if (!waveExclusive) ENEMY_TYPES.forEach((t) => pool.push(t));
+      } else if (sessionPicks < 4) pool = [ENEMY_TYPES[0], ENEMY_TYPES[0], ENEMY_TYPES[1]];
       else if (sessionPicks < 10) pool = ENEMY_TYPES;
       else pool = [ENEMY_TYPES[1], ENEMY_TYPES[2], ENEMY_TYPES[3], ENEMY_TYPES[0]];
+      if (!pool.length) pool = ENEMY_TYPES.length ? [ENEMY_TYPES[0]] : [];
+      if (!pool.length) return;
       const type = pool[Math.floor(Math.random() * pool.length)];
-      const speed = (55 + Math.random() * 35 + Math.min(40, sessionPicks * 1.2)) * type.speedMul;
+      const speed = (48 + Math.random() * 28 + Math.min(28, sessionPicks * 0.9)) * type.speedMul * PACE_ENEMY;
       enemies.push({
         id: `${type.id}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
         typeId: type.id,
@@ -1180,10 +2269,24 @@
         const min = (e.mult && e.mult.minor) || 1;
         mult = Math.max(maj, min, 1) * 1.35;
       }
-      const dmg = b.damage * mult;
+      const dmgBase = b.damage * mult;
+      let dmg = dmgBase;
+      if (sectorFireBonus > 0) dmg *= 1 + sectorFireBonus * 0.12;
+      if (window.SpiritMutation) {
+        dmg *= SpiritMutation.armorBreakMul(mutationLevels, e);
+        if (SpiritMutation.rollCrit(mutationLevels)) {
+          dmg *= SpiritMutation.critDamageMul();
+          floatTexts.push({ x: e.x, y: e.y - 30, text: "暴击", life: 0.85, color: "#ffb0e8" });
+        }
+      }
       if (mult <= 0.3) {
         floatTexts.push({ x: e.x, y: e.y - 18, text: "抗性！", life: 1, color: "#ff8a8a" });
-        showToast(`抗性！${e.name}不怕这发 · ${e.tip}`);
+        if (!sessionResistTaught) {
+          sessionResistTaught = true;
+          openResistTeach(e);
+        } else {
+          showToast(`抗性！${e.name}不怕这发 · ${e.tip}`);
+        }
       } else if (b.kind === "super" || mult >= 1.35) {
         const label = b.kind === "super" ? "合弦克制" : b.kind === "major" ? "明快克制" : b.kind === "minor" ? "阴郁克制" : "有效";
         floatTexts.push({ x: e.x, y: e.y - 18, text: label, life: 1, color: b.color });
@@ -1195,6 +2298,15 @@
         e.freezeDeep = mult >= 1.35 || b.kind === "super";
         if (e.freezeDeep) {
           floatTexts.push({ x: e.x, y: e.y - 36, text: b.kind === "super" ? "合弦压制" : "冰冻", life: 0.9, color: "#a8c8ff" });
+        }
+      }
+      // I20 阴郁融化 DoT
+      if ((b.kind === "minor" || b.kind === "super") && mult > 0.35) {
+        const meltMs = (window.SpiritData && SpiritData.MELT_MS) || 2200;
+        e.meltUntil = Date.now() + meltMs;
+        e.meltDps = ((window.SpiritData && SpiritData.MELT_DPS) || 0.55) * (b.kind === "super" ? 1.35 : 1);
+        if (b.kind === "minor") {
+          floatTexts.push({ x: e.x, y: e.y - 48, text: "融化", life: 0.75, color: "#90a8ff" });
         }
       }
       burst(e.x, e.y, mult <= 0.3 ? "#666" : b.color);
@@ -1213,6 +2325,7 @@
     }
 
     function pickDropDef(typeId) {
+      if (window.SpiritLoot) return SpiritLoot.pickDropDef(typeId);
       const type = ENEMY_TYPES.find(t => t.id === typeId);
       const pcs = type && type.dropPcs;
       if (pcs && pcs.length) {
@@ -1223,6 +2336,7 @@
     }
 
     function rollLootKind(typeId) {
+      if (window.SpiritLoot) return SpiritLoot.rollLootKind(typeId);
       const type = ENEMY_TYPES.find(t => t.id === typeId);
       const table = (type && type.loot) || [{ kind: "note", w: 1 }];
       const total = table.reduce((s, row) => s + row.w, 0);
@@ -1234,46 +2348,25 @@
       return table[0].kind;
     }
 
-    function pushLootOrb(e, kind, ang, spd) {
-      if (loot.length >= MAX_LOOT) return null;
-      const meta = LOOT_META[kind] || LOOT_META.note;
-      const ox = Math.cos(ang) * 22;
-      const oy = Math.sin(ang) * 22;
-      let noteDef = null;
-      let midi = null;
-      let label = meta.label;
-      if (kind === "note") {
-        noteDef = pickDropDef(e.typeId);
-        midi = BASE_MIDI + noteDef.pc + OCTAVE_SHIFTS[Math.floor(Math.random() * OCTAVE_SHIFTS.length)];
-        label = noteDef.letter;
-      }
-      const orb = {
-        kind, label,
-        color: kind === "note" ? noteDef.color : meta.color,
-        x: e.x + ox, y: e.y + oy,
-        r: meta.r,
-        vx: Math.cos(ang) * spd,
-        vy: Math.sin(ang) * spd,
-        pulse: Math.random() * Math.PI * 2,
-        shine: 1.6,
-        pickupAt: Date.now() + 480,
-        noteDef, midi
-      };
-      loot.push(orb);
-      particles.push({
-        x: e.x, y: e.y,
-        vx: Math.cos(ang) * (3.2 + Math.random()),
-        vy: Math.sin(ang) * (3.2 + Math.random()),
-        life: 1.15,
-        color: orb.color,
-        r: 2.2,
-        letter: label
-      });
-      return orb;
+    function lootToastName(d) {
+      if (window.SpiritLoot) return SpiritLoot.toastName(d);
+      if (d.kind === "note") return `音符 ${d.label}`;
+      return d.label;
     }
 
-    /** 击散：碎裂 + 按怪种掉落音符/弹药/属性碎片 */
+    /** 击散：碎裂 + 按怪种掉落（优先 SpiritLoot 积木） */
     function shatterEnemy(e, source) {
+      if (window.SpiritLoot && typeof SpiritLoot.shatter === "function") {
+        SpiritLoot.shatter(e, source, {
+          player,
+          loot,
+          particles,
+          floatTexts,
+          showToast,
+          playSung: (midi, a, b) => { try { Sfx.playSung(midi, a, b); } catch { /* */ } }
+        });
+        return;
+      }
       const count = e.isBoss ? 2 : (Math.random() < 0.4 ? 1 : 2);
       const shardColor = source === "ram" ? "#ffe08a" : (e.color || "#c8b0ff");
       for (let i = 0; i < 22; i++) {
@@ -1288,7 +2381,6 @@
           r: 1.4 + Math.random() * 2.2
         });
       }
-
       const away = Math.atan2(e.y - player.y, e.x - player.x) || (Math.random() * Math.PI * 2);
       const drops = [];
       for (let i = 0; i < count; i++) {
@@ -1296,35 +2388,27 @@
         const spread = (i - (count - 1) / 2) * 0.85;
         const ang = away + spread + (Math.random() - 0.5) * 0.3;
         const spd = 240 + Math.random() * 120;
-        const orb = pushLootOrb(e, kind, ang, spd);
-        if (orb) drops.push(orb);
+        if (loot.length >= MAX_LOOT) break;
+        const meta = LOOT_META[kind] || LOOT_META.note;
+        const def = kind === "note" ? pickDropDef(e.typeId) : null;
+        const orb = {
+          kind,
+          label: kind === "note" ? def.letter : meta.label,
+          color: kind === "note" ? def.color : meta.color,
+          x: e.x + Math.cos(ang) * 22,
+          y: e.y + Math.sin(ang) * 22,
+          r: meta.r,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          pulse: 0, shine: 1.6,
+          pickupAt: Date.now() + 480,
+          noteDef: def,
+          midi: def ? BASE_MIDI + def.pc : null
+        };
+        loot.push(orb);
+        drops.push(orb);
       }
-
-      const summary = drops.map(d => d.label).join(" ");
-      floatTexts.push({
-        x: e.x, y: e.y - 24,
-        text: summary ? `✦ ${summary}` : (source === "ram" ? "撞击碎裂" : "碎裂"),
-        life: 1.15,
-        color: source === "ram" ? "#ffe08a" : "#e8d8ff"
-      });
-
-      drops.filter(d => d.kind === "note" && d.midi != null).forEach((d, idx) => {
-        setTimeout(() => { try { Sfx.playSung(d.midi, 0.22, 0.12); } catch { /* */ } }, idx * 70);
-      });
-      showToast(summary
-        ? `${e.name}掉落 · ${drops.map(d => lootToastName(d)).join(" · ")}`
-        : `${e.name}击散`);
-    }
-
-    function lootToastName(d) {
-      if (d.kind === "note") return `音符 ${d.label}`;
-      if (d.kind === "ammo_major") return "明快弹药";
-      if (d.kind === "ammo_minor") return "阴郁弹药";
-      if (d.kind === "ammo_flat") return "弹芯";
-      if (d.kind === "armor") return "刚石碎片";
-      if (d.kind === "swift") return "闪速碎片";
-      if (d.kind === "heart") return "灵息";
-      return d.label;
+      showToast(drops.length ? `${e.name}掉落` : `${e.name}击散`);
     }
 
     function collectLoot(i) {
@@ -1378,13 +2462,258 @@
       }
     }
 
+    function playRecruitChord(kind) {
+      const root = BASE_MIDI;
+      const third = kind === "minor" ? root + 3 : root + 4;
+      const fifth = root + 7;
+      try {
+        Sfx.playSung(root, 0.22, 0.14);
+        setTimeout(() => Sfx.playSung(third, 0.22, 0.13), 90);
+        setTimeout(() => Sfx.playSung(fifth, 0.28, 0.12), 180);
+      } catch { /* */ }
+    }
+
+    function closeRecruitPanel(okMsg) {
+      recruitOpen = false;
+      recruitPending = null;
+      recruitPanelEl.classList.remove("show");
+      recruitPanelEl.setAttribute("aria-hidden", "true");
+      if (okMsg) showToast(okMsg);
+      flushRecruitQueue();
+      flushPendingVictory();
+    }
+
+    function flushRecruitQueue() {
+      if (recruitOpen || !recruitQueue.length) return;
+      if (enemies.length > 0 && waveLive) return; // 战斗中不打断
+      const pending = recruitQueue.shift();
+      openListenRecruit(pending);
+    }
+
+    function openListenRecruit(pending) {
+      if (!pending || !recruitPanelEl) {
+        if (window.SpiritDrones) SpiritDrones.commitRecruit(pending, { showToast, pushFloat: (ft) => floatTexts.push(ft) });
+        return;
+      }
+      // 战斗中：排队，喘息/清场再听辨（不打断手感）
+      if (started && waveLive && enemies.length > 0 && !timeStopped && !paused) {
+        recruitQueue.push(pending);
+        showToast("收编机会已排队 · 清场后再听辨");
+        floatTexts.push({
+          x: pending.x || player.x,
+          y: (pending.y || player.y) - 28,
+          text: "收编排队",
+          life: 1,
+          color: "#b8ffe8"
+        });
+        return;
+      }
+      recruitPending = pending;
+      recruitOpen = true;
+      if (paused) setPaused(false);
+      const tip = pending.typeId === "stone"
+        ? "刚石弱点偏明快"
+        : pending.typeId === "mist"
+          ? "雾灵弱点偏阴郁"
+          : "凭听感判断色彩";
+      recruitPrompt.textContent = `收编「${pending.name}」· ${tip} · 先听再选`;
+      recruitStatus.textContent = "";
+      recruitPanelEl.classList.add("show");
+      recruitPanelEl.setAttribute("aria-hidden", "false");
+      playRecruitChord(pending.answer);
+      showToast("听辨收编 · 选对色彩");
+    }
+
+    function answerRecruit(choice) {
+      if (!recruitOpen || !recruitPending) return;
+      const pending = recruitPending;
+      const ok = choice === pending.answer;
+      if (ok) {
+        SpiritDrones.commitRecruit(pending, {
+          showToast,
+          pushFloat: (ft) => floatTexts.push(ft)
+        });
+        closeRecruitPanel();
+      } else {
+        recruitStatus.textContent = "音色不对 · 它溜走了";
+        showToast("听辨失败 · 未收编");
+        setTimeout(() => closeRecruitPanel(), 700);
+      }
+    }
+
+    function healAfterLord(boss) {
+      const full = SD.LORD_HEAL_TO_FULL !== false;
+      const before = lives;
+      if (full) lives = player.maxLives || 3;
+      else lives = Math.min(player.maxLives || 3, lives + (SD.LORD_HEAL_MIN || 2));
+      setLivesDisplay();
+      const gained = lives - before;
+      floatTexts.push({
+        x: boss.x, y: boss.y - 52,
+        text: gained > 0 ? "领主击破 · 回灵" : "领主击破",
+        life: 1.2, color: "#ff8090"
+      });
+      showToast(gained > 0 ? "领主击破 · 生命重整" : "领主击破 · 超级弹 +1");
+    }
+
+    function openMegaReward() {
+      megaRewardOpen = true;
+      if (paused) setPaused(false);
+      if (victoryOpen) dismissVictory();
+      const opts = (window.SpiritSectors && SpiritSectors.megaRewards)
+        ? SpiritSectors.megaRewards()
+        : [
+          { id: "maxLife", title: "生命上限 +1", desc: "更耐打" },
+          { id: "firePower", title: "和弦火力 +1", desc: "大三/小三伤害略升" },
+          { id: "tenacity", title: "星区韧性", desc: "受伤减伤机会提升" }
+        ];
+      if (megaRewardHintEl) megaRewardHintEl.textContent = "君主击破 · 选一项本局强化";
+      if (megaRewardChoicesEl) {
+        megaRewardChoicesEl.innerHTML = "";
+        (opts.length ? opts : [{ id: "maxLife", title: "生命上限 +1", desc: "更耐打" }]).forEach((o) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.innerHTML = `<strong>${o.title}</strong><br>${o.desc}`;
+          btn.addEventListener("click", () => pickMegaReward(o.id));
+          megaRewardChoicesEl.appendChild(btn);
+        });
+      }
+      if (megaRewardPanelEl) {
+        megaRewardPanelEl.classList.add("show");
+        megaRewardPanelEl.setAttribute("aria-hidden", "false");
+      }
+      showToast("君主击破 · 选择成长");
+    }
+
+    function pickMegaReward(id) {
+      if (!megaRewardOpen) return;
+      if (id === "maxLife") {
+        player.maxLives = (player.maxLives || 3) + 1;
+        lives = player.maxLives;
+        setLivesDisplay();
+        showToast("生命上限 +1 · 已回满");
+      } else if (id === "firePower") {
+        sectorFireBonus++;
+        skillMajor++;
+        skillMinor++;
+        persistSkills({ major: skillMajor, minor: skillMinor, schoolDone: !!schoolTriggered });
+        showToast("和弦火力提升");
+      } else if (id === "tenacity") {
+        sectorResistBonus++;
+        if (window.SpiritMutation && SpiritMutation.applyLevel) {
+          mutationLevels = SpiritMutation.applyLevel(mutationLevels, "resist");
+        } else {
+          mutationLevels.resist = (mutationLevels.resist || 0) + 1;
+        }
+        showToast("星区韧性提升");
+      }
+      megaRewardOpen = false;
+      if (megaRewardPanelEl) {
+        megaRewardPanelEl.classList.remove("show");
+        megaRewardPanelEl.setAttribute("aria-hidden", "true");
+      }
+      const idx = (window.SpiritSectors && SpiritSectors.sectorIndexFromWave)
+        ? SpiritSectors.sectorIndexFromWave(wave)
+        : 0;
+      openSectorReview(idx);
+    }
+
+    function openSectorReview(idx) {
+      sectorFlowOpen = true;
+      sectorReviewAnswered = false;
+      pendingSectorIdx = idx;
+      const pack = (window.SpiritSectors && SpiritSectors.reviewForSector)
+        ? SpiritSectors.reviewForSector(idx)
+        : { title: "星区结算", summary: "复习明快与阴郁", quiz: null };
+      if (sectorTitleEl) sectorTitleEl.textContent = pack.title;
+      if (sectorSummaryEl) sectorSummaryEl.textContent = pack.summary;
+      if (sectorStatusEl) sectorStatusEl.textContent = "";
+      if (sectorChoicesEl) sectorChoicesEl.innerHTML = "";
+      if (pack.quiz && sectorChoicesEl) {
+        if (sectorPromptEl) sectorPromptEl.textContent = pack.quiz.prompt;
+        pack.quiz.options.forEach((o) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = o.label;
+          btn.dataset.sid = o.id;
+          btn.addEventListener("click", () => answerSectorReview(o.id, pack.quiz));
+          sectorChoicesEl.appendChild(btn);
+        });
+      } else if (sectorPromptEl) {
+        sectorPromptEl.textContent = "本区复习完成";
+      }
+      if (sectorPanelEl) {
+        sectorPanelEl.classList.add("show");
+        sectorPanelEl.setAttribute("aria-hidden", "false");
+      }
+      if (sectorContinueBtn) sectorContinueBtn.style.display = pack.quiz ? "none" : "inline-block";
+    }
+
+    function answerSectorReview(choiceId, quiz) {
+      if (!sectorFlowOpen || sectorReviewAnswered || !quiz) return;
+      sectorReviewAnswered = true;
+      if (choiceId === quiz.answer) {
+        if (sectorStatusEl) sectorStatusEl.textContent = "正确 · " + (quiz.teach || "");
+        ammoSuper = Math.min(AMMO_CAP, ammoSuper + 1);
+        renderAmmo();
+      } else {
+        if (sectorStatusEl) sectorStatusEl.textContent = (quiz.teach || "对照构成再想一想") + " · 不扣生命";
+      }
+      if (sectorContinueBtn) sectorContinueBtn.style.display = "inline-block";
+    }
+
+    function enterNextSector() {
+      if (!sectorFlowOpen) return;
+      sectorFlowOpen = false;
+      if (sectorPanelEl) {
+        sectorPanelEl.classList.remove("show");
+        sectorPanelEl.setAttribute("aria-hidden", "true");
+      }
+      lives = player.maxLives || 3;
+      setLivesDisplay();
+      ammoMajor = Math.min(AMMO_CAP, Math.max(ammoMajor, 4));
+      ammoMinor = Math.min(AMMO_CAP, Math.max(ammoMinor, 4));
+      ammoSuper = Math.min(AMMO_CAP, ammoSuper + 1);
+      renderAmmo();
+      const nextIdx = pendingSectorIdx + 1;
+      const label = (window.SpiritSectors && SpiritSectors.sectorLabel)
+        ? SpiritSectors.sectorLabel(nextIdx)
+        : `星区 ${nextIdx + 1}`;
+      showToast(`${label} · 状态已重整`);
+      hintEl.textContent = `${label} · 满血启程 · 继续探索`;
+      floatTexts.push({
+        x: player.x, y: player.y - 36,
+        text: label, life: 1.4, color: "#ffe08a"
+      });
+      // 让整备自然衔接下波
+      breathUntil = 0;
+      waveLive = false;
+    }
+
     function defeatEnemy(j, result, source) {
       const e = enemies[j];
+      // 轻打击反馈：击杀顿帧
+      hitStopUntil = Date.now() + (e.isBoss ? 90 : 45);
+      if (window.SpiritDrones) {
+        SpiritDrones.tryRecruit(e, {
+          showToast,
+          pushFloat: (ft) => floatTexts.push(ft),
+          openListenRecruit
+        });
+      }
       shatterEnemy(e, source);
       if (e.isBoss) {
+        if (window.SpiritBoss && SpiritBoss.clearBeam) SpiritBoss.clearBeam();
         ammoSuper = Math.min(AMMO_CAP, ammoSuper + 1);
         renderAmmo();
         floatTexts.push({ x: e.x, y: e.y - 40, text: "Boss击破 · 超+1", life: 1.2, color: "#ffb0e0" });
+        if (e.isMega) {
+          enemies.splice(j, 1);
+          registerCorrectKill(result.mult);
+          openFinale(); // I60：终局叙事（仅 mega 击破）
+          return;
+        }
+        healAfterLord(e);
       }
       enemies.splice(j, 1);
       registerCorrectKill(result.mult);
@@ -1408,13 +2737,47 @@
     }
 
     function runSchoolStep(focusKind) {
+      tsChoices.innerHTML = "";
+      tsStatus.textContent = "";
+
+      // I11：第 0 题听辨色彩；第 1 题构成知识；第 2 题再听辨确认
+      if (schoolStep === 1) {
+        const quiz = Math.random() < 0.5
+          ? {
+            prompt: "大三和弦的构成是？",
+            answer: "a",
+            options: [
+              { id: "a", label: "根音 + 大三度(+4) + 纯五度" },
+              { id: "b", label: "根音 + 小三度(+3) + 纯五度" },
+              { id: "c", label: "根音 + 大二度 + 纯四度" }
+            ]
+          }
+          : {
+            prompt: "小三和弦听感更接近？",
+            answer: "b",
+            options: [
+              { id: "a", label: "明亮、干脆、适合穿透" },
+              { id: "b", label: "阴郁、柔和、适合冰冻控场" },
+              { id: "c", label: "完全无色彩差异" }
+            ]
+          };
+        schoolAnswer = quiz.answer;
+        tsPrompt.textContent = quiz.prompt;
+        quiz.options.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = opt.label;
+          btn.addEventListener("click", () => answerSchool(opt.id));
+          tsChoices.appendChild(btn);
+        });
+        return;
+      }
+
       schoolAnswer = Math.random() < 0.5 ? "major" : "minor";
       if (schoolStep === 0 && focusKind) schoolAnswer = focusKind;
       tsPrompt.textContent = schoolStep === 0
         ? "先听这段和弦，它更像哪一种？"
-        : "再听一次：这是大三还是小三？";
-      tsStatus.textContent = "";
-      tsChoices.innerHTML = "";
+        : "最后确认：这是大三还是小三？";
       [
         { id: "major", label: "大三 · 明快（弹药包上槽）" },
         { id: "minor", label: "小三 · 阴郁（弹药包下槽）" }
@@ -1431,19 +2794,29 @@
     function answerSchool(choice) {
       if (!timeStopped) return;
       if (choice !== schoolAnswer) {
-        tsStatus.textContent = "还差一点 · 再听一遍，注意明快 vs 阴郁";
-        Sfx.playChord(schoolAnswer, 60);
+        tsStatus.textContent = schoolStep === 1
+          ? "再想一想 · 对照明快(+4) / 阴郁(+3)"
+          : "还差一点 · 再听一遍，注意明快 vs 阴郁";
+        if (schoolStep !== 1) Sfx.playChord(schoolAnswer, 60);
         return;
       }
       schoolStep++;
-      if (schoolStep < 2) {
-        tsStatus.textContent = "正确！再确认一题";
+      if (schoolStep < 3) {
+        tsStatus.textContent = "正确！下一题";
         setTimeout(() => runSchoolStep(null), 450);
         return;
       }
       tsStatus.textContent = "学会了！弹药威力提升，时间恢复";
       persistSkills({ major: skillMajor + 1, minor: skillMinor + 1, schoolDone: true });
-      showToast("技能升级 · 时间恢复");
+      // I06：学堂结业偶发回灵
+      if (lives < (player.maxLives || 3) && Math.random() < 0.4) {
+        lives++;
+        setLivesDisplay();
+        floatTexts.push({ x: player.x, y: player.y - 22, text: "学堂回灵", life: 1, color: "#ff8090" });
+        showToast("学堂回灵 · 生命 +1");
+      } else {
+        showToast("技能升级 · 时间恢复");
+      }
       setTimeout(closeTimeStop, 700);
     }
 
@@ -1474,6 +2847,23 @@
       renderPack();
       notes.splice(i, 1);
       sessionPicks++;
+      if (n.def.accidental) {
+        mutationStacks += MUTATION_STACK_PER_PICK;
+        floatTexts.push({
+          x: n.x, y: n.y - 22, text: "突变层+", life: 0.9, color: "#c8a0ff"
+        });
+        // I41：首次捡到变化音 → 短教学打断
+        if (!sessionAccidentalTaught) {
+          sessionAccidentalTaught = true;
+          showToast("变化音 ♯升半音 / ♭降半音 · 叠满可变异");
+          hintEl.textContent = "变化音：比相邻白键高/低半音 · 集满突变层可三选一增益";
+        }
+        while (mutationStacks >= MUTATION_CHOICE_EVERY) {
+          mutationStacks -= MUTATION_CHOICE_EVERY;
+          openMutationChoice();
+        }
+        renderStacks();
+      }
       awardNote(n.def.letter);
       spawnNote();
       const banked = tryBankAmmo();
@@ -1484,77 +2874,742 @@
         if (banked2 && !pendingSchoolKind) pendingSchoolKind = banked2;
         if (banked2 && !banked) maybeTriggerSchool(banked2);
       }
+      if (!whyOpen) tryPerfectFifthStability();
+      if (!whyOpen) tryOctaveResonance();
+      if (!banked && !whyOpen) maybeChordComposeHint(true);
     }
 
-    function hurtPlayer() {
+    let sessionDeaths = 0;
+    let sessionBestWave = 1;
+
+    function showDefeatSummary() {
+      const lines = [
+        `败北小结 · 波次 ${wave}`,
+        `本局叠层击杀 ${correctKills} · 拾音 ${sessionPicks}`,
+        `倒下 ${sessionDeaths} 次 · 可 P 暂停对照抗性`
+      ];
+      showToast(lines[0]);
+      floatTexts.push({
+        x: player.x, y: player.y - 40,
+        text: lines[1],
+        life: 2.2,
+        color: "#ffc090"
+      });
+      hintEl.textContent = lines.join(" · ");
+    }
+
+    function hurtPlayer(opts) {
+      opts = opts || {};
       if (Date.now() < invulnUntil) return;
       if (Date.now() < ramUntil) return; // 撞击中免疫
+      if (window.SpiritMutation) {
+        const mit = SpiritMutation.mitigateIncoming(mutationLevels);
+        if (mit.blocked) {
+          invulnUntil = Date.now() + Math.floor(INVULN_MS * 0.45);
+          burst(player.x, player.y, "#90c8ff");
+          floatTexts.push({ x: player.x, y: player.y - 20, text: "突变格挡", life: 0.95, color: "#90c8ff" });
+          showToast("突变韧性 · 格挡");
+          return;
+        }
+        if (mit.factor < 1 && Math.random() > mit.factor) {
+          invulnUntil = Date.now() + Math.floor(INVULN_MS * 0.55);
+          floatTexts.push({ x: player.x, y: player.y - 18, text: "减伤", life: 0.75, color: "#a0b8ff" });
+          showToast("突变韧性 · 减伤");
+          return;
+        }
+      }
       if (armorCharges > 0) {
+        if (opts.heavy && Math.random() < 0.32) {
+          floatTexts.push({ x: player.x, y: player.y - 20, text: "重击穿透", life: 0.85, color: "#ff9070" });
+        } else {
         armorCharges--;
         invulnUntil = Date.now() + Math.floor(INVULN_MS * 0.7);
         burst(player.x, player.y, "#c89050");
         floatTexts.push({ x: player.x, y: player.y - 20, text: "刚盾抵挡", life: 0.95, color: "#c89050" });
         showToast(armorCharges > 0 ? `刚盾抵挡 · 剩余 ${armorCharges}` : "刚盾碎裂");
         return;
+        }
       }
       lives--;
       invulnUntil = Date.now() + INVULN_MS;
       Sfx.hit();
+      flashHurt();
       setLivesDisplay();
       hintEl.textContent = lives > 0 ? "被暗影碰到了 · 暂避片刻" : "灵光消散 · 重新凝聚";
       if (lives <= 0) {
-        lives = player.maxLives || 3;
-        setLivesDisplay();
-        // 不强制回原点：原地重聚 + 清场喘息
-        enemies = [];
-        bullets = [];
-        invulnUntil = Date.now() + DEATH_BREATH_MS;
-        wave = Math.max(1, wave - 1);
-        startBreath(DEATH_BREATH_MS, "灵光重聚 · 原地喘息，不强制回中心");
+        sessionDeaths++;
+        sessionBestWave = Math.max(sessionBestWave, wave);
+        openDefeat();
       }
     }
 
-    async function startGame() {
+    function openDefeat() {
+      defeatOpen = true;
+      hideBossReply();
+      if (campaignMode && campaignRunActive) {
+        // 败北前快照（生命按重试时回满）；不清远征养成
+        campaignRunSnap = captureCampaignRun();
+      }
+      clearSpawnStagger();
+      pendingSpawns = 0;
+      enemies = [];
+      bullets = [];
+      if (window.SpiritBoss) SpiritBoss.reset();
+      // 练习房败北清僚机；远征局保留在 snap 里，战场清空即可
+      if (!campaignMode && window.SpiritDrones && SpiritDrones.reset) SpiritDrones.reset();
+      else if (campaignMode && window.SpiritDrones && SpiritDrones.reset) SpiritDrones.reset();
+      bossAnnouncePending = null;
+      bossTeachOpen = false;
+      bossSpawnDeferred = null;
+      waveLive = false;
+      breathUntil = 0;
+      invulnUntil = Date.now() + 999999;
+      if (breathBannerEl) breathBannerEl.classList.remove("show");
+      if (bossTeachEl) { bossTeachEl.classList.remove("show"); bossTeachEl.setAttribute("aria-hidden", "true"); }
+      if (defeatSummaryEl) {
+        defeatSummaryEl.textContent = campaignMode
+          ? `远征局养成仍在。可重试本关（保留弹药/进化/僚机），或回星图整备。抵达波次 ${wave} · 叠层 ${correctKills}。`
+          : `抵达波次 ${wave} · 叠层击杀 ${correctKills} · 拾音 ${sessionPicks} · 倒下 ${sessionDeaths} 次。整备心神，再战一次。`;
+      }
+      if (defeatRestartBtn) defeatRestartBtn.textContent = campaignMode ? "重试本关" : "重新开始";
+      if (defeatExitBtn) defeatExitBtn.textContent = campaignMode ? "回战役星图" : "返回菜单";
+      if (defeatPanelEl) {
+        defeatPanelEl.classList.add("show");
+        defeatPanelEl.setAttribute("aria-hidden", "false");
+      }
+      showToast(campaignMode ? "灵光消散 · 养成保留" : "灵光消散 · 选择重新开始或返回");
+    }
+
+    function closeDefeat() {
+      defeatOpen = false;
+      if (defeatPanelEl) {
+        defeatPanelEl.classList.remove("show");
+        defeatPanelEl.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    function restartRun() {
+      closeDefeat();
+      started = false;
+      startGame.locking = false;
+      if (campaignMode && currentNode) {
+        const node = currentNode;
+        startNodeBattle(node);
+      } else {
+        startGame();
+      }
+    }
+
+    // ---- I60 终局叙事 ----
+    function finalePages() {
+      return (SD.FINALE_PAGES && SD.FINALE_PAGES.length)
+        ? SD.FINALE_PAGES
+        : [
+          { title: "星海将息", body: "噬律·失谐君主倒下了。" },
+          { title: "女神寄语", body: "恭喜你摘到了属于自己的那颗星。去演奏吧。" }
+        ];
+    }
+    function renderFinalePage() {
+      const pages = finalePages();
+      const p = pages[Math.min(finalePage, pages.length - 1)] || pages[0];
+      const last = finalePage >= pages.length - 1;
+      if (finaleStepEl) finaleStepEl.textContent = `终局 · ${finalePage + 1}/${pages.length}`;
+      if (finaleTitleEl) finaleTitleEl.textContent = p.title || "";
+      if (finaleBodyEl) finaleBodyEl.textContent = p.body || "";
+      if (!finaleActionsEl) return;
+      finaleActionsEl.innerHTML = "";
+      if (!last) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "primary";
+        btn.id = "finaleNext";
+        btn.textContent = "继续";
+        btn.addEventListener("click", (e) => { e.stopPropagation(); advanceFinale(); });
+        finaleActionsEl.appendChild(btn);
+      } else {
+        const play = document.createElement("button");
+        play.type = "button";
+        play.className = "primary";
+        play.textContent = "去演奏";
+        play.addEventListener("click", (e) => {
+          e.stopPropagation();
+          finishFinale("perform");
+        });
+        const cont = document.createElement("button");
+        cont.type = "button";
+        cont.textContent = campaignMode ? "回战役星图" : "收下成长";
+        cont.addEventListener("click", (e) => {
+          e.stopPropagation();
+          finishFinale(campaignMode ? "campaign" : "reward");
+        });
+        finaleActionsEl.appendChild(play);
+        finaleActionsEl.appendChild(cont);
+      }
+    }
+    function openFinale() {
+      finaleOpen = true;
+      finalePage = 0;
+      hideBossReply();
+      waveLive = false;
+      breathUntil = 0;
+      if (breathBannerEl) breathBannerEl.classList.remove("show");
+      clearSpawnStagger();
+      pendingSpawns = 0;
+      if (window.SpiritBoss && SpiritBoss.clearBeam) SpiritBoss.clearBeam();
+      renderFinalePage();
+      if (finalePanelEl) {
+        finalePanelEl.classList.add("show");
+        finalePanelEl.setAttribute("aria-hidden", "false");
+      }
+      showToast("终局 · 星海将息");
+    }
+    function advanceFinale() {
+      if (!finaleOpen) return;
+      const pages = finalePages();
+      if (finalePage < pages.length - 1) {
+        finalePage++;
+        renderFinalePage();
+      }
+    }
+    function closeFinale() {
+      finaleOpen = false;
+      if (finalePanelEl) {
+        finalePanelEl.classList.remove("show");
+        finalePanelEl.setAttribute("aria-hidden", "true");
+      }
+    }
+    function finishFinale(path) {
+      closeFinale();
+      if (path === "perform") {
+        if (campaignMode && currentNode && window.SpiritCampaign) {
+          SpiritCampaign.markCleared(currentNode.id);
+        }
+        requestOpenPerform();
+        return;
+      }
+      if (path === "campaign") {
+        // 终局后回星图：走结算升级链，勿再静默踢出
+        returnToCampaignMap({ forceMark: true });
+        return;
+      }
+      // 非战役：保留君主成长奖励链
+      openMegaReward();
+    }
+    if (finaleNextBtn) {
+      finaleNextBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        advanceFinale();
+      });
+    }
+
+    // ---- I62 战役星图 ----
+    function renderCampaignMap() {
+      if (!campaignMapEl || !window.SpiritCampaign) return;
+      const SC = window.SpiritCampaign;
+      const si = currentSectorIdx;
+      const ns = SC.nodes(si);
+      campaignMapEl.innerHTML = "";
+      // 连线（SVG polyline 串起所有节点）
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("viewBox", "0 0 100 100");
+      svg.setAttribute("preserveAspectRatio", "none");
+      const pts = ns.map((n) => `${n.x},${n.y}`).join(" ");
+      const line = document.createElementNS(svgNS, "polyline");
+      line.setAttribute("points", pts);
+      line.setAttribute("fill", "none");
+      line.setAttribute("stroke", "rgba(150,130,220,0.35)");
+      line.setAttribute("stroke-width", "0.7");
+      line.setAttribute("stroke-dasharray", "2 1.6");
+      svg.appendChild(line);
+      campaignMapEl.appendChild(svg);
+      // 节点
+      ns.forEach((n, idx) => {
+        const cleared = SC.isCleared(n.id);
+        const unlocked = SC.isUnlocked(si, idx);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cmap-node " + (cleared ? "cleared" : (unlocked ? "unlocked" : "locked")) + (n.type === "lord" ? " lord" : "");
+        btn.style.left = n.x + "%";
+        btn.style.top = n.y + "%";
+        const dot = document.createElement("span");
+        dot.className = "cmap-dot";
+        dot.textContent = cleared ? "✦" : (unlocked ? (n.type === "lord" ? "★" : String(idx + 1)) : "🔒");
+        const label = document.createElement("span");
+        label.className = "cmap-label";
+        label.textContent = (n.type === "lord" ? "领主 · " : "") + n.title;
+        btn.appendChild(dot);
+        btn.appendChild(label);
+        if (unlocked) {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            startNodeBattle(n);
+          });
+        }
+        campaignMapEl.appendChild(btn);
+      });
+    }
+
+    function renderCampaignNav() {
+      if (!campaignNavEl || !window.SpiritCampaign) return;
+      const SC = window.SpiritCampaign;
+      campaignNavEl.innerHTML = "";
+      if (SC.sectorCount() <= 1) return;
+      for (let i = 0; i < SC.sectorCount(); i++) {
+        const unlocked = SC.isSectorUnlocked(i);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cmap-sector" + (i === currentSectorIdx ? " active" : "") + (unlocked ? "" : " locked");
+        btn.textContent = unlocked ? SC.sector(i).name : "🔒 " + SC.sector(i).name;
+        if (unlocked) {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            currentSectorIdx = i;
+            refreshCampaign();
+          });
+        }
+        campaignNavEl.appendChild(btn);
+      }
+    }
+
+    function refreshCampaign() {
+      const SC = window.SpiritCampaign;
+      if (campaignTitleEl) {
+        const done = SC.clearedCount(currentSectorIdx);
+        const total = SC.nodes(currentSectorIdx).length;
+        campaignTitleEl.textContent = `${SC.sector(currentSectorIdx).name} · 战役星图 · 已通 ${done}/${total}`;
+      }
+      renderCampaignNav();
+      renderCampaignMap();
+    }
+
+    function openCampaign() {
+      if (!window.SpiritCampaign) { pickModeAndStart("expedition"); return; }
+      forceCloseAllPanels({ keepCampaign: true });
+      campaignOpen = true;
+      campaignMode = false;
+      hideBossReply();
+      if (overlay) overlay.classList.add("hidden"); // 避免起始菜单穿透/挡点击
+      // 默认停在首个未全清、且已解锁的星区
+      let si = SpiritCampaign.firstOpenSector();
+      while (si > 0 && !SpiritCampaign.isSectorUnlocked(si)) si--;
+      currentSectorIdx = si;
+      refreshCampaign();
+      if (campaignPanelEl) {
+        campaignPanelEl.classList.add("show");
+        campaignPanelEl.setAttribute("aria-hidden", "false");
+      }
+    }
+
+    function closeCampaign() {
+      campaignOpen = false;
+      if (campaignPanelEl) {
+        campaignPanelEl.classList.remove("show");
+        campaignPanelEl.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    // ---- I66 远征局养成 + 节点结算 ----
+    function captureCampaignRun() {
+      return {
+        lives: Math.max(0, lives),
+        maxLives: player.maxLives || 3,
+        baseR: player.baseR || 14,
+        ammoMajor, ammoMinor, ammoSuper, selectedAmmo,
+        backpack: backpack.map((n) => Object.assign({}, n)),
+        correctKills, sessionPicks,
+        traitLifeSteal, traitCraftMaster, armorCharges,
+        traitSwiftStacks,
+        mutationLevels: mutationLevels ? Object.assign({}, mutationLevels) : { crit: 0, armorBreak: 0, resist: 0 },
+        mutationStacks: mutationStacks || 0,
+        drones: (window.SpiritDrones && SpiritDrones.exportState) ? SpiritDrones.exportState() : null
+      };
+    }
+
+    function applyCampaignRun(snap, opts) {
+      opts = opts || {};
+      if (!snap) return;
+      player.maxLives = snap.maxLives || 3;
+      player.baseR = snap.baseR || 14;
+      player.r = player.baseR;
+      lives = opts.fullHeal ? player.maxLives : Math.max(0, snap.lives);
+      if (opts.fullHeal || lives <= 0) lives = player.maxLives;
+      ammoMajor = snap.ammoMajor || 0;
+      ammoMinor = snap.ammoMinor || 0;
+      ammoSuper = snap.ammoSuper || 0;
+      selectedAmmo = snap.selectedAmmo || "major";
+      backpack = Array.isArray(snap.backpack) ? snap.backpack.map((n) => Object.assign({}, n)) : [];
+      correctKills = snap.correctKills || 0;
+      sessionPicks = snap.sessionPicks || 0;
+      traitLifeSteal = snap.traitLifeSteal || 0;
+      traitCraftMaster = !!snap.traitCraftMaster;
+      traitSwiftStacks = snap.traitSwiftStacks || 0;
+      armorCharges = snap.armorCharges || 0;
+      mutationLevels = snap.mutationLevels
+        ? Object.assign({}, snap.mutationLevels)
+        : { crit: 0, armorBreak: 0, resist: 0 };
+      mutationStacks = snap.mutationStacks || 0;
+      if (window.SpiritDrones && SpiritDrones.importState) SpiritDrones.importState(snap.drones);
+      setLivesDisplay();
+      renderPack();
+      renderAmmo();
+      renderStacks();
+    }
+
+    function clearCampaignRun() {
+      campaignRunActive = false;
+      campaignRunSnap = null;
+      farmWaveCount = 0;
+    }
+
+    function saveCampaignRunSnap() {
+      if (!campaignMode || !campaignRunActive) return;
+      campaignRunSnap = captureCampaignRun();
+    }
+
+    function openNodeSettle() {
+      if (!currentNode) { onNodeClearedLegacy(); return; }
+      nodeSettleOpen = true;
+      waveLive = false;
+      breathUntil = 0;
+      if (breathBannerEl) breathBannerEl.classList.remove("show");
+      saveCampaignRunSnap();
+      const already = window.SpiritCampaign && SpiritCampaign.isCleared(currentNode.id);
+      const title = currentNode.title || "本关";
+      if (nodeSettleTitleEl) nodeSettleTitleEl.textContent = already ? `${title} · 清剿` : `${title} · 清场`;
+      if (nodeSettleBodyEl) {
+        nodeSettleBodyEl.textContent = already
+          ? "已通关节点。可继续清剿刷养成，或回星图选下一处（状态会保留）。"
+          : "本关清空了。可继续清剿巩固，或回星图推进——首次通关将获得一次成长三选一。";
+      }
+      if (nodeSettleMapBtn) {
+        nodeSettleMapBtn.textContent = already ? "回星图" : "回星图并升级";
+      }
+      if (nodeSettlePanelEl) {
+        nodeSettlePanelEl.classList.add("show");
+        nodeSettlePanelEl.setAttribute("aria-hidden", "false");
+      }
+      showToast(already ? "可继续清剿或回星图" : "清场 · 选继续清剿或回星图升级");
+    }
+
+    function closeNodeSettle() {
+      nodeSettleOpen = false;
+      if (nodeSettlePanelEl) {
+        nodeSettlePanelEl.classList.remove("show");
+        nodeSettlePanelEl.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    function farmCurrentNode() {
+      closeNodeSettle();
+      farmWaveCount++;
+      enemies = [];
+      bullets = [];
+      clearSpawnStagger();
+      pendingSpawns = 0;
+      if (window.SpiritBoss) SpiritBoss.reset();
+      breathUntil = 0;
+      if (breathBannerEl) breathBannerEl.classList.remove("show");
+      const w = (currentNode && currentNode.wave) || wave;
+      wave = w;
+      spawnWave(w);
+      showToast(`继续清剿 · 第 ${farmWaveCount + 1} 轮 · 状态保留`);
+    }
+
+    function returnToCampaignMap(opts) {
+      opts = opts || {};
+      closeNodeSettle();
+      const node = currentNode;
+      const firstClear = node && window.SpiritCampaign && !SpiritCampaign.isCleared(node.id);
+      if (node && window.SpiritCampaign && (firstClear || opts.forceMark)) {
+        SpiritCampaign.markCleared(node.id);
+      }
+      saveCampaignRunSnap();
+      campaignMode = false;
+      waveLive = false;
+      started = false;
+      startGame.locking = false;
+
+      const goMap = () => {
+        if (node && (node.type === "lord" || node.type === "mega")) {
+          let lesson = "";
+          try {
+            const st = SD.WAVE_STAGES && SD.WAVE_STAGES[node.wave];
+            if (st && st.lesson) lesson = st.lesson;
+          } catch { /* */ }
+          showToast(`📜 ${node.title} · ${lesson || "星区推进"}`);
+        }
+        openCampaign();
+      };
+
+      if (firstClear || opts.forceUpgrade) {
+        // 首次通关：强制成长三选一，再回星图
+        applyCampaignRun(campaignRunSnap, { fullHeal: false });
+        started = true; // evo UI 需要
+        pendingAfterEvo = () => {
+          saveCampaignRunSnap();
+          started = false;
+          goMap();
+        };
+        const tier = Math.max(1, getEvoTier() || 1);
+        openEvoChoice(tier);
+        if (evoTierLabel) evoTierLabel.textContent = "关卡成长 · 选一条强化（远征局保留）";
+        showToast("首次通关 · 选择成长");
+        return;
+      }
+      goMap();
+    }
+
+    /** 旧路径兜底（无节点时） */
+    function onNodeClearedLegacy() {
+      campaignMode = false;
+      openCampaign();
+    }
+
+    function onNodeCleared() {
+      // 兼容旧调用：改为结算面板
+      openNodeSettle();
+    }
+
+    function startNodeBattle(node) {
+      let preserve = false;
+      if (campaignRunActive) {
+        saveCampaignRunSnap();
+        preserve = !!campaignRunSnap;
+      } else {
+        campaignRunActive = true;
+        campaignRunSnap = null;
+      }
+      forceCloseAllPanels();
+      closeCampaign();
+      closeDefeat();
+      closeNodeSettle();
+      currentNode = node;
+      campaignMode = true;
+      farmWaveCount = 0;
+      pendingStartWave = node.wave || 1;
+      saveRunMode("expedition");
+      started = false;
+      startGame.locking = false;
+      invulnUntil = 0;
+      startGame({ preserveRun: preserve });
+    }
+
+    // ---- I65 台词交互（非模态·自动消失） ----
+    function hideBossReply() {
+      if (bossReplyTimer) { clearTimeout(bossReplyTimer); bossReplyTimer = 0; }
+      if (bossReplyEl) {
+        bossReplyEl.classList.remove("show");
+        bossReplyEl.setAttribute("aria-hidden", "true");
+      }
+    }
+    function showBossReply(line) {
+      if (!bossReplyEl || !started) return;
+      if (bossReplyLineEl) bossReplyLineEl.textContent = line ? `「${line}」` : "君主凝视着你……";
+      bossReplyEl.classList.add("show");
+      bossReplyEl.setAttribute("aria-hidden", "false");
+      if (bossReplyTimer) clearTimeout(bossReplyTimer);
+      bossReplyTimer = setTimeout(hideBossReply, 5500); // 不回应则自动消失
+    }
+    function applyBossReply(kind) {
+      const now = Date.now();
+      if (kind === "provoke") {
+        swiftUntil = Math.max(swiftUntil, now + 4500);
+        showToast("挑衅 · 斗志涌起，身法提速");
+        floatTexts.push({ x: player.x, y: player.y - player.r - 14, text: "斗志·提速", life: 1.3, color: "#ffcf80" });
+      } else if (kind === "soothe") {
+        let hit = false;
+        for (const e of enemies) {
+          if (e.isBoss) {
+            hit = true;
+            e.skillCdUntil = Math.max(e.skillCdUntil || 0, now + 2800);
+            e.beamCdUntil = Math.max(e.beamCdUntil || 0, now + 2800);
+            e.pendingSlamAt = 0;
+            floatTexts.push({ x: e.x, y: e.y - e.r - 16, text: "被安抚·迟疑", life: 1.4, color: "#8ff0c0" });
+          }
+        }
+        showToast(hit ? "安抚 · 不谐之息一滞" : "安抚 · 星海稍歇");
+      } else {
+        armorCharges = Math.min(3, armorCharges + 1);
+        renderAmmo();
+        showToast(`沉默 · 凝神聚气 · 刚盾 ×${armorCharges}`);
+        floatTexts.push({ x: player.x, y: player.y - player.r - 14, text: "凝神", life: 1.2, color: "#cdbcff" });
+      }
+      hideBossReply();
+    }
+    if (bossReplyEl) {
+      bossReplyEl.querySelectorAll(".br-opt").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          applyBossReply(btn.getAttribute("data-reply"));
+        });
+      });
+    }
+
+    function saveRunMode(mode) {
+      runMode = mode === "practice" ? "practice" : "expedition";
+      try {
+        sessionStorage.setItem(LS_RUN_MODE, runMode);
+        localStorage.setItem(LS_RUN_MODE, runMode);
+      } catch { /* */ }
+    }
+
+    function practiceCap() {
+      return (SD.PRACTICE_WAVE_CAP != null ? SD.PRACTICE_WAVE_CAP : (SD.SECTOR_WAVES || 6));
+    }
+
+    function openPracticeClear() {
+      practiceClearOpen = true;
+      waveLive = false;
+      breathUntil = 0;
+      if (breathBannerEl) breathBannerEl.classList.remove("show");
+      if (practicePanelEl) {
+        practicePanelEl.classList.add("show");
+        practicePanelEl.setAttribute("aria-hidden", "false");
+      }
+      showToast("练习房通关");
+    }
+
+    function closePracticeClear() {
+      practiceClearOpen = false;
+      if (practicePanelEl) {
+        practicePanelEl.classList.remove("show");
+        practicePanelEl.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    function restartPracticeRun() {
+      closePracticeClear();
+      saveRunMode("practice");
+      started = false;
+      startGame.locking = false;
+      startGame();
+    }
+
+    async function startGame(opts) {
       if (started || startGame.locking) return;
+      opts = opts || {};
+      const preserveRun = !!opts.preserveRun && !!campaignRunSnap;
       startGame.locking = true;
       try {
         try {
           await Sfx.init();
           Sfx.playSung(BASE_MIDI, 0.28, 0.14);
         } catch { /* muted ok */ }
+        // 进关前清干净所有模态（灵气达标/进化/收编等叠层会导致世界假死）
+        forceCloseAllPanels();
         started = true;
         syncSpiritFromStore();
+        pendingVictory = false;
         loadSkills();
-        lives = 3;
-        sessionPicks = 0;
-        correctKills = 0;
+        if (!preserveRun) {
+          lives = 3;
+          sessionPicks = 0;
+          correctKills = 0;
+          sessionDeaths = 0;
+          sessionBestWave = 1;
+          traitLifeSteal = 0;
+          traitCraftMaster = false;
+          traitSwiftStacks = 0;
+          armorCharges = 0;
+          ammoMajor = 0;
+          ammoMinor = 0;
+          ammoSuper = 0;
+          selectedAmmo = "major";
+          backpack = [];
+          mutationStacks = 0;
+          mutationLevels = (window.SpiritMutation && SpiritMutation.emptyLevels)
+            ? SpiritMutation.emptyLevels()
+            : { crit: 0, armorBreak: 0, resist: 0 };
+        }
         lastRamAt = 0;
         ramUntil = 0;
-        wave = 1;
+        lastDodgeAt = 0;
+        dodgeUntil = 0;
+        wave = pendingStartWave || 1;
+        pendingStartWave = 0;
         breathUntil = Date.now() + 999999;
         waveLive = false;
         evoChoosing = false;
-        traitLifeSteal = 0;
-        traitCraftMaster = false;
+        mutationChoosing = false;
+        megaRewardOpen = false;
+        sectorFlowOpen = false;
+        practiceClearOpen = false;
+        nodeSettleOpen = false;
+        firstSectorReviewed = false;
+        sectorFireBonus = 0;
+        sectorResistBonus = 0;
+        sectorReviewAnswered = false;
+        if (!preserveRun) mutationStacks = 0;
+        sessionAccidentalTaught = false;
+        sessionResistTaught = false;
+        sessionBossTaught = false;
+        sessionPitTaught = false;
+        sessionFogTaught = false;
+        sessionChordHintTaught = false;
+        sessionAutoSwitchTaught = false;
+        sessionBreathTaught = false;
+        teachOpen = false;
+        bossTeachOpen = false;
+        bossSpawnDeferred = null;
+        bossTeachAnswered = false;
+        if (teachTipEl) {
+          teachTipEl.classList.remove("show");
+          teachTipEl.setAttribute("aria-hidden", "true");
+        }
+        if (bossTeachEl) {
+          bossTeachEl.classList.remove("show");
+          bossTeachEl.setAttribute("aria-hidden", "true");
+        }
+        if (!preserveRun) {
+          mutationLevels = (window.SpiritMutation && SpiritMutation.emptyLevels)
+            ? SpiritMutation.emptyLevels()
+            : { crit: 0, armorBreak: 0, resist: 0 };
+        }
+        recruitOpen = false;
+        recruitPending = null;
+        recruitQueue = [];
         evoPanelEl.classList.remove("show");
         evoPanelEl.setAttribute("aria-hidden", "true");
-        armorCharges = 0;
+        if (mutationPanelEl) {
+          mutationPanelEl.classList.remove("show");
+          mutationPanelEl.setAttribute("aria-hidden", "true");
+        }
+        if (megaRewardPanelEl) {
+          megaRewardPanelEl.classList.remove("show");
+          megaRewardPanelEl.setAttribute("aria-hidden", "true");
+        }
+        if (sectorPanelEl) {
+          sectorPanelEl.classList.remove("show");
+          sectorPanelEl.setAttribute("aria-hidden", "true");
+        }
+        if (recruitPanelEl) {
+          recruitPanelEl.classList.remove("show");
+          recruitPanelEl.setAttribute("aria-hidden", "true");
+        }
+        if (!preserveRun) {
+          armorCharges = 0;
+        }
         swiftUntil = 0;
         paused = false;
         pausePanelEl.classList.remove("show");
         pausePanelEl.setAttribute("aria-hidden", "true");
         pauseBtn.textContent = "暂停 P";
-        backpack = [];
         bullets = [];
         loot = [];
-        ammoMajor = 0;
-        ammoMinor = 0;
-        ammoSuper = 0;
-        selectedAmmo = "major";
-        player.baseR = 14;
-        player.maxLives = 3;
-        player.r = 14;
-        applyEvolutionStats();
+        if (!preserveRun) {
+          player.baseR = 14;
+          player.maxLives = 3;
+          player.r = 14;
+          applyEvolutionStats();
+          // I55 血量阶梯：战役越深，生命上限越高
+          if (campaignMode && currentSectorIdx > 0) {
+            player.maxLives += currentSectorIdx;
+            lives = player.maxLives;
+          }
+        } else {
+          applyCampaignRun(campaignRunSnap, { fullHeal: true });
+        }
         setLivesDisplay();
         renderPack();
         renderAmmo();
@@ -1565,19 +3620,36 @@
         enemies = [];
         particles = [];
         floatTexts = [];
+        if (!preserveRun && window.SpiritDrones) SpiritDrones.reset();
+        if (window.SpiritHazards) SpiritHazards.reset();
+        if (window.SpiritBoss) SpiritBoss.reset();
+        bossAnnouncePending = null;
         overlay.classList.add("hidden");
         if (!victoryOpen) {
-          hintEl.textContent = "波次制 · 清场喘息 · P 暂停思考";
+          let focus = runMode === "practice"
+            ? `练习房 · 首星区 1–${practiceCap()} · 可反复刷 · P 暂停`
+            : (preserveRun
+              ? "远征局 · 养成已保留 · P 暂停 · 击杀可收编"
+              : "远征 · 坑雾柱晶 · P 暂停 · E 撞柱 · 击杀可收编僚机");
+          try {
+            const stored = sessionStorage.getItem("mtg-spirit-focus");
+            if (stored) focus = `星图焦点：${stored} · 探险坑雾柱晶`;
+          } catch { /* */ }
+          hintEl.textContent = focus;
         }
+        if (window.SpiritHazards) SpiritHazards.ensureForWave(wave, W, H, player);
         for (let i = 0; i < 5; i++) spawnNote();
-        spawnWave(1);
+        spawnWave(wave);
+        if (preserveRun) saveCampaignRunSnap();
       } finally {
         startGame.locking = false;
       }
     }
 
     function update(dt) {
-      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing) return;
+      if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen || campaignOpen || defeatOpen || finaleOpen || nodeSettleOpen) return;
+      // 轻打击反馈：击杀顿帧
+      if (Date.now() < hitStopUntil) dt *= 0.12;
       let dx = 0, dy = 0;
       if (keys.w || keys.arrowup) dy -= 1;
       if (keys.s || keys.arrowdown) dy += 1;
@@ -1585,6 +3657,7 @@
       if (keys.d || keys.arrowright) dx += 1;
       const now = Date.now();
       const ramming = now < ramUntil;
+      const dodging = now < dodgeUntil;
       if (ramming) {
         player.x += player.ramVx * dt;
         player.y += player.ramVy * dt;
@@ -1606,16 +3679,94 @@
             }
           }
         }
+      } else if (dodging) {
+        player.x += (player.dodgeVx || 0) * dt;
+        player.y += (player.dodgeVy || 0) * dt;
       } else if (dx || dy) {
         const len = Math.hypot(dx, dy) || 1;
         facing.x = dx / len;
         facing.y = dy / len;
-        const spd = PLAYER_SPEED * (Date.now() < swiftUntil ? 1.38 : 1);
+        const fogMul = (window.SpiritHazards && SpiritHazards.getMoveMul)
+          ? SpiritHazards.getMoveMul(player)
+          : 1;
+        if (fogMul < 1 && !sessionFogTaught) {
+          sessionFogTaught = true;
+          showToast("雾区减速 · 移动变慢");
+        }
+        const sprint = (keys.shift && Date.now() >= dodgeUntil) ? 1.28 : 1;
+        const swiftTrait = 1 + Math.min(0.24, traitSwiftStacks * 0.08);
+        const spd = PLAYER_SPEED * (Date.now() < swiftUntil ? 1.38 : 1) * fogMul * sprint * swiftTrait;
         player.x += facing.x * spd * dt;
         player.y += facing.y * spd * dt;
       }
       player.x = Math.max(player.r, Math.min(W - player.r, player.x));
       player.y = Math.max(player.r + 40, Math.min(H - player.r - 24, player.y));
+
+      if (window.SpiritHazards && SpiritHazards.resolvePlayer) {
+        SpiritHazards.resolvePlayer(player);
+        player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+        player.y = Math.max(player.r + 40, Math.min(H - player.r - 24, player.y));
+      }
+
+      if (window.SpiritHazards && SpiritHazards.tryRamBreak && ramming) {
+        const broke = SpiritHazards.tryRamBreak(player, true, lastRamAt);
+        if (broke > 0) {
+          showToast(broke > 1 ? "撞碎遗迹柱 · 开路！" : "遗迹柱碎裂 · 弹药+1");
+          burst(player.x, player.y, "#c8b090");
+          ammoMajor = Math.min(AMMO_CAP, ammoMajor + broke);
+          ammoMinor = Math.min(AMMO_CAP, ammoMinor + broke);
+          renderAmmo();
+          floatTexts.push({
+            x: player.x, y: player.y - 26,
+            text: `碎柱补给 +${broke}`,
+            life: 1.05, color: "#e8d0a0"
+          });
+          hitStopUntil = Date.now() + 40;
+        }
+      }
+
+      if (window.SpiritHazards) {
+        SpiritHazards.update({
+          dt,
+          now,
+          player,
+          ramming,
+          invulnUntil,
+          onFall(pit) {
+            if (!sessionPitTaught) {
+              sessionPitTaught = true;
+              showToast("坑洞会坠落弹出并受伤");
+            }
+            const eject = (window.SpiritData && SpiritData.PIT_EJECT) || 72;
+            const ang = Math.atan2(player.y - pit.y, player.x - pit.x) || Math.random() * Math.PI * 2;
+            player.x = pit.x + Math.cos(ang) * (pit.r + eject);
+            player.y = pit.y + Math.sin(ang) * (pit.r + eject);
+            player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+            player.y = Math.max(player.r + 40, Math.min(H - player.r - 24, player.y));
+            if (SpiritHazards.resolvePlayer) SpiritHazards.resolvePlayer(player);
+            burst(player.x, player.y, "#c07050");
+            floatTexts.push({ x: player.x, y: player.y - 22, text: "坠入深坑！", life: 1.05, color: "#e09070" });
+            showToast("坠入深坑 · 被弹出");
+            hurtPlayer();
+          },
+          onCrystal(c) {
+            burst(c.x, c.y, "#a8e0ff");
+            floatTexts.push({ x: c.x, y: c.y - 14, text: "遗迹晶石 +灵气", life: 1, color: "#b8ecff" });
+            showToast("拾取遗迹晶石 · 弹药+1");
+            awardNote("◇");
+            ammoMajor = Math.min(AMMO_CAP, ammoMajor + 1);
+            ammoMinor = Math.min(AMMO_CAP, ammoMinor + 1);
+            renderAmmo();
+            // I06：晶石偶发回血
+            if (lives < (player.maxLives || 3) && Math.random() < 0.28) {
+              lives++;
+              setLivesDisplay();
+              floatTexts.push({ x: c.x, y: c.y - 28, text: "晶石回灵", life: 1, color: "#ff8090" });
+            }
+            try { Sfx.playSung(BASE_MIDI + 7, 0.2, 0.12); } catch { /* */ }
+          }
+        });
+      }
 
       aimTarget = nearestEnemy();
 
@@ -1659,11 +3810,118 @@
         const frozen = now < e.slowUntil;
         const spd = frozen ? e.baseSpeed * (e.freezeDeep ? 0.12 : 0.32) : e.baseSpeed;
         e.speed = spd;
-        const ang = Math.atan2(player.y - e.y, player.x - e.x);
-        e.x += Math.cos(ang) * e.speed * dt;
-        e.y += Math.sin(ang) * e.speed * dt;
-        e.x += Math.sin(e.wobble) * (frozen ? 6 : 20) * dt;
+        const dashing = (e.dashUntil && now < e.dashUntil)
+          || (e.dashTelegraphUntil && now < e.dashTelegraphUntil);
+        if (!dashing) {
+          const ang = Math.atan2(player.y - e.y, player.x - e.x);
+          e.x += Math.cos(ang) * e.speed * dt;
+          e.y += Math.sin(ang) * e.speed * dt;
+          e.x += Math.sin(e.wobble) * (frozen ? 6 : 20) * dt;
+        }
+        if (e.meltUntil && now < e.meltUntil && e.meltDps) {
+          e.hp -= e.meltDps * dt;
+          if (Math.random() < dt * 4) {
+            particles.push({
+              x: e.x + (Math.random() - 0.5) * e.r,
+              y: e.y + (Math.random() - 0.5) * e.r,
+              vx: 0, vy: -0.6, life: 0.5, color: "#8090ff", r: 2
+            });
+          }
+        }
+        if (window.SpiritBoss) {
+          if (e.isBoss) {
+            SpiritBoss.updateBoss({
+              dt, now, boss: e, player, notes, sfx: Sfx,
+              onHurt(label, meta) {
+                if (now < invulnUntil || ramming) return;
+                floatTexts.push({ x: player.x, y: player.y - 24, text: label || "Boss技能", life: 0.9, color: "#ff9070" });
+                hurtPlayer({ heavy: meta && meta.weight >= 1.1 });
+                player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+                player.y = Math.max(player.r + 40, Math.min(H - player.r - 24, player.y));
+              },
+              onDevourFx(n) {
+                burst(n.x, n.y, "#c070ff");
+                floatTexts.push({ x: n.x, y: n.y - 8, text: "吞", life: 0.6, color: "#e0a0ff" });
+              },
+              onBeamCharge(b, line) {
+                flashHurt();
+                floatTexts.push({ x: player.x, y: player.y - 30, text: "聚能——Shift/E 闪避！", life: 1.2, color: "#ff5a5a" });
+                if (line && b) floatTexts.push({ x: b.x, y: b.y - b.r - 22, text: `「${line}」`, life: 1.4, color: "#ff96b0" });
+                showToast(b && b.isMega ? "君主聚能激光 · 闪避！" : "聚能激光 · 闪避！");
+              },
+              onStealPack() {
+                // 仅君主 / 背包较满时才吞，降低学习向惩罚
+                const boss = enemies.find(en => en.isBoss);
+                if (!boss || !boss.isMega) return;
+                if (backpack.length < 3) return;
+                if (Math.random() > 0.45) return;
+                const stolen = backpack.pop();
+                renderPack();
+                floatTexts.push({
+                  x: player.x, y: player.y - 28,
+                  text: `背包被吞 · ${stolen.letter}`,
+                  life: 1.1, color: "#e090ff"
+                });
+                showToast(`君主吞噬了背包里的 ${stolen.solfege || stolen.letter}`);
+              }
+            });
+            if (e.justEnraged) {
+              e.justEnraged = false;
+              showToast(e.rageLine || "狂暴");
+              flashHurt();
+              floatTexts.push({ x: e.x, y: e.y - e.r - 16, text: "狂暴", life: 1.3, color: "#ff6060" });
+              if (e.rageLine) floatTexts.push({ x: e.x, y: e.y - e.r - 36, text: `「${e.rageLine}」`, life: 1.5, color: "#ff96b0" });
+            }
+            if (e.justStagedTo) {
+              const st = e.justStagedTo;
+              e.justStagedTo = 0;
+              const pool = (SD.BOSS_LINES && (st >= 3 ? SD.BOSS_LINES.stage3 : SD.BOSS_LINES.stage2)) || [];
+              const line = pool.length ? pool[Math.floor(Math.random() * pool.length)] : "";
+              flashHurt();
+              burst(e.x, e.y, st >= 3 ? "#ff3050" : "#ff7040");
+              const tag = st >= 3 ? "第三阶 · 聚能激光解封" : "第二阶 · 重装启动";
+              showToast(line || tag);
+              floatTexts.push({ x: e.x, y: e.y - e.r - 18, text: tag, life: 1.6, color: st >= 3 ? "#ff5a5a" : "#ffa050" });
+              if (line) floatTexts.push({ x: e.x, y: e.y - e.r - 40, text: `「${line}」`, life: 1.7, color: "#ff96b0" });
+              if (st >= 3) showBossReply(line); // 阶段3 高潮：给玩家一次回应
+            }
+          } else {
+            SpiritBoss.updateMinion({ dt, now, enemy: e, player, frozen });
+          }
+          e.x = Math.max(e.r, Math.min(W - e.r, e.x));
+          e.y = Math.max(e.r + 40, Math.min(H - e.r - 24, e.y));
+        }
       });
+
+      // 融化 DoT 击杀
+      for (let j = enemies.length - 1; j >= 0; j--) {
+        if (enemies[j].hp <= 0) {
+          defeatEnemy(j, { mult: 1, killed: true, resisted: false }, "melt");
+        }
+      }
+
+      if (window.SpiritBoss) {
+        const ann = SpiritBoss.updateAnnounce(now);
+        if (ann && ann.ready && bossAnnouncePending) {
+          const { w, plan, mega } = bossAnnouncePending;
+          bossAnnouncePending = null;
+          const bossName = (ann.announce && ann.announce.name) || "领主";
+          if (!sessionBossTaught) {
+            sessionBossTaught = true;
+            openBossTeach(bossName, { w, plan, mega, ann });
+          } else {
+            spawnBoss(w, { mega, typeIndex: plan.bossTypeIndex });
+            for (let i = 0; i < (plan.escort || 0); i++) spawnEnemy();
+            showToast(`${bossName} 降临！`);
+            hintEl.textContent = `${bossName} · 吞音放技能 · 看抗性开火`;
+            showBossReply((ann.announce && ann.announce.line) || "");
+          }
+        }
+        SpiritBoss.updateHostile(dt, player, () => {
+          if (now >= invulnUntil && !ramming) hurtPlayer();
+        });
+        SpiritBoss.updateFx(dt);
+      }
 
       if (now >= invulnUntil && !ramming) {
         for (let i = 0; i < enemies.length; i++) {
@@ -1672,6 +3930,16 @@
             break;
           }
         }
+      }
+
+      if (window.SpiritDrones) {
+        SpiritDrones.update({
+          dt,
+          now,
+          player,
+          enemies,
+          addBullet: (b) => bullets.push(b)
+        });
       }
 
       for (let i = bullets.length - 1; i >= 0; i--) {
@@ -1709,16 +3977,43 @@
       floatTexts.forEach(f => { f.y -= 28 * dt; f.life -= dt * 0.9; });
       floatTexts = floatTexts.filter(f => f.life > 0);
 
-      // 波次：清场 → 喘息 → 下一波（不再持续补怪）
-      if (enemies.length === 0) {
+      // 波次：清场 → 整备 → 下一波（预告中 / 错开刷怪未完 不算清场）
+      // 纠偏：场上有怪却误标非战斗时，恢复战斗态并清掉整备计时
+      if (enemies.length > 0 && !waveLive) {
+        waveLive = true;
+        breathUntil = 0;
+        if (breathBannerEl) breathBannerEl.classList.remove("show");
+      }
+      const announcing = window.SpiritBoss && (SpiritBoss.getAnnounce() || bossAnnouncePending || bossTeachOpen || bossSpawnDeferred);
+      const stillSpawning = pendingSpawns > 0 || !!spawnStaggerTimer;
+      if (megaRewardOpen || sectorFlowOpen || practiceClearOpen || defeatOpen || campaignOpen || finaleOpen || nodeSettleOpen) {
+        updateBreathUi();
+        return; // 结算中不推进波次
+      }
+      // I66 战役：清场 → 结算面板（可继续清剿 / 回星图升级），禁止静默踢出
+      if (campaignMode && waveLive && enemies.length === 0 && !announcing && !stillSpawning) {
+        openNodeSettle();
+        return;
+      }
+      if (enemies.length === 0 && !announcing && !stillSpawning) {
         if (waveLive) {
-          const ms = wave <= 2 ? BREATH_MS_EARLY : BREATH_MS_LATER;
-          startBreath(ms, `清场 · 喘息 ${Math.round(ms / 1000)} 秒`);
+          const ms = (window.SpiritWaves && SpiritWaves.breathMs)
+            ? SpiritWaves.breathMs(wave)
+            : (wave <= 2 ? BREATH_MS_EARLY : BREATH_MS_LATER);
+          startBreath(ms, `清场整备 ${Math.round(ms / 1000)} 秒 · Enter 下一波`);
         } else if (Date.now() >= breathUntil) {
-          wave += 1;
-          spawnWave(wave);
+          if (runMode === "practice" && wave >= practiceCap()) {
+            openPracticeClear();
+          } else if (runMode === "expedition" && wave === practiceCap() && !firstSectorReviewed) {
+            firstSectorReviewed = true;
+            openSectorReview(0);
+          } else {
+            wave += 1;
+            spawnWave(wave);
+          }
         }
       }
+      updateBreathUi();
     }
 
     function drawGlow(x, y, r, color, alpha) {
@@ -1750,6 +4045,12 @@
       }
 
       if (!started) return;
+
+      if (window.SpiritHazards) SpiritHazards.draw(ctx, Date.now());
+      if (window.SpiritBoss) SpiritBoss.drawBossFx(ctx, Date.now());
+      if (window.SpiritBoss && SpiritBoss.drawSkillTelegraphs) {
+        SpiritBoss.drawSkillTelegraphs(ctx, Date.now(), enemies);
+      }
 
       // aim line to nearest enemy
       if (aimTarget && !victoryOpen && !timeStopped && !paused) {
@@ -1813,12 +4114,40 @@
         ctx.font = "bold 11px Segoe UI,sans-serif";
         ctx.textAlign = "center";
         ctx.fillText(e.tag, e.x, e.y + e.r + 11);
-        if (e.isBoss) {
-          ctx.strokeStyle = "rgba(255, 200, 120, 0.65)";
+        // 闪步/冲刺前摇预警线
+        if (e.dashTelegraphUntil && Date.now() < e.dashTelegraphUntil) {
+          const ang = e.dashAng || 0;
+          const dist = e.pendingDashDist || 55;
+          ctx.beginPath();
+          ctx.strokeStyle = "rgba(255, 180, 120, 0.85)";
           ctx.lineWidth = 2;
+          ctx.setLineDash([5, 4]);
+          ctx.moveTo(e.x, e.y);
+          ctx.lineTo(e.x + Math.cos(ang) * dist, e.y + Math.sin(ang) * dist);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.beginPath();
+          ctx.arc(e.x, e.y, e.r + 6, 0, Math.PI * 2);
+          ctx.strokeStyle = "rgba(255, 140, 100, 0.55)";
+          ctx.stroke();
+        }
+        if (e.dashUntil && Date.now() < e.dashUntil) {
+          ctx.beginPath();
+          ctx.strokeStyle = "rgba(200, 220, 255, 0.45)";
+          ctx.lineWidth = 3;
+          ctx.moveTo(e.x - (e.dashVx || 0) * 0.05, e.y - (e.dashVy || 0) * 0.05);
+          ctx.lineTo(e.x, e.y);
+          ctx.stroke();
+        }
+        if (e.isBoss) {
+          ctx.strokeStyle = e.phase >= 2 ? "rgba(255, 80, 90, 0.75)" : "rgba(255, 200, 120, 0.65)";
+          ctx.lineWidth = e.phase >= 2 ? 3 : 2;
           ctx.beginPath();
           ctx.arc(e.x, e.y, e.r + 4, 0, Math.PI * 2);
           ctx.stroke();
+          ctx.fillStyle = "rgba(255, 200, 160, 0.9)";
+          ctx.font = "bold 12px Segoe UI,sans-serif";
+          ctx.fillText(e.name || "Boss", e.x, e.y - e.r - 16);
         }
         // 小血条（Boss 始终显示）
         if (e.isBoss || e.hp < e.maxHp) {
@@ -1830,7 +4159,31 @@
         }
       });
 
-      bullets.forEach(b => drawGlow(b.x, b.y, b.r, b.color, 0.95));
+      bullets.forEach(b => {
+        // I05b：明快穿透拖尾 / 阴郁融化解离感
+        if (b.kind === "major" || b.kind === "super") {
+          ctx.beginPath();
+          ctx.strokeStyle = b.kind === "super" ? "rgba(255,176,232,0.45)" : "rgba(255,224,138,0.4)";
+          ctx.lineWidth = b.kind === "super" ? 3 : 2;
+          ctx.moveTo(b.x - (b.vx || 0) * 0.04, b.y - (b.vy || 0) * 0.04);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+        drawGlow(b.x, b.y, b.r, b.color, 0.95);
+        if (b.kind === "minor") {
+          ctx.beginPath();
+          ctx.strokeStyle = "rgba(144,176,255,0.5)";
+          ctx.lineWidth = 1.5;
+          ctx.arc(b.x, b.y, b.r + 3 + Math.sin(Date.now() * 0.02) * 1.5, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      });
+
+      if (window.SpiritDrones) {
+        SpiritDrones.draw(ctx, player, Date.now());
+      }
+
+      if (window.SpiritBoss) SpiritBoss.drawAnnounce(ctx, W, H, Date.now());
 
       particles.forEach(p => {
         ctx.beginPath();
@@ -1892,9 +4245,13 @@
       requestAnimationFrame(loop);
     }
 
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) lastTs = 0; // 回前台重置，避免大跳帧
+    });
+
     function onKey(e, down) {
       const k = e.key.toLowerCase();
-      if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", " ", "1", "2", "3", "4", "e", "p", "r"].includes(k)) {
+      if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", " ", "enter", "1", "2", "3", "4", "e", "p", "r", "t", "shift"].includes(k)) {
         e.preventDefault();
       }
       keys[k] = down;
@@ -1903,17 +4260,41 @@
         startGame();
         return;
       }
-      if ((k === "escape") && victoryOpen) {
-        dismissVictory();
-        return;
+      if (practiceClearOpen) return;
+      // Esc：紧急关闭任意结算面板（防假死）
+      if (k === "escape") {
+        if (victoryOpen || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen
+            || megaRewardOpen || sectorFlowOpen || practiceClearOpen || whyOpen || timeStopped
+            || finaleOpen || defeatOpen || nodeSettleOpen) {
+          // 升级回调未完成时 Esc：仍回星图，避免卡死
+          const after = pendingAfterEvo;
+          forceCloseAllPanels({ keepCampaign: campaignOpen });
+          if (typeof after === "function") {
+            pendingAfterEvo = null;
+            after();
+          } else {
+            showToast("已关闭面板 · 可继续");
+            flushPendingVictory();
+          }
+          return;
+        }
+        if (paused) {
+          togglePause();
+          return;
+        }
       }
-      if (evoChoosing) return;
+      if (evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen || practiceClearOpen || finaleOpen || defeatOpen || campaignOpen || nodeSettleOpen) return;
       if (whyOpen) {
-        if (k === " " || k === "enter" || k === "escape") dismissWhyChord();
+        if (k === " " || k === "enter") dismissWhyChord();
         return;
       }
+      if (teachOpen) {
+        if (k === " " || k === "enter") dismissResistTeach();
+        return;
+      }
+      if (bossTeachOpen) return;
       if (timeStopped || victoryOpen) return;
-      if (k === "p" || (k === "escape" && paused)) {
+      if (k === "p") {
         if (started) togglePause();
         return;
       }
@@ -1922,7 +4303,8 @@
         if (k === "2") selectAmmo("minor");
         if (k === "3") selectAmmo("flat");
         if (k === "4") selectAmmo("super");
-        if (k === "r") tryCraftSuper();
+        if (k === "r") cycleAmmoCf();
+        if (k === "t") tryCraftSuper();
         if (k === " " || k === "enter") setPaused(false);
         return;
       }
@@ -1931,18 +4313,30 @@
       if (k === "2") selectAmmo("minor");
       if (k === "3") selectAmmo("flat");
       if (k === "4") selectAmmo("super");
-      if (k === "r") tryCraftSuper();
-      if (k === " ") fire();
+      if (k === "r") cycleAmmoCf();
+      if (k === "t") tryCraftSuper();
+      if (k === " ") {
+        if (isBreathing()) skipBreath();
+        else fire();
+      }
+      if (k === "enter" && isBreathing()) skipBreath();
       if (k === "e") tryRam();
+      if (k === "shift" && !e.repeat) tryDodge();
     }
 
+    if (breathBannerEl) {
+      breathBannerEl.addEventListener("click", (e) => {
+        e.stopPropagation();
+        skipBreath();
+      });
+    }
     slotMajor.addEventListener("click", () => selectAmmo("major"));
     slotMinor.addEventListener("click", () => selectAmmo("minor"));
     slotFlat.addEventListener("click", () => selectAmmo("flat"));
     if (slotSuper) slotSuper.addEventListener("click", () => selectAmmo("super"));
     pauseBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (!started || evoChoosing) return;
+      if (!started || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen) return;
       togglePause();
     });
     document.getElementById("pauseResume").addEventListener("click", (e) => {
@@ -1954,7 +4348,7 @@
     });
 
     window.addEventListener("wheel", (e) => {
-      if (!started || timeStopped || victoryOpen || whyOpen || evoChoosing) return;
+      if (!started || timeStopped || victoryOpen || whyOpen || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen) return;
       e.preventDefault();
       cycleAmmo(e.deltaY > 0 ? 1 : -1);
       if (paused) refreshPauseTeach();
@@ -1964,6 +4358,143 @@
       e.stopPropagation();
       dismissWhyChord();
     });
+    if (teachTipOk) {
+      teachTipOk.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dismissResistTeach();
+      });
+    }
+    if (teachTipEl) {
+      teachTipEl.addEventListener("click", (e) => {
+        if (e.target === teachTipEl) dismissResistTeach();
+      });
+    }
+    if (bossTeachChoices) {
+      bossTeachChoices.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-boss-choice]");
+        if (!btn) return;
+        e.stopPropagation();
+        answerBossTeach(btn.getAttribute("data-boss-choice"));
+      });
+    }
+    if (sectorContinueBtn) {
+      sectorContinueBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        enterNextSector();
+      });
+    }
+    function pickModeAndStart(mode) {
+      saveRunMode(mode);
+      startGame();
+    }
+    if (modePracticeBtn) {
+      modePracticeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        pickModeAndStart("practice");
+      });
+    }
+    if (modeExpeditionBtn) {
+      modeExpeditionBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        saveRunMode("expedition");
+        openCampaign();
+      });
+    }
+    if (practiceReplayBtn) {
+      practiceReplayBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        restartPracticeRun();
+      });
+    }
+    if (practiceToExpeditionBtn) {
+      practiceToExpeditionBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closePracticeClear();
+        saveRunMode("expedition");
+        started = false;
+        startGame.locking = false;
+        startGame();
+      });
+    }
+    if (practiceExitBtn) {
+      practiceExitBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closePracticeClear();
+        requestExit();
+      });
+    }
+    if (defeatRestartBtn) {
+      defeatRestartBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        restartRun();
+      });
+    }
+    if (defeatExitBtn) {
+      defeatExitBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeDefeat();
+        started = false;
+        startGame.locking = false;
+        invulnUntil = 0;
+        campaignMode = false;
+        // 回星图：保留远征局；放弃远征在「返回菜单」
+        if (campaignRunActive && window.SpiritCampaign) {
+          saveCampaignRunSnap();
+          openCampaign();
+        } else if (overlay) {
+          overlay.classList.remove("hidden");
+          requestExit();
+        }
+      });
+    }
+    if (nodeSettleFarmBtn) {
+      nodeSettleFarmBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        farmCurrentNode();
+      });
+    }
+    if (nodeSettleMapBtn) {
+      nodeSettleMapBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        returnToCampaignMap();
+      });
+    }
+    if (campaignBackBtn) {
+      campaignBackBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeCampaign();
+        clearCampaignRun();
+        campaignMode = false;
+        started = false;
+        startGame.locking = false;
+        if (overlay) overlay.classList.remove("hidden");
+        requestExit();
+      });
+    }
+    if (recruitHearBtn) {
+      recruitHearBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (recruitPending) playRecruitChord(recruitPending.answer);
+      });
+    }
+    if (recruitMajorBtn) {
+      recruitMajorBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        answerRecruit("major");
+      });
+    }
+    if (recruitMinorBtn) {
+      recruitMinorBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        answerRecruit("minor");
+      });
+    }
+    if (recruitSkipBtn) {
+      recruitSkipBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeRecruitPanel("放过了");
+      });
+    }
     whyChordEl.addEventListener("click", (e) => {
       if (e.target === whyChordEl) dismissWhyChord();
     });
@@ -1989,10 +4520,13 @@
 
     window.addEventListener("keydown", e => onKey(e, true));
     window.addEventListener("keyup", e => onKey(e, false));
-    overlay.addEventListener("pointerdown", () => startGame());
+    overlay.addEventListener("pointerdown", (e) => {
+      if (e.target.closest("#modePick")) return;
+      /* 需点练习房/远征；空格仍可用上次模式开局 */
+    });
     canvas.addEventListener("pointerdown", () => {
-      if (!started) startGame();
-      else if (!timeStopped && !victoryOpen && !paused && !whyOpen && !evoChoosing) fire();
+      if (!started) return;
+      else if (!timeStopped && !victoryOpen && !paused && !whyOpen && !evoChoosing && !mutationChoosing && !recruitOpen && !teachOpen && !bossTeachOpen && !megaRewardOpen && !sectorFlowOpen && !practiceClearOpen) fire();
     });
     window.addEventListener("resize", resize);
 

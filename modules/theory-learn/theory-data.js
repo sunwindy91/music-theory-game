@@ -74,8 +74,11 @@ const THEORY_LESSONS = [
       },
       {
         prompt: "从 C 到 E 是什么音程？",
+        hint: "C→D→E 共 4 个半音",
+        previewMidi: 64,
         options: ["大二度", "小三度", "大三度", "纯四度"],
-        answer: 2
+        answer: 2,
+        why: "C 到 E 含 4 个半音，是大三度（明快色彩的关键音程）。"
       },
       {
         prompt: "从 C 到 G 是什么音程？",
@@ -178,6 +181,48 @@ const THEORY_LESSONS = [
       {
         prompt: "D 大调有几个升号？",
         options: ["1 个", "2 个", "3 个", "4 个"],
+        answer: 1
+      }
+    ]
+  },
+  {
+    id: "theory-accidentals",
+    title: "升降号（高阶）",
+    emoji: "♯",
+    intro: `
+      <p><strong>升号 ♯</strong>把音升高半音；<strong>降号 ♭</strong>把音降低半音。它们写在音符左边，或写在调号里整曲生效。</p>
+      <ul>
+        <li>C → C♯（升 C）→ 再升半音到 D</li>
+        <li>B → B♭（降 B）→ 再降半音到 A</li>
+        <li>白键之间本来就有半音的地方（E–F、B–C）没有黑键</li>
+      </ul>
+      <p>先认清「半音 / 全音」，再进调号；星图里黑键音会在更高波次出现。</p>`,
+    visual: `
+      <div class="tl-interval-demo">
+        <div class="tl-pair"><span>C</span><span class="tl-arrow">♯</span><span>C♯</span><span class="tl-label">升高半音</span></div>
+        <div class="tl-pair"><span>B</span><span class="tl-arrow">♭</span><span>B♭</span><span class="tl-label">降低半音</span></div>
+        <div class="tl-pair"><span>E</span><span class="tl-arrow">→</span><span>F</span><span class="tl-label">本就半音</span></div>
+      </div>`,
+    steps: [
+      {
+        prompt: "升号 ♯ 的作用是？",
+        options: ["升高半音", "降低半音", "升高全音", "取消所有变化"],
+        answer: 0
+      },
+      {
+        prompt: "降号 ♭ 的作用是？",
+        options: ["升高半音", "降低半音", "变成休止符", "只用于低音谱号"],
+        answer: 1
+      },
+      {
+        prompt: "下列哪一对<strong>本来就是半音</strong>（中间没有黑键）？",
+        hint: "想想钢琴：E–F、B–C",
+        options: ["C–D", "E–F", "F–G", "A–B"],
+        answer: 1
+      },
+      {
+        prompt: "G 大调调号里的升号是？",
+        options: ["C♯", "F♯", "B♭", "没有升号"],
         answer: 1
       }
     ]

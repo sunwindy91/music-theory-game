@@ -16,6 +16,8 @@ const LearningPath = (() => {
     { id: "practice-triads", kind: "practice", emoji: "🎯", title: "和弦巩固", sub: "专题练习", topicId: "theory-triads", requires: "theory-triads" },
     { id: "theory-keys", kind: "lesson", emoji: "🔑", title: "调号入门", sub: "乐理 · 单元 4", module: "theory", lessonId: "theory-keys", topicId: "theory-keys" },
     { id: "practice-keys", kind: "practice", emoji: "🎯", title: "调号巩固", sub: "专题练习", topicId: "theory-keys", requires: "theory-keys" },
+    { id: "theory-accidentals", kind: "lesson", emoji: "♯", title: "升降号", sub: "乐理 · 高阶", module: "theory", lessonId: "theory-accidentals", topicId: "theory-accidentals", requires: "theory-keys" },
+    { id: "practice-accidentals", kind: "practice", emoji: "🎯", title: "升降号巩固", sub: "专题练习", topicId: "theory-accidentals", requires: "theory-accidentals" },
     { id: "theory-meter", kind: "lesson", emoji: "🥁", title: "拍号时值", sub: "乐理 · 单元 5", module: "theory", lessonId: "theory-meter", topicId: "theory-meter" },
     { id: "practice-meter", kind: "practice", emoji: "🎯", title: "拍号巩固", sub: "专题练习", topicId: "theory-meter", requires: "theory-meter" },
     { id: "intro-piano", kind: "lesson", emoji: "🎹", title: "钢琴入门", sub: "键盘与中央 C", module: "piano", lessonId: "intro-piano", topicId: "intro-piano" },
@@ -25,6 +27,144 @@ const LearningPath = (() => {
     { id: "rhythm-branch", kind: "side", emoji: "🥁", title: "节奏闯关", sub: "支线 · 7 关跟拍", module: "rhythm", requires: "theory-meter" },
     { id: "spirit-map", kind: "spirit", emoji: "✨", title: "灵气星图", sub: "完成识谱后解锁", module: "spirit", requires: "sight-reading" }
   ];
+
+  /** 路径节点 → 星图关卡建议（I29 MVP）；label 为空则仅预留 stub */
+  const PATH_SPIRIT_SUGGESTIONS = {
+    "theory-notes": { label: "捡白键音名入背包" },
+    "practice-notes": { label: "捡白键音名入背包", mirrorLessonId: "theory-notes" },
+    "theory-intervals": { label: "听音程距离感" },
+    "practice-intervals": { label: "听音程距离感", mirrorLessonId: "theory-intervals" },
+    "theory-triads": {
+      label: "练明快/阴郁克制",
+      focus: ["大三弹", "小三弹", "怪谱抗性"]
+    },
+    "practice-triads": { label: "练明快/阴郁克制", mirrorLessonId: "theory-triads" },
+    "theory-keys": { label: "高阶再碰升降号" },
+    "practice-keys": { label: "高阶再碰升降号", mirrorLessonId: "theory-keys" },
+    "theory-accidentals": { label: "高波次可遇变化音" },
+    "practice-accidentals": { label: "高波次可遇变化音", mirrorLessonId: "theory-accidentals" },
+    "theory-meter": { label: "跟拍与小节呼吸" },
+    "practice-meter": { label: "跟拍与小节呼吸", mirrorLessonId: "theory-meter" },
+    "sight-reading": {
+      label: "波次 1–2 白键",
+      focus: ["识谱认键", "星图门禁已开"]
+    },
+    "sight-drill": { label: "波次 1–2 白键", mirrorLessonId: "sight-reading" },
+    "spirit-map": { label: "波次 1–2 白键", whenRequirementMet: true }
+  };
+
+  let _bridgeDoneInit = false;
+  let _bridgeDoneIds = new Set();
+
+  function collectDoneLessonNodeIds() {
+    const ids = new Set();
+    for (const node of NODES) {
+      if ((node.kind === "lesson" || node.kind === "hub") && isLessonDone(node)) {
+        ids.add(node.id);
+      }
+    }
+    return ids;
+  }
+
+  function popNewlyCompletedLessonNodes() {
+    const now = collectDoneLessonNodeIds();
+    if (!_bridgeDoneInit) {
+      _bridgeDoneIds = now;
+      _bridgeDoneInit = true;
+      return [];
+    }
+    const fresh = [];
+    for (const id of now) {
+      if (!_bridgeDoneIds.has(id)) fresh.push(NODES.find(n => n.id === id));
+    }
+    _bridgeDoneIds = now;
+    return fresh.filter(Boolean);
+  }
+
+  function bridgeToast(msg) {
+    const el = document.createElement("div");
+    el.className = "lp-bridge-toast";
+    el.textContent = msg;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    setTimeout(() => {
+      el.classList.remove("show");
+      setTimeout(() => el.remove(), 280);
+    }, 2600);
+  }
+
+  function dismissBridgeCard() {
+    document.querySelector(".lp-bridge-backdrop")?.remove();
+  }
+
+  function openSpiritFromBridge(label) {
+    const spiritNode = NODES.find(n => n.id === "spirit-map");
+    const unlocked = spiritNode && (isDevMode() || getNodeState(spiritNode) !== "locked");
+    if (!unlocked) {
+      bridgeToast("识谱 7 课完成后解锁灵气星图");
+      return;
+    }
+    try {
+      sessionStorage.setItem("mtg-spirit-focus", label || "波次制 · 清场整备");
+    } catch { /* ignore */ }
+    dismissBridgeCard();
+    document.querySelector('[data-module="spirit"]')?.click();
+  }
+
+  function maybeShowCompleteBridgeCard() {
+    const nodes = popNewlyCompletedLessonNodes();
+    for (const node of nodes) {
+      const label = getSpiritSuggestionLabel(node);
+      if (!label) continue;
+      dismissBridgeCard();
+      const backdrop = document.createElement("div");
+      backdrop.className = "lp-bridge-backdrop";
+      backdrop.setAttribute("role", "dialog");
+      backdrop.setAttribute("aria-modal", "true");
+      backdrop.innerHTML = `
+        <div class="lp-bridge-card">
+          <button type="button" class="lp-bridge-close" aria-label="关闭">×</button>
+          <p class="lp-bridge-kicker">本课练成了什么</p>
+          <h3 class="lp-bridge-title">${node.emoji} ${node.title}</h3>
+          <p class="lp-bridge-suggest">去星图试：${label}</p>
+          <div class="lp-bridge-actions">
+            <button type="button" class="lp-bridge-btn secondary" data-lp-bridge="stay">继续路径</button>
+            <button type="button" class="lp-bridge-btn primary" data-lp-bridge="spirit">去星图试试</button>
+          </div>
+        </div>`;
+      document.body.appendChild(backdrop);
+      backdrop.addEventListener("click", (e) => {
+        if (e.target === backdrop) dismissBridgeCard();
+      });
+      backdrop.querySelector(".lp-bridge-close")?.addEventListener("click", dismissBridgeCard);
+      backdrop.querySelector('[data-lp-bridge="stay"]')?.addEventListener("click", dismissBridgeCard);
+      backdrop.querySelector('[data-lp-bridge="spirit"]')?.addEventListener("click", () => {
+        openSpiritFromBridge(label);
+      });
+      return;
+    }
+  }
+
+  function getSpiritSuggestionLabel(node) {
+    const entry = PATH_SPIRIT_SUGGESTIONS[node.id];
+    if (!entry || !entry.label) return null;
+
+    if (entry.whenRequirementMet && node.kind === "spirit") {
+      const req = NODES.find(n => n.id === node.requires);
+      return req && isLessonDone(req) ? entry.label : null;
+    }
+
+    if (entry.mirrorLessonId) {
+      const lesson = NODES.find(n => n.id === entry.mirrorLessonId);
+      return lesson && isLessonDone(lesson) ? entry.label : null;
+    }
+
+    if (node.kind === "lesson" || node.kind === "hub") {
+      return isLessonDone(node) ? entry.label : null;
+    }
+
+    return null;
+  }
 
   function isLessonDone(node) {
     if (!node) return false;
@@ -116,6 +256,10 @@ const LearningPath = (() => {
       return;
     }
     if (node.module === "spirit") {
+      try {
+        const hint = getSpiritSuggestionLabel(node) || "波次制 · 清场整备";
+        sessionStorage.setItem("mtg-spirit-focus", hint);
+      } catch { /* ignore */ }
       document.querySelector('[data-module="spirit"]')?.click();
     }
   }
@@ -135,6 +279,10 @@ const LearningPath = (() => {
       const badge = state === "done" ? '<span class="lp-badge">✓</span>'
         : state === "current" ? '<span class="lp-badge current">继续</span>'
         : state === "locked" ? '<span class="lp-badge lock">🔒</span>' : "";
+      const spiritHint = getSpiritSuggestionLabel(node);
+      const spiritHintHtml = spiritHint
+        ? `<span class="lp-spirit-hint">星图建议：${spiritHint}</span>`
+        : "";
       return `
         <div class="lp-row">
           <button type="button" class="lp-node ${state} ${node.kind}" data-node-id="${node.id}" ${state === "locked" ? "disabled" : ""}>
@@ -142,6 +290,7 @@ const LearningPath = (() => {
             <span class="lp-body">
               <span class="lp-title">${node.title}</span>
               <span class="lp-sub">${node.sub}</span>
+              ${spiritHintHtml}
             </span>
             ${badge}
           </button>
@@ -162,9 +311,20 @@ const LearningPath = (() => {
         if (node) handleNodeClick(node);
       });
     });
+
+    maybeShowCompleteBridgeCard();
   }
 
-  return { NODES, render, completedCount, totalLessonNodes, getNodeState, refresh: render };
+  return {
+    NODES,
+    PATH_SPIRIT_SUGGESTIONS,
+    getSpiritSuggestionLabel,
+    render,
+    completedCount,
+    totalLessonNodes,
+    getNodeState,
+    refresh: render
+  };
 })();
 
 if (typeof window !== "undefined") {

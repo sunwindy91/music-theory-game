@@ -41,6 +41,7 @@ const WrongBookStore = (() => {
       difficulty: question.difficulty,
       text: question.text,
       hint: question.hint || "",
+      why: question.why || "",
       options: [...question.options],
       answer: question.answer,
       isAudio: !!question.isAudio,
