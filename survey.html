@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>乐理小达人 · 试玩反馈</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg0: #1a1630;
+      --bg1: #2a2148;
+      --ink: #f4f0ff;
+      --muted: #b8aed4;
+      --accent: #ff9f43;
+      --line: rgba(255, 255, 255, 0.12);
+      --card: rgba(255, 255, 255, 0.06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Fredoka", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 0%, #3d2f6e 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 100%, #4a2a1a 0%, transparent 50%),
+        linear-gradient(165deg, var(--bg0), var(--bg1));
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 40px 20px 64px;
+    }
+    .back {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .back:hover { color: var(--accent); }
+    h1 {
+      margin: 20px 0 8px;
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      letter-spacing: 0.02em;
+    }
+    .lead {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 36em;
+    }
+    .lead a { color: var(--accent); }
+    form {
+      display: grid;
+      gap: 18px;
+    }
+    fieldset {
+      margin: 0;
+      padding: 16px 16px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card);
+    }
+    legend {
+      padding: 0 6px;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    label.opt {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin: 8px 0;
+      font-size: 0.92rem;
+      cursor: pointer;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.25);
+      color: var(--ink);
+      font: inherit;
+      resize: vertical;
+      min-height: 72px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    button, .btn {
+      font: inherit;
+      font-weight: 700;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 20px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .primary {
+      background: linear-gradient(135deg, var(--accent), #e07a20);
+      color: #2a1400;
+    }
+    .ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+    .note {
+      margin-top: 18px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    #out {
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px dashed var(--accent);
+      background: rgba(255, 159, 67, 0.08);
+      white-space: pre-wrap;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="index.html">← 回乐理小达人</a>
+    <h1>试玩反馈 · 5 题</h1>
+    <p class="lead">
+      先玩 5–10 分钟（首页「学 ‖ 玩」任选），再填本页。
+      答完可一键复制；你也可用
+      <a href="https://music-theory-game-br5.pages.dev/" target="_blank" rel="noopener">线上试玩</a>。
+      若已建 Tally/金数据，把外链贴进本页顶部即可替换。
+    </p>
+
+    <form id="surveyForm">
+      <fieldset>
+        <legend>1. 你主要从哪边进来？</legend>
+        <label class="opt"><input type="radio" name="entry" value="learn" /> 学习路径 / 识谱课</label>
+        <label class="opt"><input type="radio" name="entry" value="play" /> 星图 / 演奏</label>
+        <label class="opt"><input type="radio" name="entry" value="both" /> 两边都试了</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>2. 有没有「会选但对原理不懂」的题？</legend>
+        <textarea name="confused" placeholder="随便写一题或一关，没有就写「没有」"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. 星图凑成大三/小三时，你知不知道为什么算凑成？</legend>
+        <label class="opt"><input type="radio" name="chordWhy" value="yes" /> 知道 / 游戏有说清</label>
+        <label class="opt"><input type="radio" name="chordWhy" value="kinda" /> 半懂</label>
+        <label class="opt"><input type="radio" name="chordWhy" value="no" /> 不知道，只觉得加分了</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>4. 更想多要什么？（可多选）</legend>
+        <label class="opt"><input type="checkbox" name="want" value="teach" /> 教学引导</label>
+        <label class="opt"><input type="checkbox" name="want" value="battle" /> 可玩战斗</label>
+        <label class="opt"><input type="checkbox" name="want" value="sight" /> 识谱练习</label>
+        <label class="opt"><input type="checkbox" name="want" value="perform" /> 演奏手感</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>5. 一句话：最想改的一点？</legend>
+        <input type="text" name="onefix" placeholder="例如：远征规则不清 / 某关太难 / 手机扫弦…" />
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit" class="primary">生成并复制答卷</button>
+        <a class="btn ghost" href="index.html">回去再玩一局</a>
+      </div>
+    </form>
+
+    <pre id="out" aria-live="polite"></pre>
+    <p class="note">本地不上传服务器：答卷只在你浏览器里生成文本，方便粘贴到微信/邮件/表格。版本对齐页脚 APP_VERSION。</p>
+  </div>
+  <script>
+    document.getElementById("surveyForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const wants = fd.getAll("want").join(", ") || "（未选）";
+      const lines = [
+        "【乐理小达人 · 试玩反馈】",
+        "1 入口: " + (fd.get("entry") || "（未选）"),
+        "2 会选不懂: " + ((fd.get("confused") || "").trim() || "（空）"),
+        "3 和弦为什么: " + (fd.get("chordWhy") || "（未选）"),
+        "4 更想要: " + wants,
+        "5 最想改: " + ((fd.get("onefix") || "").trim() || "（空）"),
+        "时间: " + new Date().toISOString()
+      ];
+      const text = lines.join("\n");
+      const out = document.getElementById("out");
+      out.style.display = "block";
+      out.textContent = text;
+      try {
+        await navigator.clipboard.writeText(text);
+        out.textContent = text + "\n\n✓ 已复制到剪贴板";
+      } catch {
+        out.textContent = text + "\n\n（复制失败时请手动全选上方文本）";
+      }
+    });
+  </script>
+</body>
+</html>

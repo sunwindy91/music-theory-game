@@ -1,7 +1,7 @@
 # 乐理小达人 · 交接与路线图
 
 > **用途**：新 Cursor 对话 / 新协作者快速接手。用户会基于实际上线情况把关，本文档为「计划 + 现状」参考，非硬性合同。  
-> **最后更新**：2026-07-23 · 代码版本 **v1.7.14**（Boss 预警统一 + 进化池/地形挂钩）
+> **最后更新**：2026-07-23 · 代码版本 **v1.7.15**（7/26 冲刺：问卷/STAR/远征密封）
 
 ---
 
@@ -309,7 +309,13 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 **哲学**：学习路径 + 可玩世界是**有意的双核**，不是做歪。开源/问卷/求职展示/Agent 飞轮见 `.cursor/skills/music-theory-game/SKILL.md` 与 `docs/IDEA-BACKLOG.md`。
 
-**当前代码**：v1.7.14 —
+**当前代码**：v1.7.15 —
+- **7/26 复盘交付**：`survey.html` 五题反馈 + 页脚/README CTA；`docs/STAR-CASE-DRAFT.md`；`docs/SPRINT-0726.md`。
+- **远征密封**：战役首开 tip；「结束远征局」文案 + confirm；清剿轮次文案；远征入口副标「局内养成保留」。
+- **吉他节奏闪**：空格/同键续扫时指板旁 ↓/↑ 闪一下。
+- git 基线：`checkpoint/v1.7.14`。
+
+**前作**：v1.7.14 —
 - **Boss telegraph 统一**：弹幕改 `pendingBoltsAt` 前摇锥线；重砸预警圈 `drawSkillTelegraphs`；击杀轻顿帧 `hitStopUntil`。
 - **进化池加厚**：`SpiritEvo` 六选池 `pickThree`（生命/偷取/合弦/弹药/刚盾/流光步伐）；`traitSwiftStacks` 入远征局快照。
 - **地形挂钩**：晶石/碎柱给弹药；开波 `objectiveHint` toast（柱/晶/雾/坑）。
@@ -357,14 +363,14 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 **两天冲刺** Day1 手感 + Day2 名场面/台词/死亡修复/Boss 层级校正 + I63 命名 + I64 君主多阶段 + I62 战役星图 MVP 已落地。
 
 **下一刀（可照抄配方 · 详见 SKILL「Auto 续航手册」）**：
-1. ~~闪步 + I66 远征局~~ v1.7.13；~~Boss telegraph / 进化池 / 地形挂钩~~ **已落地·v1.7.14**
-2. 演奏最痛手感；I61 分端 UX 穿插；卫星能力再分化
-3. A/B / 问卷 / 部署 — **后置，须用户点名**
+1. ~~闪步 + I66 / Boss telegraph / 进化池~~ **v1.7.13–14**；~~问卷·STAR·远征密封~~ **v1.7.15**
+2. **7/25–26**：部署 Cloudflare → 发试玩+问卷；回收后 Top3 回 IDEA
+3. 之后：I61 分端 UX；卫星能力分化；演奏余下手感
 
 **Auto 续航**：切 Auto 后每刀独立可验收；避坑见 SKILL「Auto 模式续航手册」。
 
 **愿景后置**：黑神话式章节深度（更多回刷奖励分层）可继续加厚。
 
-**部署**：用户点名再发。
+**部署**：7/26 冲刺内默认推进 Pages；其余仍可点名。
 
 **双端 UX 原则（用户 2026-07-22 指定 · 强制）**：每个乐器/模块都要 **PC 与手机都好用**——鼠标能点/拖，手机能点/滑；避免只为鼠标设计的交互。任何来源（自测/家人/问卷/他人）反馈的体验问题一律先记入 `IDEA-BACKLOG` 审校表再排期。

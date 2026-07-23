@@ -75,7 +75,9 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 ## 反馈
 
-如有问题或建议，欢迎通过 Issue 或邮件反馈（待补充联系方式）。
+试玩后请填 [survey.html](survey.html)（5 题，可一键复制答卷）。线上试玩：https://music-theory-game-br5.pages.dev/
+
+求职 STAR 半页草稿见 [docs/STAR-CASE-DRAFT.md](docs/STAR-CASE-DRAFT.md)。7/26 冲刺清单见 [docs/SPRINT-0726.md](docs/SPRINT-0726.md)。
 
 ---
 

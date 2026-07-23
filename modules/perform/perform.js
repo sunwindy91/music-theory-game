@@ -1492,6 +1492,23 @@ const PerformModule = (() => {
   }
 
   /** 按当前节奏型推进一拍并扫弦；rest(0) 跳过发声仍推进 */
+  function flashStrumStroke(downstroke) {
+    if (!root) return;
+    let el = root.querySelector(".pf-stroke-flash");
+    if (!el) {
+      el = document.createElement("div");
+      el.className = "pf-stroke-flash";
+      el.setAttribute("aria-hidden", "true");
+      const board = root.querySelector(".pf-fretboard") || root;
+      board.appendChild(el);
+    }
+    el.textContent = downstroke ? "↓" : "↑";
+    el.classList.remove("show");
+    // 强制重启动画
+    void el.offsetWidth;
+    el.classList.add("show");
+  }
+
   function playPatternStroke(fromHint = "") {
     const isUke = instrument === "uke";
     if (instrument !== "guitar" && instrument !== "uke") return;
@@ -1507,6 +1524,7 @@ const PerformModule = (() => {
     if (stroke !== 0) {
       Audio.strumChord(ch.notes, stroke > 0, 0.62, isUke ? "uke" : "guitar");
       setFeedback(`${stroke > 0 ? "↓" : "↑"} ${ch.name} · ${pat.name}（空格续扫）`);
+      flashStrumStroke(stroke > 0);
     } else {
       setFeedback(`— 休止 · ${ch.name}（空格续扫）`);
     }

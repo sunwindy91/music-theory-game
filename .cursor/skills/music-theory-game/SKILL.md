@@ -168,7 +168,7 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 - **探险层**：全屏世界；坑/雾/晶石/遗迹柱；听辨收编；Boss 来袭  
 - **mewo（I38）**：待用户提供工具  
 
-检查点：`8238aed`。部署仍须用户点名。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.14**）。
+检查点：`f199142`（v1.7.14）+ 本轮 v1.7.15。7/26 冲刺内可部署 Pages。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.15**）。
 **死亡交互（v1.7.3）**：死亡→`openDefeat()` 清战场/计时/Boss 面板→「灵光消散」面板（重新开始/返回菜单）；勿再用 `startBreath` 静默复活（会在刷怪计时未清时卡死）。
 **Boss 层级（v1.7.3）**：激光仅 `isMega`（终局君主）；领主是附庸，刚石=蓄力重装·重砸（`pendingSlamAt` 预警后重砸），雾灵=弹幕。命名/tip 按元素。
 **Boss 台词（v1.7.2 · I54-B）**：`spirit-data.js` `BOSS_LINES{entrance/mega/laser/enrage}`；`spirit-boss.js` `pickLine()`；出场画面渲染 taunt，狂暴/聚能经回调在 Boss 头顶浮字。纯氛围，与捡音/伤害解耦。
@@ -183,6 +183,7 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 **壳双核 + 星门点击（v1.7.12·I61 MVP）**：首页 `#dualGate` 学‖玩；战役 `#campaignPanel` z>overlay；`#overlay.hidden` 须 `visibility:hidden`。
 **闪步 + 远征局（v1.7.13）**：暗涌/流曜禁裸 `x+=`；前摇+dt 冲刺。I66：`campaignRunSnap` 跨节点保留养成；`#nodeSettlePanel` 继续清剿/回星图升级；`SpiritDrones.exportState/importState`；`nodeSettleOpen` 进守卫。
 **Boss 预警 + 成长池 + 地形（v1.7.14）**：弹幕 `pendingBoltsAt` + `drawSkillTelegraphs`；击杀 `hitStopUntil`；`SpiritEvo.pickThree` 六选抽三；晶石/碎柱给弹 + `objectiveHint`。
+**7/26 交付（v1.7.15）**：`survey.html` + 页脚 CTA；`STAR-CASE-DRAFT` / `SPRINT-0726`；远征 tip+结束确认；吉他节奏 ↓↑ 闪。
 **当前下一刀**：演奏手感；I61 分端 UX；卫星能力再分化。A/B 后置。
 
 ## 两天冲刺 + 终局愿景（2026-07-23）
@@ -324,12 +325,12 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 - 验收：**仅**在击破 mega 时触发，不与「灵气达标 victory」混淆。
 - 坑：触发点要判 `isMega` 且是真正击破，不是灵气达标。
 
-**⑤ 下一刀候选（v1.7.14 后）**
-- **演奏手感**；I61 分端 UX 穿插；卫星能力再分化
-- ~~闪步 / I66 / Boss telegraph / 进化池 / 地形~~ 已消化·v1.7.13–14
-- A/B / 问卷 — **后置，须用户点名**
+**⑤ 下一刀候选（v1.7.15 后）**
+- **7/25–26**：部署 + 发问卷；Top3 回 IDEA（见 `docs/SPRINT-0726.md`）
+- I61 分端 UX；卫星能力再分化；演奏余下手感
+- ~~闪步 / I66 / Boss telegraph / 进化池 / 问卷·STAR·远征密封~~ 已消化·v1.7.13–15
 
-**之后**：内容打磨稳后再议 A/B 发布与问卷。发布/部署仍须用户点名。
+**之后**：问卷归集后再排大功能。GitHub 开源仍须用户点名「开源到 GitHub」。
 
 ## 详细参考
 

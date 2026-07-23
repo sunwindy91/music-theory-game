@@ -606,7 +606,7 @@
   <div id="campaignPanel" aria-hidden="true">
     <div class="campaign-box">
       <h2 id="campaignTitle">首星区 · 战役星图</h2>
-      <p class="campaign-sub">选择星门进入。远征局内<strong>养成会保留</strong>；清场可选继续清剿或回星图升级。已通关可反复刷。</p>
+      <p class="campaign-sub">选择星门进入。远征局内<strong>养成会保留</strong>；清场可选继续清剿或回星图升级。已通关可反复刷。<br><small id="campaignRunHint" style="opacity:.85">「结束远征局」才会清空本局弹药/进化/僚机。</small></p>
       <div id="campaignNav"></div>
       <div id="campaignMap"></div>
       <div class="actions">
@@ -633,7 +633,7 @@
         Boss「聚能」预警线亮起时 <strong>Shift/E 闪避</strong>躲激光 · 明快穿透 · 阴郁冰冻融化 · 一关一主题怪 · 节奏偏慢好学</p>
       <div class="actions" id="modePick" style="margin-top:20px">
         <button type="button" class="primary" id="modePractice" data-mode="practice">练习房<br><small style="opacity:.85;font-weight:400">首星区 1–6 · 可反复刷</small></button>
-        <button type="button" id="modeExpedition" data-mode="expedition">远征<br><small style="opacity:.85;font-weight:400">星区推进 · 君主与成长</small></button>
+        <button type="button" id="modeExpedition" data-mode="expedition">远征<br><small style="opacity:.85;font-weight:400">星区推进 · 局内养成保留</small></button>
       </div>
     </div>
   </div>
@@ -3195,10 +3195,19 @@
       while (si > 0 && !SpiritCampaign.isSectorUnlocked(si)) si--;
       currentSectorIdx = si;
       refreshCampaign();
+      if (campaignBackBtn) {
+        campaignBackBtn.textContent = campaignRunActive ? "结束远征局" : "返回菜单";
+      }
       if (campaignPanelEl) {
         campaignPanelEl.classList.add("show");
         campaignPanelEl.setAttribute("aria-hidden", "false");
       }
+      try {
+        if (!localStorage.getItem("mtg_campaign_tip_v1")) {
+          localStorage.setItem("mtg_campaign_tip_v1", "1");
+          showToast("远征局：清场可选继续清剿或回星图升级；「结束远征局」才清空养成");
+        }
+      } catch { /* */ }
     }
 
     function closeCampaign() {
@@ -3279,7 +3288,7 @@
       if (nodeSettleTitleEl) nodeSettleTitleEl.textContent = already ? `${title} · 清剿` : `${title} · 清场`;
       if (nodeSettleBodyEl) {
         nodeSettleBodyEl.textContent = already
-          ? "已通关节点。可继续清剿刷养成，或回星图选下一处（状态会保留）。"
+          ? `已通关节点 · 本关清剿第 ${farmWaveCount + 1} 轮。可继续刷养成，或回星图选下一处（状态保留）。`
           : "本关清空了。可继续清剿巩固，或回星图推进——首次通关将获得一次成长三选一。";
       }
       if (nodeSettleMapBtn) {
@@ -4462,6 +4471,10 @@
     if (campaignBackBtn) {
       campaignBackBtn.addEventListener("click", (e) => {
         e.stopPropagation();
+        if (campaignRunActive) {
+          const ok = window.confirm("结束远征局将清空本局养成（弹药 / 进化 / 僚机）。确定结束？");
+          if (!ok) return;
+        }
         closeCampaign();
         clearCampaignRun();
         campaignMode = false;

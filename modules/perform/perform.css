@@ -988,6 +988,30 @@
   50% { box-shadow: 0 0 0 6px rgba(255, 176, 32, 0.15) !important; }
 }
 
+/* 节奏型扫弦方向闪（空格 / 同键续扫） */
+.pf-fretboard { position: relative; }
+.pf-stroke-flash {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%) scale(0.85);
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #ffb020;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.pf-stroke-flash.show {
+  animation: pf-stroke-pop 0.42s ease-out forwards;
+}
+@keyframes pf-stroke-pop {
+  0% { opacity: 0; transform: translateY(-50%) scale(0.6); }
+  25% { opacity: 1; transform: translateY(-50%) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-58%) scale(1); }
+}
+
 /* I47 尤克里里 / 多轨愿景 */
 .pf-uke-neck {
   background: linear-gradient(180deg, #4a3a28 0%, #2e2418 100%);

@@ -21,7 +21,7 @@ const AppFeatures = {
   midiInput: false
 };
 
-const APP_VERSION = "v1.7.14";
+const APP_VERSION = "v1.7.15";
 
 /** 部署 Cloudflare 后若域名不同，改 domestic 为实际 pages.dev 地址 */
 const AppUrls = {
