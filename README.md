@@ -17,7 +17,7 @@ python -m http.server 8080
 
 若 `python` 不可用，可试 `py -m http.server 8080`。
 
-浏览器访问 `http://localhost:8080`，页脚应显示 **v1.5.8+**（与 `core/features.js` 中 `APP_VERSION` 一致），首页有学习路径与 ✨ 灵气计数。
+浏览器访问 `http://localhost:8080`，页脚应显示当前 **APP_VERSION**（见 `core/features.js`），首页有「学 ‖ 玩」双核入口与学习路径。
 
 ## 功能
 
@@ -73,12 +73,23 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 代码已推送至 https://gitee.com/chunny/music-theory-game ；Pages 静态托管暂不可用，仅作版本备份。
 
-## 反馈
+## 反馈与分享
 
-试玩后请填 [survey.html](survey.html)（5 题，可一键复制答卷）。线上试玩：https://music-theory-game-br5.pages.dev/
+试玩后请填 [survey.html](survey.html)（5 题，可一键复制答卷）。
 
-求职 STAR 半页草稿见 [docs/STAR-CASE-DRAFT.md](docs/STAR-CASE-DRAFT.md)。7/26 冲刺清单见 [docs/SPRINT-0726.md](docs/SPRINT-0726.md)。
+**复制即发：**
+
+```
+【乐理小达人 · 试玩邀请】
+试玩：https://music-theory-game-br5.pages.dev/
+玩 5–10 分钟：首页点「学」或「玩」都行
+反馈：https://music-theory-game-br5.pages.dev/survey.html
+```
+
+求职 STAR：[docs/STAR-CASE-DRAFT.md](docs/STAR-CASE-DRAFT.md) · 叙事对齐：[docs/CAREER-ALIGN.md](docs/CAREER-ALIGN.md) · 48–72h DoD：[docs/SPRINT-0726.md](docs/SPRINT-0726.md)
+
+贡献见 [CONTRIBUTING.md](CONTRIBUTING.md)；许可 [LICENSE](LICENSE)（MIT）。GitHub Issues 模板已备；mirror 到 GitHub 须仓库主人点名。
 
 ---
 
-*乐理小达人 · demo · 仅供学习娱乐 · v1.5.8+*
+*乐理小达人 · demo · 仅供学习娱乐 · 以 `APP_VERSION` 为准*

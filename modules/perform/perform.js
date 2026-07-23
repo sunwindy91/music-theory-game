@@ -2242,6 +2242,7 @@ const PerformModule = (() => {
             <button type="button" class="pf-toggle on" data-strum-pattern="folk">民谣 ↓↓↑↓↑</button>
             <button type="button" class="pf-toggle" data-strum-pattern="ballad">抒情 ↓—↑—</button>
             <button type="button" class="pf-toggle" data-strum-pattern="drive">推进 ↓↑↓↑</button>
+            <button type="button" class="pf-toggle pf-stroke-tap" id="pfGuitarStrokeTap" title="等同空格：按节奏型扫下一拍">↓↑ 续扫</button>
           </div>
           <button type="button" class="pf-jam-start" id="pfJamStart">🎤 弹唱练习</button>
           <div class="pf-jam hidden" id="pfJam" role="region" aria-label="弹唱练习">
@@ -2411,6 +2412,13 @@ const PerformModule = (() => {
       btn.addEventListener("click", () => setStrumPattern(btn.dataset.strumPattern));
     });
     syncPatternUi();
+    const guitarStrokeTap = $("#pfGuitarStrokeTap");
+    if (guitarStrokeTap) {
+      guitarStrokeTap.addEventListener("click", (e) => {
+        e.preventDefault();
+        playPatternStroke("tap");
+      });
+    }
 
     const syncBowEasyUi = () => {
       ["#pfBowEasyToggle", "#pfCelloBowEasyToggle"].forEach((sel) => {

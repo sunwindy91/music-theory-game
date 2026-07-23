@@ -1,7 +1,7 @@
 # 乐理小达人 · 交接与路线图
 
 > **用途**：新 Cursor 对话 / 新协作者快速接手。用户会基于实际上线情况把关，本文档为「计划 + 现状」参考，非硬性合同。  
-> **最后更新**：2026-07-23 · 代码版本 **v1.7.15**（7/26 冲刺：问卷/STAR/远征密封）
+> **最后更新**：2026-07-23 · 代码版本 **v1.7.16**（中期 48h：双核触控 + 续扫钮 + STAR/开源就绪）
 
 ---
 
@@ -309,7 +309,10 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 **哲学**：学习路径 + 可玩世界是**有意的双核**，不是做歪。开源/问卷/求职展示/Agent 飞轮见 `.cursor/skills/music-theory-game/SKILL.md` 与 `docs/IDEA-BACKLOG.md`。
 
-**当前代码**：v1.7.15 —
+**当前代码**：v1.7.16 —
+- **中期 Day A/B**：双核窄屏热区（≤560px）；吉他「↓↑ 续扫」触控钮；STAR 加厚 + `CAREER-ALIGN`；Issue 模板；README 分享话术；`SPRINT-0726` 改为 48–72h DoD。
+
+**前作**：v1.7.15 —
 - **7/26 复盘交付**：`survey.html` 五题反馈 + 页脚/README CTA；`docs/STAR-CASE-DRAFT.md`；`docs/SPRINT-0726.md`。
 - **远征密封**：战役首开 tip；「结束远征局」文案 + confirm；清剿轮次文案；远征入口副标「局内养成保留」。
 - **吉他节奏闪**：空格/同键续扫时指板旁 ↓/↑ 闪一下。
@@ -363,9 +366,9 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 **两天冲刺** Day1 手感 + Day2 名场面/台词/死亡修复/Boss 层级校正 + I63 命名 + I64 君主多阶段 + I62 战役星图 MVP 已落地。
 
 **下一刀（可照抄配方 · 详见 SKILL「Auto 续航手册」）**：
-1. ~~闪步 + I66 / Boss telegraph / 进化池~~ **v1.7.13–14**；~~问卷·STAR·远征密封~~ **v1.7.15**
-2. **7/25–26**：部署 Cloudflare → 发试玩+问卷；回收后 Top3 回 IDEA
-3. 之后：I61 分端 UX；卫星能力分化；演奏余下手感
+1. ~~复盘章节 v1.7.15~~；~~中期 Day A/B 产品+材料 v1.7.16~~
+2. **Day C**：发问卷 8–15 人；你过目 STAR；回收 Top3 → IDEA
+3. 之后：卫星能力分化；演奏余下手感；GitHub remote（须点名）
 
 **Auto 续航**：切 Auto 后每刀独立可验收；避坑见 SKILL「Auto 模式续航手册」。
 

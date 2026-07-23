@@ -199,8 +199,15 @@
     body[data-density="kid"] .dual-card strong { font-size: 1.55rem; }
     body[data-density="kid"] .dual-card span { font-size: 0.9rem; }
     body[data-density="std"] .dual-card { border-radius: 12px; }
-    @media (max-width: 420px) {
-      .dual-gate { grid-template-columns: 1fr; }
+    @media (max-width: 560px) {
+      .dual-gate { grid-template-columns: 1fr; gap: 12px; }
+      .dual-card {
+        padding: 16px 16px 14px;
+        min-height: 72px;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .dual-card strong { font-size: 1.5rem; }
+      .dual-card span { font-size: 0.85rem; }
     }
     .dual-gate-pulse {
       outline: 2px solid rgba(124, 92, 255, 0.55);
@@ -535,7 +542,7 @@
   <link rel="stylesheet" href="modules/instrument-intro/instrument-intro.css">
   <link rel="stylesheet" href="modules/sight-reading/sight-reading.css">
   <link rel="stylesheet" href="modules/rhythm-game/rhythm-game.css">
-  <link rel="stylesheet" href="modules/perform/perform.css?v=1.7.15">
+  <link rel="stylesheet" href="modules/perform/perform.css?v=1.7.16">
   <link rel="stylesheet" href="modules/wrong-book/wrong-book.css">
   <link rel="stylesheet" href="modules/daily-challenge/daily-challenge.css">
   <link rel="stylesheet" href="modules/share-card/share-card.css">
@@ -733,7 +740,7 @@
   <script src="modules/share-card/share-card.js"></script>
   <script src="modules/symbol-match/symbol-data.js"></script>
   <script src="modules/symbol-match/symbol-match.js"></script>
-  <script src="modules/perform/perform.js?v=1.7.15"></script>
+  <script src="modules/perform/perform.js?v=1.7.16"></script>
   <script src="modules/spirit-journey/spirit-journey.js"></script>
   <script src="modules/rhythm-game/rhythm-charts.js"></script>
   <script src="modules/rhythm-game/rhythm-engine.js"></script>
