@@ -82,7 +82,7 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 ```
 【乐理小达人 · 试玩邀请】v1.7.20
-试玩：https://music-theory-game-br5.pages.dev/
+试玩（已解除关卡锁定）：https://music-theory-game-br5.pages.dev/?dev=1
 问卷（7 题·约2分钟）：https://music-theory-game-br5.pages.dev/survey.html
 
 5 分钟：首页点「学」或「玩」→ 星图练习房捡音开火 → 清场可点整备条跳过 → 填问卷「最想改」

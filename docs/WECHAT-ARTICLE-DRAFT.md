@@ -2,7 +2,8 @@
 
 > **用途**：公众号「洞见百晓纯」发文；朋友圈只贴短导语 + 推文链接。  
 > **对齐版本**：**v1.7.20** · 问卷为浅色简约 7 题页  
-> **链**：试玩 https://music-theory-game-br5.pages.dev/ · 问卷 https://music-theory-game-br5.pages.dev/survey.html  
+> **试玩（推荐无锁定）**：https://music-theory-game-br5.pages.dev/?dev=1  
+> **问卷**：https://music-theory-game-br5.pages.dev/survey.html  
 > **语气**：对人讲故事，少写 Harness/简历黑话；收尾再轻提「下一版按你们的反馈改」。  
 > **建议篇幅**：800–1200 字；配 2–3 张图（首页双卡、星图战斗、浅色问卷页）。
 
@@ -65,9 +66,10 @@
 
 如果你愿意花 **5–10 分钟**：
 
-1. **试玩**  
-   https://music-theory-game-br5.pages.dev/  
-   建议：首页点「玩」→ 灵气星图 → 先选「练习房」熟悉手感；也可以点「学」跟一条路径点几课。
+1. **试玩（已解除关卡锁定，方便直接体验）**  
+   https://music-theory-game-br5.pages.dev/?dev=1  
+   建议：首页点「玩」→ 灵气星图 → 先选「练习房」熟悉手感；也可以点「学」跟一条路径点几课。  
+   （正式版仍需识谱课后解锁星图；问卷试玩用无锁定链接就好。）
 
 2. **填问卷（7 题 · 约 2 分钟）**  
    https://music-theory-game-br5.pages.dev/survey.html  
@@ -92,7 +94,7 @@
 谢谢你愿意点开。  
 试玩与问卷链接再放一次：
 
-- 试玩：https://music-theory-game-br5.pages.dev/  
+- 试玩（无锁定·推荐）：https://music-theory-game-br5.pages.dev/?dev=1  
 - 问卷：https://music-theory-game-br5.pages.dev/survey.html  
 
 ——邹翔 / 洞见百晓纯  
