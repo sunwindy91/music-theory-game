@@ -1,7 +1,7 @@
 # 乐理小达人 · 交接与路线图
 
 > **用途**：新 Cursor 对话 / 新协作者快速接手。用户会基于实际上线情况把关，本文档为「计划 + 现状」参考，非硬性合同。  
-> **最后更新**：2026-07-23 · 代码版本 **v1.7.18**（I68 文件型 A2A 协议）
+> **最后更新**：2026-07-23 · 代码版本 **v1.7.19**（问卷扩为 7 题）
 
 ---
 
@@ -308,12 +308,16 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 ## 12. 产品哲学与当前断点（2026-07-21）
 
 > **多 Agent 对齐入口**：[`docs/ALIGNMENT-BRIEF-FOR-CODEX.md`](ALIGNMENT-BRIEF-FOR-CODEX.md)（可整份粘贴给 Codex）  
-> **A2A 协议**：[`docs/A2A-PROTOCOL.md`](A2A-PROTOCOL.md) · 模板 [`A2A-HANDOFF-TEMPLATE.md`](A2A-HANDOFF-TEMPLATE.md) · 决策 [`A2A-DECISION-LOG.md`](A2A-DECISION-LOG.md)
+> **A2A 协议**：[`docs/A2A-PROTOCOL.md`](A2A-PROTOCOL.md) · 模板 [`A2A-HANDOFF-TEMPLATE.md`](A2A-HANDOFF-TEMPLATE.md) · 决策 [`A2A-DECISION-LOG.md`](A2A-DECISION-LOG.md) · 切换 [`AGENT-LOG.md`](AGENT-LOG.md)
 
-**哲学**：学习路径 + 可玩世界是**有意的双核**，不是做歪。开源/问卷/求职展示/Agent 飞轮见 `.cursor/skills/music-theory-game/SKILL.md` 与 `docs/IDEA-BACKLOG.md`。
+**哲学**：学路径与星图世界是**两个功能模块、不是两个产品**——分模块交付是为每侧体验做到极致（有意双核）。开源/问卷/求职展示/Agent 飞轮见 Skill 与 `IDEA-BACKLOG`。
 
-**当前代码**：v1.7.18 —
-- **I68 文件型 A2A**：Cursor↔Codex 角色/信封/模板；决策日志 stub（ALIGNMENT §6）；口令「A2A / 让 Codex 看 / 双顾问」。
+**当前代码**：v1.7.19 —
+- **问卷加厚**：`survey.html` 核心 5 题 +「玩到哪」+「还会打开」(+可选联系)；SHARE / 推文草稿同步「7 题·约2分钟」。
+
+**前作**：v1.7.18 —
+- **A2A §6 已拍板**：问卷优先 → 等 Top3 再砍功能；`AGENT-LOG` 已建；桌面简历版本 Codex 已改；空栏/探测条目标通讯测试不当 backlog。
+- **I68 文件型 A2A**：Cursor↔Codex 角色/信封/模板；决策日志真源；口令「A2A / 让 Codex 看 / 双顾问」。
 
 **前作**：v1.7.17 —
 - **中期续推**：CAREER 对齐桌面简历（版本号校准提示）；`resume-snippet.md` 可粘贴；`SHARE-SCRIPT.md` 微信一页；双核 hint + 首星区 tip；整备横幅「点此/Enter」双端文案。
@@ -376,8 +380,8 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 **下一刀（可照抄配方 · 详见 SKILL「Auto 续航手册」）**：
 1. ~~复盘章节 v1.7.15~~；~~中期 Day A/B 产品+材料 v1.7.16~~；~~简历对齐+分享话术 v1.7.17~~；~~I68 A2A·v1.7.18~~
-2. **Day C（仅你）**：发问卷 8–15 人；过目 STAR/resume-snippet；回收 Top3 → IDEA；**A2A**：模板 A→Codex → 回传写入 `A2A-DECISION-LOG`
-3. 之后：卫星能力分化；演奏余下手感；GitHub remote（须点名）
+2. **Day C（仅你）**：发问卷 8–15 人；过目 STAR/resume-snippet；回收 Top3 → IDEA（功能刀等数据；开源等回收+点名）
+3. 之后：按问卷 Top3；卫星分化 / 演奏手感仅作候选；GitHub remote（须点名）
 
 **Auto 续航**：切 Auto 后每刀独立可验收；避坑见 SKILL「Auto 模式续航手册」。
 

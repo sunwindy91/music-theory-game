@@ -11,7 +11,7 @@
 ```
 【乐理小达人 · 试玩邀请】
 试玩：https://music-theory-game-br5.pages.dev/
-问卷（5 题）：https://music-theory-game-br5.pages.dev/survey.html
+问卷（7 题·约2分钟）：https://music-theory-game-br5.pages.dev/survey.html
 
 5 分钟怎么玩：
 ① 首页点「学」或「玩」都行（手机也行）
@@ -31,7 +31,7 @@
 不用下载，手机/电脑打开就能玩：
 https://music-theory-game-br5.pages.dev/
 
-如果你方便，玩 5–10 分钟后填一下 5 题反馈（可复制答卷）：
+如果你方便，玩 5–10 分钟后填一下反馈（7 题·约 2 分钟，可复制答卷）：
 https://music-theory-game-br5.pages.dev/survey.html
 
 你的「最想改」会直接进下一版改版清单。感谢～
@@ -49,3 +49,11 @@ https://music-theory-game-br5.pages.dev/survey.html
 | 4–5 | 回首页点「学」看路径；打开问卷页 |
 
 本地自测：`start-local.bat` → http://127.0.0.1:8080/ → 页脚「试玩反馈」
+
+---
+
+## 公众号推文 + 朋友圈
+
+完整草稿见 [`docs/WECHAT-ARTICLE-DRAFT.md`](WECHAT-ARTICLE-DRAFT.md)（正文可粘公众号；文首有朋友圈短导语）。  
+策略：推文 = 正式邀请；朋友圈 = 导流到推文，不必塞满玩法。
+

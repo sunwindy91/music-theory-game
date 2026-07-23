@@ -133,9 +133,9 @@
 <body>
   <div class="wrap">
     <a class="back" href="index.html">← 回乐理小达人</a>
-    <h1>试玩反馈 · 5 题</h1>
+    <h1>试玩反馈 · 7 题</h1>
     <p class="lead">
-      先玩 5–10 分钟（首页「学 ‖ 玩」任选），再填本页。
+      先玩 5–10 分钟（首页「学 ‖ 玩」任选），再填本页（约 2 分钟）。
       答完可一键复制；你也可用
       <a href="https://music-theory-game-br5.pages.dev/" target="_blank" rel="noopener">线上试玩</a>。
       若已建 Tally/金数据，把外链贴进本页顶部即可替换。
@@ -174,6 +174,29 @@
         <input type="text" name="onefix" placeholder="例如：远征规则不清 / 某关太难 / 手机扫弦…" />
       </fieldset>
 
+      <fieldset>
+        <legend>6. 你大概玩到哪一步了？</legend>
+        <label class="opt"><input type="radio" name="depth" value="home" /> 主要在首页转转</label>
+        <label class="opt"><input type="radio" name="depth" value="learn" /> 主要走了学习路径 / 识谱</label>
+        <label class="opt"><input type="radio" name="depth" value="spirit_few" /> 进了星图，打了几波</label>
+        <label class="opt"><input type="radio" name="depth" value="spirit_boss" /> 打到过领主 / Boss</label>
+        <label class="opt"><input type="radio" name="depth" value="perform" /> 主要在演奏练习</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>7. 下次还想打开吗？</legend>
+        <label class="opt"><input type="radio" name="return" value="yes" /> 会</label>
+        <label class="opt"><input type="radio" name="return" value="maybe" /> 看心情</label>
+        <label class="opt"><input type="radio" name="return" value="no" /> 不太会</label>
+        <input type="text" name="returnWhy" placeholder="可选：半句原因（太难 / 好玩 / 没时间…）" style="min-height:44px" />
+      </fieldset>
+
+      <fieldset>
+        <legend>可选 · 愿意的话留下联系方式</legend>
+        <p style="margin:0 0 8px;font-size:0.85rem;color:var(--muted)">若方便深聊 10 分钟，可留微信或邮箱（不填也完全没问题）。</p>
+        <input type="text" name="contact" placeholder="微信 / 邮箱（可选）" style="min-height:44px" />
+      </fieldset>
+
       <div class="actions">
         <button type="submit" class="primary">生成并复制答卷</button>
         <a class="btn ghost" href="index.html">回去再玩一局</a>
@@ -195,6 +218,10 @@
         "3 和弦为什么: " + (fd.get("chordWhy") || "（未选）"),
         "4 更想要: " + wants,
         "5 最想改: " + ((fd.get("onefix") || "").trim() || "（空）"),
+        "6 玩到哪: " + (fd.get("depth") || "（未选）"),
+        "7 还会打开: " + (fd.get("return") || "（未选）") +
+          (((fd.get("returnWhy") || "").trim()) ? (" · " + (fd.get("returnWhy") || "").trim()) : ""),
+        "联系(可选): " + ((fd.get("contact") || "").trim() || "（无）"),
         "时间: " + new Date().toISOString()
       ];
       const text = lines.join("\n");
