@@ -254,6 +254,7 @@
 | I17 | Skill + HANDOFF + 本积压 = 记忆飞轮（已建） | 进行中 |
 | I18 | 稳定流程≥2次 → 提炼进 Skill | 进行中 |
 | I19 | 按需 n8n（问卷归集）/ ComfyUI（角色原画）；不预装 | 积压 |
+| I68 | **文件型 A2A**：Cursor↔Codex 信封/模板/决策日志（粘贴即用；非 Google SDK） | **MVP·v1.7.18** |
 
 ---
 
@@ -302,6 +303,7 @@
 | v1.7.3 | **死亡卡死修复**（清战场+计时→「灵光消散」面板·重新开始/返回菜单，已浏览器验证）；**Boss 层级校正**：激光仅归终局君主，刚石领主改「蓄力重装·重砸」（预警后重砸）；台词/tip 按元素校正 |
 | v1.7.4 | **I63 命名体系统一**：小怪 影刺→暗涌 / 闪鼠→流曜（刚石·雾灵保留=教学锚点）；领主/君主专名 磐岳·刚石领主 / 幽岚·雾灵领主 / 噬律·失谐君主；同步 waves/drones/teach 文案 |
 | v1.7.5 | **I64 君主多阶段**（阶段1 弹幕→阶段2 弹幕+蓄力重装+吞音加速→阶段3 解锁聚能激光；进阶浮字+台词 stage2/stage3）；**I62 战役星图 MVP**（`spirit-campaign.js`：首星区 6 节点·解锁进度 localStorage；`#campaignPanel` DOM 地图：节点星门 lock/unlock/cleared + SVG 连线；远征→选节点进入·清场=关卡完成回星图·打通解锁下一处，不再自动刷新；`pendingStartWave` 支持从指定 wave 起） |
+| v1.7.18 | **I68 文件型 A2A**：PROTOCOL + 模板 A–D + DECISION-LOG；ALIGNMENT/Skill 口令「A2A/双顾问」 |
 | v1.7.17 | **中期续推**：简历对齐 CAREER/resume-snippet · SHARE-SCRIPT 微信话术 · 双核 hint · 首星区 tip · 整备「点此/Enter」 |
 | v1.7.16 | **中期 48h**：双核窄屏热区 · 吉他触控续扫 · STAR/CAREER-ALIGN · Issue 模板 · 分享话术 · SPRINT 72h DoD |
 | v1.7.15 | **7/26 冲刺**：问卷页 CTA · STAR 草稿 · 远征密封（tip/结束确认/清剿轮次）· 吉他节奏↓↑闪 · SPRINT-0726 |

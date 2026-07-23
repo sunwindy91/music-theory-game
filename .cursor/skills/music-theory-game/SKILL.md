@@ -111,12 +111,21 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 
 不另开计划征求确认（总架构已授权时）；部署/commit 仍须用户点名。
 
+**A2A / 双顾问协议（2026-07-23 · I68）**
+
+用户说 **「A2A / 让 Codex 看 / 双顾问」** 时：
+
+1. 读 [`docs/A2A-PROTOCOL.md`](../../docs/A2A-PROTOCOL.md)；用 [`A2A-HANDOFF-TEMPLATE`](../../docs/A2A-HANDOFF-TEMPLATE.md) 信封，不另发明格式。  
+2. Codex = 战略/审阅；Cursor = 实现；用户 = 拍板与文件传递（粘贴/提交）。  
+3. 顾问结论 → 记入 [`docs/A2A-DECISION-LOG.md`](../../docs/A2A-DECISION-LOG.md) → 再改代码。  
+4. 对齐入口仍是 `ALIGNMENT-BRIEF-FOR-CODEX.md`；**不做**网络 A2A 服务端/OAuth/全量 SDK，除非用户另点名。
+
 **自动提炼触发（做完刀就扫一遍）**
 
 | 若本轮出现… | 写到 |
 |-------------|------|
 | 新积木/LS key/body 属性 | `MODULE-CONTRACTS` + Skill 技术表 |
-| 稳定协作口令（如「继续」） | 本 Skill 飞轮节 |
+| 稳定协作口令（如「继续」「A2A / 双顾问」） | 本 Skill 飞轮节 |
 | 设计锚点验证（节奏/星区/双肤） | Skill「星图锚点」或壳锚点 |
 | 玩家可见串台词 | IDEA 审校表 + 立刻清 UI |
 
@@ -168,7 +177,7 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 - **探险层**：全屏世界；坑/雾/晶石/遗迹柱；听辨收编；Boss 来袭  
 - **mewo（I38）**：待用户提供工具  
 
-检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.17**）。
+检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.18**）。
 **死亡交互（v1.7.3）**：死亡→`openDefeat()` 清战场/计时/Boss 面板→「灵光消散」面板（重新开始/返回菜单）；勿再用 `startBreath` 静默复活（会在刷怪计时未清时卡死）。
 **Boss 层级（v1.7.3）**：激光仅 `isMega`（终局君主）；领主是附庸，刚石=蓄力重装·重砸（`pendingSlamAt` 预警后重砸），雾灵=弹幕。命名/tip 按元素。
 **Boss 台词（v1.7.2 · I54-B）**：`spirit-data.js` `BOSS_LINES{entrance/mega/laser/enrage}`；`spirit-boss.js` `pickLine()`；出场画面渲染 taunt，狂暴/聚能经回调在 Boss 头顶浮字。纯氛围，与捡音/伤害解耦。
@@ -186,7 +195,8 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 **7/26 交付（v1.7.15）**：`survey.html` + 页脚 CTA；`STAR-CASE-DRAFT` / `SPRINT-0726`；远征 tip+结束确认；吉他节奏 ↓↑ 闪。
 **中期 48h（v1.7.16）**：双核窄屏热区；吉他「↓↑ 续扫」触控；`CAREER-ALIGN`；Issue 模板；README 分享块。
 **中期续推（v1.7.17）**：简历对齐 + `resume-snippet`；`SHARE-SCRIPT`；双核 hint；首星区 tip；整备横幅点跳过文案。
-**当前下一刀**：Day C 发问卷（仅你）；过目 STAR/简历粘贴稿。其后：演奏手感；卫星能力再分化。
+**A2A 文件协议（v1.7.18·I68）**：`docs/A2A-PROTOCOL.md` + 模板 + 决策日志；口令「A2A / 让 Codex 看 / 双顾问」。
+**当前下一刀**：Day C 发问卷（仅你）；过目 STAR/简历粘贴稿；把 Codex 首轮回传写入 `A2A-DECISION-LOG`。其后：演奏手感；卫星能力再分化。
 
 ## 两天冲刺 + 终局愿景（2026-07-23）
 
@@ -249,7 +259,7 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 | 收集反馈 | Tally / 金数据外链问卷 | 先别上后端 |
 | 问卷→表格自动归集 | 以后再 **n8n** | 现在手抄也行 |
 | 女神/角色原画批量 | 以后再 **ComfyUI** / Meowa | MVP 用占位或单张 |
-| 多 Agent 编排 | 中期以后；先把单 Agent 飞轮跑顺 | WorkBuddy 非必须 |
+| 多 Agent 编排 | **I68 文件 A2A**（粘贴/MD）已可用；正式 SDK 中期以后 | WorkBuddy / Google A2A 服务端非必须 |
 
 用户若主动提供 n8n/ComfyUI/自动化能力，Agent 可在对应里程碑接入，仍遵守「计划→确认→做」。
 
@@ -327,10 +337,11 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 - 验收：**仅**在击破 mega 时触发，不与「灵气达标 victory」混淆。
 - 坑：触发点要判 `isMega` 且是真正击破，不是灵气达标。
 
-**⑤ 下一刀候选（v1.7.17 后）**
+**⑤ 下一刀候选（v1.7.18 后）**
 - **Day C（仅用户）**：发问卷；过目 STAR/`resume-snippet`；Top3 回 IDEA（`docs/SPRINT-0726.md`）
+- **A2A**：模板 A→Codex → 回传写入 `A2A-DECISION-LOG`
 - 卫星能力分化；演奏余下手感
-- ~~复盘章节 / 中期 Day A·B / 简历对齐+分享~~ 已消化·v1.7.15–17
+- ~~复盘章节 / 中期 Day A·B / 简历对齐+分享 / I68 A2A~~ 已消化·v1.7.15–18
 
 **之后**：问卷归集后再排大功能。GitHub 开源仍须用户点名「开源到 GitHub」。
 

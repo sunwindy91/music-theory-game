@@ -2,7 +2,7 @@
 
 > **截止**：2026-07-25/26  
 > **目标**：中期线可交差（试玩连贯 + 求职材料可用 + 开源脚手架齐），**不是**再堆大系统  
-> **当前代码**：v1.7.17（基线 v1.7.16 中期 48h；本切片：简历对齐 + 分享话术 + 首区/整备双端 tip）
+> **当前代码**：v1.7.18（基线 v1.7.17 中期续推；本切片：I68 文件型 A2A）
 
 ---
 
@@ -58,6 +58,9 @@
 | 文件 | 对应 |
 |------|------|
 | `docs/ALIGNMENT-BRIEF-FOR-CODEX.md` | 多 Agent / Codex 对齐简报（整份粘贴） |
+| `docs/A2A-PROTOCOL.md` | 文件型 A2A（角色/信封/礼仪） |
+| `docs/A2A-HANDOFF-TEMPLATE.md` | 模板 A–D（今晚粘贴 Codex） |
+| `docs/A2A-DECISION-LOG.md` | 联合决策流水 |
 | `survey.html` | 试玩反馈问卷 |
 | `docs/STAR-CASE-DRAFT.md` | 求职 STAR 口述稿 |
 | `docs/CAREER-ALIGN.md` | 简历/体验报告 ↔ 仓库证据 |

@@ -1,8 +1,9 @@
 # 乐理小达人 · 对齐简报（给 Codex / 多 Agent）
 
 > **写给**：与 Cursor Agent 并列的顾问（Codex / 其它模型）。先对齐再提方案，**勿重复已交付**。  
-> **日期**：2026-07-23 · **代码锚点**：`APP_VERSION` = **v1.7.17**（以 `core/features.js` / 线上页脚为准）  
-> **权威接力**：本简报 → `docs/HANDOFF-AND-ROADMAP.md` §12 → `.cursor/skills/music-theory-game/SKILL.md`
+> **日期**：2026-07-23 · **代码锚点**：`APP_VERSION` = **v1.7.18**（以 `core/features.js` / 线上页脚为准）  
+> **权威接力**：本简报 → `docs/HANDOFF-AND-ROADMAP.md` §12 → `.cursor/skills/music-theory-game/SKILL.md`  
+> **A2A**：对等协作协议 → [`docs/A2A-PROTOCOL.md`](A2A-PROTOCOL.md) · 模板 [`A2A-HANDOFF-TEMPLATE.md`](A2A-HANDOFF-TEMPLATE.md) · 决策 [`A2A-DECISION-LOG.md`](A2A-DECISION-LOG.md)
 
 ---
 
@@ -12,6 +13,7 @@
 |----|------|
 | 你的角色 | 战略/优先级顾问；可挑战假设，但方案须标明**影响哪一层时间尺度** |
 | 默认动作 | 小切片；先读本简报 + HANDOFF §12；再提案；**不要**重写已落地系统 |
+| **A2A** | 用户说「A2A / 让 Codex 看 / 双顾问」时：按 `A2A-PROTOCOL` 信封回传；结论记入 `A2A-DECISION-LOG`；**勿**另发明格式或直接改仓库 |
 | 产品一句话 | 浏览器端乐理**学练一体**：学习路径（教）+ 可玩世界（星图/演奏） |
 | 故意双核 | 「两个游戏合成一个壳」是**产品决策**，不是做歪。勿劝退双核；帮**分期交付、接口清晰、不烂尾** |
 
@@ -23,7 +25,7 @@
 
 | 项 | 值 |
 |----|-----|
-| 版本 | **v1.7.17** |
+| 版本 | **v1.7.18** |
 | 仓库 | https://gitee.com/chunny/music-theory-game （`origin`；**尚无** GitHub remote） |
 | 线上（国内主） | https://music-theory-game-br5.pages.dev/ |
 | 海外备用 | https://music-theory-game.vercel.app/ |
@@ -51,6 +53,7 @@
 
 | Commit | 要点 |
 |--------|------|
+| （本切片）**v1.7.18** | 文件型 A2A 协议 + 模板 + 决策日志（I68） |
 | `adb6812` **v1.7.17** | 简历对齐、微信分享话术、首区/整备双端 tip |
 | `d1677c3` **v1.7.16** | 双核触控、吉他续扫钮、CAREER/Issue、SPRINT 72h DoD |
 | `4c0ce9f` **v1.7.15** | 问卷+STAR、远征密封 UX、吉他↓↑闪 |
@@ -70,9 +73,9 @@
 
 | 层 | 目标 | 当前进度 | 下一动作 |
 |----|------|----------|----------|
-| **当下** | 可玩可学、星图手感 | v1.7.17 可分享；星图战役+远征局已可通首区线 | 用户发问卷+手机自测；Agent 默认**等反馈**，勿堆大系统 |
+| **当下** | 可玩可学、星图手感 | v1.7.18 可分享；星图战役+远征局已可通首区线；A2A 文件协议可用 | 用户发问卷+手机自测；Agent 默认**等反馈**，勿堆大系统 |
 | **中期**（2–3 周） | 问卷→改版→求职展示 | 材料齐；闭环缺「真实答卷」 | Day C：发卷→Top3→IDEA；简历改版本号；过目 STAR |
-| **长远**（季度+） | 飞轮·开源·多 Agent | Skill/HANDOFF/积压已转；GitHub 未开 | 点名后开源；稳定流程结晶进 Skill；内容/Boss 加深 |
+| **长远**（季度+） | 飞轮·开源·多 Agent | Skill/HANDOFF/积压已转；**I68 文件 A2A** 已起步；GitHub 未开 | 点名后开源；A2A 跑顺后再考虑正式协议映射；内容/Boss 加深 |
 
 用户当次消息可覆盖优先级。
 
@@ -125,7 +128,7 @@
 5. **剩余 2–3 天精力分配**（至 7/26）：用户侧 vs Agent 侧各占多少；Agent 该闲还是做文档/小 polish？  
 6. **STAR 主叙事**：偏「乐理产品 PM」还是偏「Harness / AI 协作承载层」——哪条更利 DeepSeek/Harness 向岗位？  
 7. **桌面简历仍写 v1.4.8**：口头纠偏够不够，还是必须先改文件再发卷？  
-8. **多 Agent 协作边界**：Codex 出战略、Cursor 写代码——接口文档还缺什么才不会互踩？
+8. **多 Agent 协作边界**：Codex 出战略、Cursor 写代码——现已有 `docs/A2A-PROTOCOL.md`；还缺什么才不会互踩？可建议改信封字段，勿另起一套。
 
 ---
 
@@ -134,9 +137,12 @@
 | 路径 | 用途 |
 |------|------|
 | `docs/ALIGNMENT-BRIEF-FOR-CODEX.md` | **本简报** · 多 Agent 对齐入口 |
+| `docs/A2A-PROTOCOL.md` | Cursor↔Codex 文件型 A2A（角色/信封/礼仪） |
+| `docs/A2A-HANDOFF-TEMPLATE.md` | 可复制模板 A–D |
+| `docs/A2A-DECISION-LOG.md` | 联合决策流水 |
 | `.cursor/skills/music-theory-game/SKILL.md` | 协作铁律 · 三层时间 · 星图锚点 · Auto 续航 |
 | `docs/HANDOFF-AND-ROADMAP.md` | 交接；**§12 = 当前断点** |
-| `docs/IDEA-BACKLOG.md` | 想法/审校/置顶冲刺；中期 ID：**I12/I15/I16** |
+| `docs/IDEA-BACKLOG.md` | 想法/审校/置顶冲刺；中期 ID：**I12/I15/I16**；A2A：**I68** |
 | `docs/SPRINT-0726.md` | 7/23–26 · 48–72h DoD |
 | `docs/MIDTERM-CAREER-AND-OPENSOURCE.md` | 问卷·开源·求职中期备忘 |
 | `docs/STAR-CASE-DRAFT.md` | 求职 STAR 口述稿 |
@@ -152,10 +158,11 @@
 
 ## 8. 一页结论（建议默认立场）
 
-1. **先读**：本简报 → HANDOFF §12 → Skill 三层时间；提案必须标明 **当下 / 中期 / 长远**。  
+1. **先读**：本简报 → HANDOFF §12 → Skill 三层时间 → [`A2A-PROTOCOL`](A2A-PROTOCOL.md)；提案必须标明 **当下 / 中期 / 长远**。  
 2. **默认小切片**：代码侧暂停堆大功能；中期堵点是**用户发问卷 + 简历版本校准**，不是再做一个 Boss。  
 3. **勿重复交付**：v1.7.14–17 已封可分享章节与职涯材料；你的价值在**优先级、叙事、问卷后第一刀选型**。  
 4. **双核护栏**：肯定分期与接口，不劝合并成「只剩刷题」或「只剩动作游戏」。  
 5. **开源/部署/commit**：默认不做；等用户点名。  
+6. **A2A 回传**：用信封（见协议 §2）或至少按模板；结论由用户/Cursor 写入 `A2A-DECISION-LOG`，你不直接改仓。  
 
-**回传格式建议**：对 §6 八题各 2–4 行；末附「若只做一件事」一句话。
+**回传格式建议**：对 §6 八题各 2–4 行；末附「若只做一件事」一句话；优先贴进 A2A 信封。
