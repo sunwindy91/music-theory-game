@@ -199,6 +199,15 @@
     body[data-density="kid"] .dual-card strong { font-size: 1.55rem; }
     body[data-density="kid"] .dual-card span { font-size: 0.9rem; }
     body[data-density="std"] .dual-card { border-radius: 12px; }
+    .dual-gate-hint {
+      grid-column: 1 / -1;
+      margin: 0;
+      font-size: 0.72rem;
+      line-height: 1.4;
+      opacity: 0.72;
+      color: var(--muted, #6b6280);
+      text-align: center;
+    }
     @media (max-width: 560px) {
       .dual-gate { grid-template-columns: 1fr; gap: 12px; }
       .dual-card {
@@ -208,6 +217,7 @@
       }
       .dual-card strong { font-size: 1.5rem; }
       .dual-card span { font-size: 0.85rem; }
+      .dual-gate-hint { font-size: 0.8rem; opacity: 0.85; text-align: left; }
     }
     .dual-gate-pulse {
       outline: 2px solid rgba(124, 92, 255, 0.55);
@@ -611,6 +621,7 @@
         <strong>玩</strong>
         <span>灵气星图 · 练习房 / 远征</span>
       </button>
+      <p class="dual-gate-hint" id="dualGateHint">手机也行：点「学」或「玩」进入 · 星图里点画面开火、点弹药钮切弹</p>
     </section>
       <div class="setup-group" id="learnGroup">
         <div class="setup-label">📘 学习中心 · 学习路径</div>

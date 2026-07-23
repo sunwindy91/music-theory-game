@@ -168,7 +168,7 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 - **探险层**：全屏世界；坑/雾/晶石/遗迹柱；听辨收编；Boss 来袭  
 - **mewo（I38）**：待用户提供工具  
 
-检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.16**）。
+检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.17**）。
 **死亡交互（v1.7.3）**：死亡→`openDefeat()` 清战场/计时/Boss 面板→「灵光消散」面板（重新开始/返回菜单）；勿再用 `startBreath` 静默复活（会在刷怪计时未清时卡死）。
 **Boss 层级（v1.7.3）**：激光仅 `isMega`（终局君主）；领主是附庸，刚石=蓄力重装·重砸（`pendingSlamAt` 预警后重砸），雾灵=弹幕。命名/tip 按元素。
 **Boss 台词（v1.7.2 · I54-B）**：`spirit-data.js` `BOSS_LINES{entrance/mega/laser/enrage}`；`spirit-boss.js` `pickLine()`；出场画面渲染 taunt，狂暴/聚能经回调在 Boss 头顶浮字。纯氛围，与捡音/伤害解耦。
@@ -185,7 +185,8 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 **Boss 预警 + 成长池 + 地形（v1.7.14）**：弹幕 `pendingBoltsAt` + `drawSkillTelegraphs`；击杀 `hitStopUntil`；`SpiritEvo.pickThree` 六选抽三；晶石/碎柱给弹 + `objectiveHint`。
 **7/26 交付（v1.7.15）**：`survey.html` + 页脚 CTA；`STAR-CASE-DRAFT` / `SPRINT-0726`；远征 tip+结束确认；吉他节奏 ↓↑ 闪。
 **中期 48h（v1.7.16）**：双核窄屏热区；吉他「↓↑ 续扫」触控；`CAREER-ALIGN`；Issue 模板；README 分享块。
-**当前下一刀**：演奏手感；I61 分端 UX；卫星能力再分化。A/B 后置。
+**中期续推（v1.7.17）**：简历对齐 + `resume-snippet`；`SHARE-SCRIPT`；双核 hint；首星区 tip；整备横幅点跳过文案。
+**当前下一刀**：Day C 发问卷（仅你）；过目 STAR/简历粘贴稿。其后：演奏手感；卫星能力再分化。
 
 ## 两天冲刺 + 终局愿景（2026-07-23）
 
@@ -326,10 +327,10 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 - 验收：**仅**在击破 mega 时触发，不与「灵气达标 victory」混淆。
 - 坑：触发点要判 `isMega` 且是真正击破，不是灵气达标。
 
-**⑤ 下一刀候选（v1.7.16 后）**
-- **Day C**：发问卷；过目 STAR；Top3 回 IDEA（`docs/SPRINT-0726.md`）
+**⑤ 下一刀候选（v1.7.17 后）**
+- **Day C（仅用户）**：发问卷；过目 STAR/`resume-snippet`；Top3 回 IDEA（`docs/SPRINT-0726.md`）
 - 卫星能力分化；演奏余下手感
-- ~~复盘章节 / 中期 Day A·B~~ 已消化·v1.7.15–16
+- ~~复盘章节 / 中期 Day A·B / 简历对齐+分享~~ 已消化·v1.7.15–17
 
 **之后**：问卷归集后再排大功能。GitHub 开源仍须用户点名「开源到 GitHub」。
 

@@ -75,18 +75,20 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 ## 反馈与分享
 
-试玩后请填 [survey.html](survey.html)（5 题，可一键复制答卷）。
+试玩后请填 [survey.html](survey.html)（5 题，可一键复制答卷）。  
+一页话术（含 5 分钟指法）：[docs/SHARE-SCRIPT.md](docs/SHARE-SCRIPT.md)
 
 **复制即发：**
 
 ```
 【乐理小达人 · 试玩邀请】
 试玩：https://music-theory-game-br5.pages.dev/
-玩 5–10 分钟：首页点「学」或「玩」都行
-反馈：https://music-theory-game-br5.pages.dev/survey.html
+问卷（5 题）：https://music-theory-game-br5.pages.dev/survey.html
+
+5 分钟：首页点「学」或「玩」→ 星图练习房捡音开火 → 清场可点整备条跳过 → 填问卷「最想改」
 ```
 
-求职 STAR：[docs/STAR-CASE-DRAFT.md](docs/STAR-CASE-DRAFT.md) · 叙事对齐：[docs/CAREER-ALIGN.md](docs/CAREER-ALIGN.md) · 48–72h DoD：[docs/SPRINT-0726.md](docs/SPRINT-0726.md)
+求职 STAR：[docs/STAR-CASE-DRAFT.md](docs/STAR-CASE-DRAFT.md) · 简历粘贴稿：[docs/resume-snippet.md](docs/resume-snippet.md) · 叙事对齐：[docs/CAREER-ALIGN.md](docs/CAREER-ALIGN.md) · 48–72h DoD：[docs/SPRINT-0726.md](docs/SPRINT-0726.md)
 
 贡献见 [CONTRIBUTING.md](CONTRIBUTING.md)；许可 [LICENSE](LICENSE)（MIT）。GitHub Issues 模板已备；mirror 到 GitHub 须仓库主人点名。
 

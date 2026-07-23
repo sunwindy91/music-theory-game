@@ -1,8 +1,8 @@
 # STAR 半页案例草稿 · 乐理小达人
 
 > **用途**：产品经理 / Harness·AI 产品向求职口述或一页 Notion；非对外官网文案。  
-> **版本锚点**：代码至 **v1.7.16**；试玩 https://music-theory-game-br5.pages.dev/  
-> **更新**：2026-07-23 · 对齐个人《体验报告 v2》Harness 叙事（仓库内对照见 `CAREER-ALIGN.md`）
+> **版本锚点**：代码至 **v1.7.17**；试玩 https://music-theory-game-br5.pages.dev/  
+> **更新**：2026-07-23 · 对齐桌面简历 +《体验报告 v2》（仓库对照：`CAREER-ALIGN.md` · 粘贴稿：`resume-snippet.md`）
 
 ---
 
@@ -19,7 +19,7 @@
 ## Action
 
 1. **定义问题**：刷题≠学会 → 学练闭环 + 可玩奖励层；明确「两个游戏一个壳」是有意双核，分期切片避免一次做两款完整游戏。  
-2. **设计交互**：时停学堂、抗性怪与和弦弹药、战役星图非自动刷图、远征局跨节点保留养成（I66）、Boss telegraph 可读性。  
+2. **设计交互**：时停学堂、抗性怪与和弦弹药、战役星图非自动刷图、远征局跨节点保留养成（I66）、Boss telegraph 可读性；双端触控（窄屏双核热区、吉他续扫、整备条可点跳过）。  
 3. **管理反馈**：IDEA 审校表记体感债（闪步像掉帧、清场静默踢出）→ 改版；`survey.html` 五题回收「最想改」。  
 4. **Harness 承载层**：Skill 稳态仪式 + HANDOFF 断点 + MODULE-CONTRACTS + Auto 续航手册 —— 让弱模型也能按配方续推，而不是靠聊天记忆。  
 5. **运营闭环**：Cloudflare Pages 可分享；页脚 CTA；开源脚手架（LICENSE / CONTRIBUTING / Issue 模板）就绪，GitHub remote 待点名。
@@ -30,8 +30,9 @@
 |------|------|
 | 线上试玩 | https://music-theory-game-br5.pages.dev/ |
 | 版本演进 | v1.0 原型 → **v1.7.x** 双核 + 首星区远征可通 + 问卷入口 |
+| 简历可对标 | ~16 学习节点 · 多练习模块 · 40+ Backlog · 文档飞轮 · 双域名部署 |
 | 可复述决策 | 双核、远征≠Roguelike 清档、闪步 telegraph、面板假死守卫链 |
-| 研究入口 | `/survey.html`；STAR / CAREER-ALIGN / SPRINT-0726 |
+| 研究入口 | `/survey.html`；STAR / CAREER-ALIGN / resume-snippet / SPRINT-0726 |
 | 协作系统 | 检查点 git + 飞轮文档，支撑连续迭代 |
 
 **一句话简历行**：独立交付学玩双核浏览器乐理产品，并用 Skill/积压飞轮与短问卷闭环做可持续迭代（Harness 式「模型+承载层」产品实践）。
@@ -41,4 +42,5 @@
 - **为什么双核？** 同一灵气进度贯通动机；壳层分期挂模块，避免拆成两个烂尾 App。  
 - **最大失败？** 远征静默踢出 / 闪步像掉帧 → 审校表 → I66 与 telegraph。  
 - **和 Harness PM 有何关系？** 核心不是「会叫 AI 写代码」，而是定义场景、交互与文档接口，让协作可复现。  
+- **简历版本号为何可能滞后？** 桌面简历快照 vs 线上页脚——面试以 Pages 页脚为准。  
 - **下一步？** 问卷 Top3 回 IDEA；点名后开源到 GitHub（`sunwindy91`）。

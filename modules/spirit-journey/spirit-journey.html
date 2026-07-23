@@ -416,9 +416,9 @@
         <span>4 合弦</span><span class="count" id="ammoSuperCount">0</span>
       </button>
     </div>
-    <div id="hint">WASD 移动 · 凑和弦入库 · 1/2/3/4 切弹 · R 切弹 · T 合成</div>
-    <div id="breathBanner" aria-live="polite">
-      清场整备 · <span id="breathSec">2</span>s · 可移动捡音 · <kbd>Enter</kbd> 下一波
+    <div id="hint">WASD/方向键移动 · 点画面开火 · 点弹药钮切弹 · 凑和弦入库</div>
+    <div id="breathBanner" aria-live="polite" title="点击或按 Enter 立刻进入下一波">
+      清场整备 · <span id="breathSec">2</span>s · 可移动捡音 · <strong>点此</strong>/<kbd>Enter</kbd> 下一波
     </div>
     <div id="stageBanner" aria-live="polite">
       <div class="stage-title" id="stageTitle">关卡</div>
@@ -629,8 +629,8 @@
       <h1>灵 气 星 图</h1>
       <p>全屏探险世界 · <strong>坑</strong>坠落 · <strong>雾</strong>减速 · <strong>晶石</strong>灵气 · <strong>柱</strong>挡路（E 可撞碎）<br>
         捡音入背包 → 凑<strong>大三/小三</strong>自动装入弹药包（+6）· 两音<strong>纯五</strong>得刚盾稳固<br>
-        <strong>1–4 / R</strong> 切弹 · <strong>T</strong> 合成超级弹 · <strong>空格</strong> 开火 · <strong>Shift</strong> 闪避/冲刺<br>
-        Boss「聚能」预警线亮起时 <strong>Shift/E 闪避</strong>躲激光 · 明快穿透 · 阴郁冰冻融化 · 一关一主题怪 · 节奏偏慢好学</p>
+        <strong>点画面 / 空格</strong> 开火 · <strong>点弹药钮 / 1–4</strong> 切弹 · <strong>T</strong> 合成 · <strong>Shift</strong> 闪避<br>
+        清场整备可<strong>点顶部横幅</strong>跳过 · Boss「聚能」亮起时 Shift/E 躲激光 · 一关一主题怪 · 节奏偏慢好学</p>
       <div class="actions" id="modePick" style="margin-top:20px">
         <button type="button" class="primary" id="modePractice" data-mode="practice">练习房<br><small style="opacity:.85;font-weight:400">首星区 1–6 · 可反复刷</small></button>
         <button type="button" id="modeExpedition" data-mode="expedition">远征<br><small style="opacity:.85;font-weight:400">星区推进 · 局内养成保留</small></button>
@@ -2109,10 +2109,10 @@
       showToast(msg);
       if (!sessionBreathTaught) {
         sessionBreathTaught = true;
-        hintEl.textContent = "清场整备：不是定身！可移动捡音/合成 · Enter 立刻下一波";
-        showToast("清场整备 · 能走能动 · Enter 跳过");
+        hintEl.textContent = "清场整备：不是定身！可移动捡音/合成 · 点横幅或 Enter 下一波";
+        showToast("清场整备 · 能走能动 · 点横幅跳过");
       } else {
-        hintEl.textContent = `整备 ${Math.round(ms / 1000)}s · 可移动 · Enter 下一波`;
+        hintEl.textContent = `整备 ${Math.round(ms / 1000)}s · 可移动 · 点横幅/Enter 下一波`;
       }
       if (breathBannerEl) breathBannerEl.classList.add("show");
       if (lives < (player.maxLives || 3) && Math.random() < 0.5) {
@@ -3205,7 +3205,11 @@
       try {
         if (!localStorage.getItem("mtg_campaign_tip_v1")) {
           localStorage.setItem("mtg_campaign_tip_v1", "1");
-          showToast("远征局：清场可选继续清剿或回星图升级；「结束远征局」才清空养成");
+          showToast("远征：点星门进关 · 清场可继续或回星图升级 ·「结束远征局」才清空养成");
+        }
+        if (!localStorage.getItem("mtg_sector0_tip_v1") && currentSectorIdx === 0) {
+          localStorage.setItem("mtg_sector0_tip_v1", "1");
+          if (hintEl) hintEl.textContent = "首星区：点星门开战 · 关内点画面开火 · 点弹药钮切弹";
         }
       } catch { /* */ }
     }
@@ -4009,7 +4013,7 @@
           const ms = (window.SpiritWaves && SpiritWaves.breathMs)
             ? SpiritWaves.breathMs(wave)
             : (wave <= 2 ? BREATH_MS_EARLY : BREATH_MS_LATER);
-          startBreath(ms, `清场整备 ${Math.round(ms / 1000)} 秒 · Enter 下一波`);
+          startBreath(ms, `清场整备 ${Math.round(ms / 1000)} 秒 · 点横幅/Enter 下一波`);
         } else if (Date.now() >= breathUntil) {
           if (runMode === "practice" && wave >= practiceCap()) {
             openPracticeClear();

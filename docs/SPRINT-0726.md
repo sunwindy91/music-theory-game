@@ -2,7 +2,7 @@
 
 > **截止**：2026-07-25/26  
 > **目标**：中期线可交差（试玩连贯 + 求职材料可用 + 开源脚手架齐），**不是**再堆大系统  
-> **当前代码**：v1.7.16（基线 v1.7.15 可分享章节已上线）
+> **当前代码**：v1.7.17（基线 v1.7.16 中期 48h；本切片：简历对齐 + 分享话术 + 首区/整备双端 tip）
 
 ---
 
@@ -17,30 +17,36 @@
 - [x] 学‖玩双核：窄屏单列断点上调 + 触控热区加大（I61 切片）
 - [x] 吉他：手机「↓↑ 续扫」大钮（等同空格，I58 触控债）
 - [x] README 分享话术可复制块 + 版本文案对齐
-- [ ] 自测：手机宽打开首页双卡 + 演奏吉他续扫（你或家人 2 分钟）
+- [x] 首区 tip + 整备横幅「点此跳过」双端文案（v1.7.17）
+- [ ] 自测：手机宽打开首页双卡 + 演奏吉他续扫 + 星图点横幅跳过整备（你或家人 2 分钟）
 
 ## Day B · 求职 + 开源就绪（7/24–25）
 
 - [x] STAR 加厚：对齐体验报告「Harness / 需求翻译」叙事 + v1.7.x 证据
-- [x] `docs/CAREER-ALIGN.md`：体验报告 ↔ 本仓库证据对照（不改 Desktop 原件）
+- [x] `docs/CAREER-ALIGN.md`：简历 + 体验报告 ↔ 本仓库证据（不改 Desktop 原件）
+- [x] `docs/resume-snippet.md`：可粘贴回桌面简历的项目条（版本写 v1.7.x）
 - [x] Issues 模板 Bug / 想法；MIDTERM 开源清单勾选可勾项
-- [ ] 你过目 STAR + CAREER-ALIGN，按需改一句话简历行
+- [ ] 你过目 STAR + resume-snippet，按需改一句话；桌面简历版本号建议改 v1.7.x
 
 ## Day C · 部署分享 + 自测（7/25–26）
 
-- [x] bump + push Gitee + Pages（本切片）
-- [ ] 把试玩链 + 问卷发给 8–15 人
+- [x] bump + push Gitee + Pages（v1.7.16 / v1.7.17）
+- [x] `docs/SHARE-SCRIPT.md` 微信一页话术（试玩 + 问卷 + 5 分钟指法）
+- [ ] 把试玩链 + 问卷发给 8–15 人（复制 `SHARE-SCRIPT` 短版）
 - [ ] 回收 Top3「最想改」→ 写回 IDEA 审校表
 
 ---
 
 ## 分享话术（复制即发）
 
+完整版见 [`docs/SHARE-SCRIPT.md`](SHARE-SCRIPT.md)。短版：
+
 ```
 【乐理小达人 · 试玩邀请】
 试玩：https://music-theory-game-br5.pages.dev/
-玩 5–10 分钟：首页点「学」或「玩」都行
-反馈（5 题，可复制答卷）：https://music-theory-game-br5.pages.dev/survey.html
+问卷（5 题）：https://music-theory-game-br5.pages.dev/survey.html
+
+5 分钟：首页点「学」或「玩」→ 星图练习房捡音开火 → 清场可点整备条跳过 → 填问卷「最想改」
 ```
 
 本地：`start-local.bat` → http://127.0.0.1:8080/ → 页脚「试玩反馈」
@@ -53,7 +59,9 @@
 |------|------|
 | `survey.html` | 试玩反馈问卷 |
 | `docs/STAR-CASE-DRAFT.md` | 求职 STAR 口述稿 |
-| `docs/CAREER-ALIGN.md` | 体验报告 ↔ 仓库证据 |
+| `docs/CAREER-ALIGN.md` | 简历/体验报告 ↔ 仓库证据 |
+| `docs/resume-snippet.md` | 简历可粘贴项目条 |
+| `docs/SHARE-SCRIPT.md` | 微信分享一页话术 |
 | `docs/SPRINT-0726.md` | 本 48–72h DoD |
 | `docs/MIDTERM-CAREER-AND-OPENSOURCE.md` | 中期总备忘 |
 | `README.md` | 分享 / 启动 / 开源入口 |
