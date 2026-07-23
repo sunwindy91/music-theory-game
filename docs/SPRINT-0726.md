@@ -57,6 +57,7 @@
 
 | 文件 | 对应 |
 |------|------|
+| `docs/ALIGNMENT-BRIEF-FOR-CODEX.md` | 多 Agent / Codex 对齐简报（整份粘贴） |
 | `survey.html` | 试玩反馈问卷 |
 | `docs/STAR-CASE-DRAFT.md` | 求职 STAR 口述稿 |
 | `docs/CAREER-ALIGN.md` | 简历/体验报告 ↔ 仓库证据 |

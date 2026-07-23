@@ -307,6 +307,8 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 ## 12. 产品哲学与当前断点（2026-07-21）
 
+> **多 Agent 对齐入口**：[`docs/ALIGNMENT-BRIEF-FOR-CODEX.md`](ALIGNMENT-BRIEF-FOR-CODEX.md)（可整份粘贴给 Codex）
+
 **哲学**：学习路径 + 可玩世界是**有意的双核**，不是做歪。开源/问卷/求职展示/Agent 飞轮见 `.cursor/skills/music-theory-game/SKILL.md` 与 `docs/IDEA-BACKLOG.md`。
 
 **当前代码**：v1.7.17 —

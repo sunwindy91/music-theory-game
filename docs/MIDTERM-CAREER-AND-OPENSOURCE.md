@@ -2,7 +2,8 @@
 
 > **性质**：白天阅读用；48–72h 执行清单见 `docs/SPRINT-0726.md`。  
 > **写入日**：2026-07-21 · **修订**：2026-07-23  
-> **关联**：Skill 三层时间尺度；IDEA I12 / I15 / I16；`docs/CAREER-ALIGN.md`
+> **关联**：Skill 三层时间尺度；IDEA I12 / I15 / I16；`docs/CAREER-ALIGN.md`  
+> **多 Agent**：先读 [`docs/ALIGNMENT-BRIEF-FOR-CODEX.md`](ALIGNMENT-BRIEF-FOR-CODEX.md)
 
 ---
 
