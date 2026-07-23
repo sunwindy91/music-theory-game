@@ -14,16 +14,17 @@
 - [x] `survey.html` + README / 页脚 CTA
 - [x] `docs/STAR-CASE-DRAFT.md` 半页
 - [x] 吉他节奏型扫弦方向闪
-- [ ] **7/25–26**：Cloudflare 部署 + 把试玩链 + 问卷发给 8–15 人
+- [x] **7/23**：Cloudflare 部署已发（预览 `https://5c6b00fe.music-theory-game-br5.pages.dev`；主域 `https://music-theory-game-br5.pages.dev/`）
+- [ ] 把试玩链 + 问卷发给 8–15 人
 - [ ] 问卷回收后，把 Top3「最想改」写回 IDEA 审校表
 
 ---
 
 ## 分享话术（可直接发）
 
-1. 试玩：https://music-theory-game-br5.pages.dev/（部署后以实际为准）  
+1. 试玩：https://music-theory-game-br5.pages.dev/（本次预览 https://5c6b00fe.music-theory-game-br5.pages.dev ）  
 2. 玩 5–10 分钟（首页「学 ‖ 玩」）  
-3. 反馈：同域 `/survey.html` 或仓库根目录问卷页  
+3. 反馈：https://music-theory-game-br5.pages.dev/survey.html 
 
 本地：`start-local.bat` → http://127.0.0.1:8080/ → 页脚「试玩反馈」
 
