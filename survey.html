@@ -7,13 +7,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg0: #1a1630;
-      --bg1: #2a2148;
-      --ink: #f4f0ff;
-      --muted: #b8aed4;
-      --accent: #ff9f43;
-      --line: rgba(255, 255, 255, 0.12);
-      --card: rgba(255, 255, 255, 0.06);
+      --bg: #f7f6f3;
+      --paper: #ffffff;
+      --ink: #1c1917;
+      --muted: #78716c;
+      --line: #e7e5e4;
+      --accent: #ea580c;
+      --accent-soft: #fff7ed;
+      --focus: #c2410c;
     }
     * { box-sizing: border-box; }
     body {
@@ -21,16 +22,13 @@
       min-height: 100vh;
       font-family: "Fredoka", "Segoe UI", sans-serif;
       color: var(--ink);
-      background:
-        radial-gradient(ellipse 80% 50% at 20% 0%, #3d2f6e 0%, transparent 55%),
-        radial-gradient(ellipse 60% 40% at 90% 100%, #4a2a1a 0%, transparent 50%),
-        linear-gradient(165deg, var(--bg0), var(--bg1));
+      background: var(--bg);
       line-height: 1.55;
     }
     .wrap {
       max-width: 640px;
       margin: 0 auto;
-      padding: 40px 20px 64px;
+      padding: 32px 20px 64px;
     }
     .back {
       color: var(--muted);
@@ -40,52 +38,73 @@
     }
     .back:hover { color: var(--accent); }
     h1 {
-      margin: 20px 0 8px;
-      font-size: clamp(1.6rem, 4vw, 2.1rem);
-      letter-spacing: 0.02em;
+      margin: 16px 0 8px;
+      font-size: clamp(1.55rem, 4vw, 1.95rem);
+      letter-spacing: 0.01em;
+      color: var(--ink);
     }
     .lead {
-      margin: 0 0 28px;
+      margin: 0 0 24px;
       color: var(--muted);
-      font-size: 1rem;
-      max-width: 36em;
+      font-size: 0.98rem;
+      max-width: 38em;
     }
-    .lead a { color: var(--accent); }
+    .lead a { color: var(--accent); font-weight: 600; }
     form {
       display: grid;
-      gap: 18px;
+      gap: 14px;
     }
-    fieldset {
+    .q {
       margin: 0;
-      padding: 16px 16px 14px;
+      padding: 16px 18px 14px;
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: var(--card);
+      border-radius: 12px;
+      background: var(--paper);
+      box-shadow: 0 1px 0 rgba(28, 25, 23, 0.03);
     }
-    legend {
-      padding: 0 6px;
+    .q h2 {
+      margin: 0 0 12px;
+      font-size: 1rem;
       font-weight: 700;
-      font-size: 0.95rem;
+      line-height: 1.4;
+      color: var(--ink);
+    }
+    .q .hint {
+      margin: -4px 0 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 400;
     }
     label.opt {
       display: flex;
       gap: 10px;
       align-items: flex-start;
-      margin: 8px 0;
-      font-size: 0.92rem;
+      margin: 0;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.95rem;
       cursor: pointer;
     }
+    label.opt:hover { background: var(--accent-soft); }
+    label.opt + label.opt { margin-top: 2px; }
+    label.opt input { margin-top: 3px; accent-color: var(--accent); }
     textarea, input[type="text"] {
       width: 100%;
-      margin-top: 8px;
+      margin-top: 4px;
       padding: 12px 14px;
       border-radius: 10px;
       border: 1px solid var(--line);
-      background: rgba(0, 0, 0, 0.25);
+      background: #fafaf9;
       color: var(--ink);
       font: inherit;
       resize: vertical;
       min-height: 72px;
+    }
+    input[type="text"].short { min-height: 44px; }
+    textarea:focus, input[type="text"]:focus {
+      outline: 2px solid rgba(234, 88, 12, 0.35);
+      border-color: var(--accent);
+      background: #fff;
     }
     .actions {
       display: flex;
@@ -105,9 +124,10 @@
       align-items: center;
     }
     .primary {
-      background: linear-gradient(135deg, var(--accent), #e07a20);
-      color: #2a1400;
+      background: var(--accent);
+      color: #fff;
     }
+    .primary:hover { background: var(--focus); }
     .ghost {
       background: transparent;
       color: var(--muted);
@@ -124,7 +144,8 @@
       padding: 14px;
       border-radius: 12px;
       border: 1px dashed var(--accent);
-      background: rgba(255, 159, 67, 0.08);
+      background: var(--accent-soft);
+      color: var(--ink);
       white-space: pre-wrap;
       font-size: 0.85rem;
     }
@@ -136,66 +157,65 @@
     <h1>试玩反馈 · 7 题</h1>
     <p class="lead">
       先玩 5–10 分钟（首页「学 ‖ 玩」任选），再填本页（约 2 分钟）。
-      答完可一键复制；你也可用
+      答完可一键复制；也可先打开
       <a href="https://music-theory-game-br5.pages.dev/" target="_blank" rel="noopener">线上试玩</a>。
-      若已建 Tally/金数据，把外链贴进本页顶部即可替换。
     </p>
 
     <form id="surveyForm">
-      <fieldset>
-        <legend>1. 你主要从哪边进来？</legend>
+      <section class="q">
+        <h2>1. 你主要从哪边进来？</h2>
         <label class="opt"><input type="radio" name="entry" value="learn" /> 学习路径 / 识谱课</label>
         <label class="opt"><input type="radio" name="entry" value="play" /> 星图 / 演奏</label>
         <label class="opt"><input type="radio" name="entry" value="both" /> 两边都试了</label>
-      </fieldset>
+      </section>
 
-      <fieldset>
-        <legend>2. 有没有「会选但对原理不懂」的题？</legend>
+      <section class="q">
+        <h2>2. 有没有「会选但对原理不懂」的题？</h2>
         <textarea name="confused" placeholder="随便写一题或一关，没有就写「没有」"></textarea>
-      </fieldset>
+      </section>
 
-      <fieldset>
-        <legend>3. 星图凑成大三/小三时，你知不知道为什么算凑成？</legend>
+      <section class="q">
+        <h2>3. 星图凑成大三/小三时，你知不知道为什么算凑成？</h2>
         <label class="opt"><input type="radio" name="chordWhy" value="yes" /> 知道 / 游戏有说清</label>
         <label class="opt"><input type="radio" name="chordWhy" value="kinda" /> 半懂</label>
         <label class="opt"><input type="radio" name="chordWhy" value="no" /> 不知道，只觉得加分了</label>
-      </fieldset>
+      </section>
 
-      <fieldset>
-        <legend>4. 更想多要什么？（可多选）</legend>
+      <section class="q">
+        <h2>4. 更想多要什么？（可多选）</h2>
         <label class="opt"><input type="checkbox" name="want" value="teach" /> 教学引导</label>
         <label class="opt"><input type="checkbox" name="want" value="battle" /> 可玩战斗</label>
         <label class="opt"><input type="checkbox" name="want" value="sight" /> 识谱练习</label>
         <label class="opt"><input type="checkbox" name="want" value="perform" /> 演奏手感</label>
-      </fieldset>
+      </section>
 
-      <fieldset>
-        <legend>5. 一句话：最想改的一点？</legend>
-        <input type="text" name="onefix" placeholder="例如：远征规则不清 / 某关太难 / 手机扫弦…" />
-      </fieldset>
+      <section class="q">
+        <h2>5. 一句话：最想改的一点？</h2>
+        <input type="text" class="short" name="onefix" placeholder="例如：远征规则不清 / 某关太难 / 手机扫弦…" />
+      </section>
 
-      <fieldset>
-        <legend>6. 你大概玩到哪一步了？</legend>
+      <section class="q">
+        <h2>6. 你大概玩到哪一步了？</h2>
         <label class="opt"><input type="radio" name="depth" value="home" /> 主要在首页转转</label>
         <label class="opt"><input type="radio" name="depth" value="learn" /> 主要走了学习路径 / 识谱</label>
         <label class="opt"><input type="radio" name="depth" value="spirit_few" /> 进了星图，打了几波</label>
         <label class="opt"><input type="radio" name="depth" value="spirit_boss" /> 打到过领主 / Boss</label>
         <label class="opt"><input type="radio" name="depth" value="perform" /> 主要在演奏练习</label>
-      </fieldset>
+      </section>
 
-      <fieldset>
-        <legend>7. 下次还想打开吗？</legend>
+      <section class="q">
+        <h2>7. 下次还想打开吗？</h2>
         <label class="opt"><input type="radio" name="return" value="yes" /> 会</label>
         <label class="opt"><input type="radio" name="return" value="maybe" /> 看心情</label>
         <label class="opt"><input type="radio" name="return" value="no" /> 不太会</label>
-        <input type="text" name="returnWhy" placeholder="可选：半句原因（太难 / 好玩 / 没时间…）" style="min-height:44px" />
-      </fieldset>
+        <input type="text" class="short" name="returnWhy" placeholder="可选：半句原因（太难 / 好玩 / 没时间…）" />
+      </section>
 
-      <fieldset>
-        <legend>可选 · 愿意的话留下联系方式</legend>
-        <p style="margin:0 0 8px;font-size:0.85rem;color:var(--muted)">若方便深聊 10 分钟，可留微信或邮箱（不填也完全没问题）。</p>
-        <input type="text" name="contact" placeholder="微信 / 邮箱（可选）" style="min-height:44px" />
-      </fieldset>
+      <section class="q">
+        <h2>可选 · 愿意的话留下联系方式</h2>
+        <p class="hint">若方便深聊 10 分钟，可留微信或邮箱（不填也完全没问题）。</p>
+        <input type="text" class="short" name="contact" placeholder="微信 / 邮箱（可选）" />
+      </section>
 
       <div class="actions">
         <button type="submit" class="primary">生成并复制答卷</button>
@@ -204,7 +224,7 @@
     </form>
 
     <pre id="out" aria-live="polite"></pre>
-    <p class="note">本地不上传服务器：答卷只在你浏览器里生成文本，方便粘贴到微信/邮件/表格。版本对齐页脚 APP_VERSION。</p>
+    <p class="note">本地不上传服务器：答卷只在你浏览器里生成文本，方便粘贴到微信/邮件/表格。版本见游戏页脚 APP_VERSION。</p>
   </div>
   <script>
     document.getElementById("surveyForm").addEventListener("submit", async (e) => {
