@@ -40,6 +40,7 @@
 | Boss | `spirit-boss.js` | 来袭 / 领主 / 君主(mega) / 小怪技能（闪步须前摇+插值）/ 敌弹 |
 | 僚机 | `spirit-drones.js` | 听辨收编 + 炼化词条；`exportState`/`importState` 供 I66 远征局 |
 | 战役 | `spirit-campaign.js` | 星区节点解锁；主循环持有 `campaignRunSnap` |
+| 输入 | `spirit-input-adapter.js` | I71：`keyboard` \| `touchMOBA`；摇杆 `{vx,vy}`；`canvasTouchEnabled`；Fullscreen+横屏提示；右簇开火/闪避/撞击（切弹顶栏） |
 | 壳 | `spirit-journey.js` + `.html` | iframe、输入、主循环；`#nodeSettlePanel` 清场结算 |
 
 ## 节点协议

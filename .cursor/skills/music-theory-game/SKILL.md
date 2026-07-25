@@ -9,9 +9,12 @@ description: >-
 
 # 启动必读：每次操作前检查本节禁止项
 
-- 禁止 git push/commit/deploy/建 remote（必须用户点名，`必须用户说"我授权你 push" 才算点名`）
 - 禁止覆盖用户传入的引用文件
 - 禁止重写已交付系统
+- 禁止 git push（必须用户说「我授权你 push」）
+- 禁止 deploy（必须用户说「我授权你部署 Pages」）
+- 禁止 commit（必须用户说「我授权你 commit」）
+- 禁止建 remote（必须用户说「我授权你建 GitHub remote」）
 
 # 乐理小达人 · 项目 Skill（含成长飞轮）
 
@@ -193,7 +196,7 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 - **探险层**：全屏世界；坑/雾/晶石/遗迹柱；听辨收编；Boss 来袭  
 - **mewo（I38）**：待用户提供工具
 
-检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.24**）。
+检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.26**）。
 **死亡交互（v1.7.3）**：死亡→`openDefeat()` 清战场/计时/Boss 面板→「灵光消散」面板（重新开始/返回菜单）；勿再用 `startBreath` 静默复活（会在刷怪计时未清时卡死）。
 **Boss 层级（v1.7.3）**：激光仅 `isMega`（终局君主）；领主是附庸，刚石=蓄力重装·重砸（`pendingSlamAt` 预警后重砸），雾灵=弹幕。命名/tip 按元素。
 **Boss 台词（v1.7.2 · I54-B）**：`spirit-data.js` `BOSS_LINES{entrance/mega/laser/enrage}`；`spirit-boss.js` `pickLine()`；出场画面渲染 taunt，狂暴/聚能经回调在 Boss 头顶浮字。纯氛围，与捡音/伤害解耦。
@@ -212,8 +215,9 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 **中期 48h（v1.7.16）**：双核窄屏热区；吉他「↓↑ 续扫」触控；`CAREER-ALIGN`；Issue 模板；README 分享块。
 **中期续推（v1.7.17）**：简历对齐 + `resume-snippet`；`SHARE-SCRIPT`；双核 hint；首星区 tip；整备横幅点跳过文案。
 **A2A 文件协议（v1.7.18·I68）**：`docs/A2A-PROTOCOL.md` + 模板 + 决策日志；口令「A2A / 让 Codex 看 / 双顾问」。
-**问卷中|EN（v1.7.23 薄片 · v1.7.24 接线）**：`SURVEY_URL_ZH`/`SURVEY_URL_EN`（`core/features.js`）；`survey.html` 语言网关；EN→https://wj.qq.com/s2/27402528/b2ad/ ；粘贴稿 `docs/SURVEY-EN-TENCENT-FORM.md`。非整站 i18n。
-**当前下一刀**：发问卷收 Top3→IDEA。I71 手机操控仍 P0。功能大刀等问卷；开源等回收+点名。部署须「我授权你 push」。
+**问卷中|EN（v1.7.23 薄片 · v1.7.24 接线）**：`SURVEY_URL_ZH`/`SURVEY_URL_EN`（`core/features.js`）；`survey.html` 语言网关；EN→[https://wj.qq.com/s2/27402528/b2ad/](https://wj.qq.com/s2/27402528/b2ad/) ；粘贴稿 `docs/SURVEY-EN-TENCENT-FORM.md`。非整站 i18n。
+**I71 手机 MOBA（v1.7.25–26）**：`spirit-input-adapter.js`（`keyboardtouchMOBA`）；左摇杆→`vx/vy`；右开火/闪避/撞击；顶栏切弹；开战旋转提示+Fullscreen；MOBA 禁画布点按开火。战役地图可竖屏。
+**当前下一刀**：发问卷收 Top3→IDEA。I71 实机验收后标已消化。功能大刀等问卷；开源等回收+点名。部署须「我授权你 push」。
 
 ## 两天冲刺 + 终局愿景（2026-07-23）
 
@@ -367,10 +371,10 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 **⑤ 下一刀候选（v1.7.24 后）**
 
 - **仅用户**：发问卷 8–15 人；过目 STAR/`resume-snippet`；Top3 回 IDEA（`docs/SPRINT-0726.md`）
-- **I71**：手机横屏+左摇杆+右开火（见 `UX-LAZY-USER`）
+- **I71**：实机验收手机横屏+摇杆+开火/闪避/撞击（见 `UX-LAZY-USER`）
 - **A2A**：模板 A→Codex → 回传写入 `A2A-DECISION-LOG`
 - 卫星能力分化；演奏余下手感
-- ~~复盘章节 / 中期 Day A·B / 简历对齐+分享 / I68 A2A / 问卷中|EN 薄片 / EN 腾讯接线~~ 已消化·v1.7.15–24
+- ~~复盘章节 / 中期 Day A·B / 简历对齐+分享 / I68 A2A / 问卷中|EN / I71 MVP1+2+撞击~~ 已消化·v1.7.15–26
 
 **之后**：问卷归集后再排大功能。GitHub 开源仍须用户点名「开源到 GitHub」。
 

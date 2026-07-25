@@ -2,12 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>灵气星图</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #050818; }
-    canvas#c { display: block; position: fixed; inset: 0; z-index: 1; }
+    canvas#c { display: block; position: fixed; inset: 0; z-index: 1; touch-action: none; }
+    /* I71 MOBA：横屏略缩画布，给拇指区留边；坐标仍按 resize 的 W/H */
+    body.moba-battle.moba-landscape canvas#c {
+      transform: scale(0.9);
+      transform-origin: center center;
+    }
     #ui {
       position: fixed; inset: 0; pointer-events: none; z-index: 10;
       font-family: "Segoe UI", system-ui, sans-serif; color: rgba(255,255,255,0.92);
@@ -370,6 +375,108 @@
       padding: 8px 14px; font-size: 0.78rem; letter-spacing: 0.08em;
     }
     #pauseBtn:hover { background: rgba(40,32,72,0.9); }
+    /* I71：切弹独立顶栏右上（不进开火簇）；暂停旁 */
+    #mobaAmmoBtn {
+      display: none; position: absolute; top: 18px; right: 96px;
+      pointer-events: auto; cursor: pointer; touch-action: manipulation;
+      border: 1px solid rgba(255,255,255,0.28); border-radius: 999px;
+      background: rgba(18,14,40,0.7); color: rgba(255,255,255,0.9);
+      padding: 7px 12px; font-size: 0.72rem; letter-spacing: 0.06em;
+      opacity: 0.6; transition: opacity 0.12s;
+    }
+    body.moba-battle #mobaAmmoBtn { display: inline-block; }
+    #mobaAmmoBtn.pressed, #mobaAmmoBtn:active { opacity: 0.9; }
+    /* I71 王者式分区：中 60% 无钮；左摇杆；右开火大+闪避中 */
+    #mobaPad {
+      display: none; position: fixed; inset: 0; z-index: 14; pointer-events: none;
+    }
+    body.moba-battle.moba-landscape #mobaPad { display: block; }
+    .moba-stick {
+      position: absolute;
+      left: max(12px, env(safe-area-inset-left, 0px));
+      bottom: max(16px, env(safe-area-inset-bottom, 0px));
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(255,255,255,0.16);
+      border: 1.5px solid rgba(255,255,255,0.38);
+      pointer-events: auto; touch-action: none;
+      opacity: 0.6; transition: opacity 0.12s;
+    }
+    .moba-stick.pressed { opacity: 0.9; }
+    .moba-stick-knob {
+      position: absolute; left: 50%; top: 50%;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.55);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .moba-btn {
+      pointer-events: auto; touch-action: manipulation; cursor: pointer;
+      border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.92); font-size: 0.72rem; letter-spacing: 0.06em;
+      background: rgba(30, 22, 60, 0.45);
+      opacity: 0.6; transition: opacity 0.12s;
+      -webkit-user-select: none; user-select: none;
+    }
+    .moba-btn.pressed, .moba-btn:active { opacity: 0.9; }
+    /* 右簇（Codex）：开火 72 → 闪避 56 → 撞击 36；切弹仍在顶栏 */
+    .moba-fire {
+      position: absolute;
+      right: max(14px, env(safe-area-inset-right, 0px));
+      bottom: max(122px, calc(env(safe-area-inset-bottom, 0px) + 106px));
+      width: 72px; height: 72px;
+      background: rgba(120, 70, 200, 0.35);
+      border-color: rgba(200, 170, 255, 0.5);
+    }
+    .moba-dodge {
+      position: absolute;
+      right: max(22px, env(safe-area-inset-right, 0px));
+      bottom: max(58px, calc(env(safe-area-inset-bottom, 0px) + 50px));
+      width: 56px; height: 56px;
+      background: rgba(40, 120, 110, 0.35);
+      border-color: rgba(120, 230, 200, 0.45);
+      font-size: 0.66rem;
+    }
+    .moba-ram {
+      position: absolute;
+      right: max(32px, calc(env(safe-area-inset-right, 0px) + 10px));
+      bottom: max(14px, env(safe-area-inset-bottom, 0px));
+      width: 36px; height: 36px;
+      background: rgba(160, 90, 40, 0.4);
+      border-color: rgba(255, 200, 120, 0.5);
+      font-size: 0.58rem;
+      letter-spacing: 0.02em;
+    }
+    .moba-ram.locked { opacity: 0.35; }
+    #rotateHint {
+      position: fixed; inset: 0; z-index: 28; display: none;
+      align-items: center; justify-content: center;
+      background: rgba(4, 6, 16, 0.88);
+      pointer-events: none;
+    }
+    #rotateHint.show { display: flex; pointer-events: auto; }
+    #rotateHint .rotate-box {
+      text-align: center; padding: 28px 26px; max-width: min(360px, 88vw);
+      border-radius: 16px; border: 1px solid rgba(180,150,255,0.35);
+      background: rgba(22,16,48,0.92);
+    }
+    #rotateHint .rotate-box p {
+      font-size: 0.95rem; letter-spacing: 0.08em; line-height: 1.7;
+      color: rgba(255,255,255,0.9); margin-bottom: 16px;
+    }
+    #rotateHint .rotate-box .rotate-sub {
+      font-size: 0.75rem; opacity: 0.65; margin: -8px 0 16px; letter-spacing: 0.04em;
+    }
+    #enterLandscapeBtn {
+      pointer-events: auto; cursor: pointer; touch-action: manipulation;
+      border: 1px solid rgba(180,160,255,0.55); border-radius: 999px;
+      background: rgba(124, 92, 255, 0.45); color: #fff;
+      padding: 12px 22px; font-size: 0.9rem; letter-spacing: 0.08em;
+    }
+    /* 竖屏进战斗：提示旋转；战役地图不强制锁横屏 */
+    @media (orientation: portrait) {
+      body.moba-battle:not(.moba-landscape) #mobaPad { display: none; }
+    }
     #pausePanel {
       position: fixed; inset: 0; z-index: 17; display: none; align-items: center; justify-content: center;
       background: radial-gradient(ellipse at center, rgba(10,14,36,0.5) 0%, rgba(4,6,16,0.88) 100%);
@@ -424,10 +531,29 @@
       <div class="stage-title" id="stageTitle">关卡</div>
       <div class="stage-lesson" id="stageLesson">本关学什么</div>
     </div>
+    <button type="button" id="mobaAmmoBtn" aria-label="切弹" title="切弹 R">切弹</button>
     <button type="button" id="pauseBtn" aria-label="暂停">暂停 P</button>
     <div id="pack" aria-label="音符背包"></div>
     <div id="toast"></div>
     <div id="keys">操作说明见暂停 P</div>
+  </div>
+
+  <!-- I71 触屏 MOBA：左摇杆 · 右开火/闪避/撞击 · 切弹顶栏 -->
+  <div id="mobaPad" aria-hidden="true">
+    <div id="mobaStick" class="moba-stick" aria-label="移动摇杆">
+      <div id="mobaStickKnob" class="moba-stick-knob"></div>
+    </div>
+    <button type="button" id="mobaFire" class="moba-btn moba-fire" aria-label="开火">开火</button>
+    <button type="button" id="mobaDodge" class="moba-btn moba-dodge" aria-label="闪避">闪避</button>
+    <button type="button" id="mobaRam" class="moba-btn moba-ram locked" aria-label="撞击" title="叠层解锁后可用">撞击</button>
+  </div>
+
+  <div id="rotateHint" aria-hidden="true">
+    <div class="rotate-box">
+      <p>请将手机横过来游玩</p>
+      <p class="rotate-sub">战役星图可竖屏浏览 · 开战需横屏</p>
+      <button type="button" id="enterLandscapeBtn">进入横屏</button>
+    </div>
   </div>
 
   <div id="evoPanel" aria-hidden="true">
@@ -648,6 +774,7 @@
   <script src="spirit-hazards.js?v=1.7.14"></script>
   <script src="spirit-boss.js?v=1.7.14"></script>
   <script src="spirit-campaign.js?v=1.7.14"></script>
+  <script src="spirit-input-adapter.js?v=1.7.25"></script>
   <script>
     const canvas = document.getElementById("c");
     const ctx = canvas.getContext("2d");
@@ -699,8 +826,40 @@
     const whyFormula = document.getElementById("whyFormula");
     const whyAmmo = document.getElementById("whyAmmo");
     const pauseBtn = document.getElementById("pauseBtn");
+    const mobaAmmoBtn = document.getElementById("mobaAmmoBtn");
+    const mobaPadEl = document.getElementById("mobaPad");
+    const mobaStickEl = document.getElementById("mobaStick");
+    const mobaStickKnobEl = document.getElementById("mobaStickKnob");
+    const mobaFireEl = document.getElementById("mobaFire");
+    const mobaDodgeEl = document.getElementById("mobaDodge");
+    const mobaRamEl = document.getElementById("mobaRam");
+    const rotateHintEl = document.getElementById("rotateHint");
+    const enterLandscapeBtn = document.getElementById("enterLandscapeBtn");
     const pausePanelEl = document.getElementById("pausePanel");
     const pauseTeach = document.getElementById("pauseTeach");
+    let rotateGateOpen = false;
+
+    /** I71：同步触屏 MOBA HUD / 旋转门 / 画布点按开火开关 */
+    function syncMobaUi() {
+      const IA = window.SpiritInputAdapter;
+      if (!IA) return;
+      const touchMoba = IA.getMode() === "touchMOBA";
+      const inBattle = !!started && !campaignOpen && !defeatOpen && !finaleOpen
+        && !nodeSettleOpen && !practiceClearOpen;
+      const land = IA.isLandscape();
+      // moba-battle：顶栏切弹等；摇杆/开火簇另需 moba-landscape
+      document.body.classList.toggle("moba-battle", touchMoba && inBattle);
+      document.body.classList.toggle("moba-landscape", touchMoba && inBattle && land);
+      rotateGateOpen = touchMoba && inBattle && !land;
+      if (rotateHintEl) {
+        rotateHintEl.classList.toggle("show", rotateGateOpen);
+        rotateHintEl.setAttribute("aria-hidden", rotateGateOpen ? "false" : "true");
+      }
+      // 横屏战斗才接收摇杆/开火；竖屏战役地图不锁横屏
+      IA.setBattleActive(touchMoba && inBattle && land);
+      if (mobaPadEl) mobaPadEl.setAttribute("aria-hidden", (touchMoba && inBattle && land) ? "false" : "true");
+      if (touchMoba) IA.canvasTouchEnabled = false;
+    }
     const evoPanelEl = document.getElementById("evoPanel");
     const evoTierLabel = document.getElementById("evoTierLabel");
     const evoChoicesEl = document.getElementById("evoChoices");
@@ -1604,6 +1763,7 @@
       hide(pausePanelEl);
       if (!keepCampaign) hide(campaignPanelEl);
       if (pauseBtn) pauseBtn.textContent = "暂停 P";
+      syncMobaUi();
     }
 
     function flushPendingVictory() {
@@ -1883,7 +2043,14 @@
       if (!evoEl) return;
       const tier = getEvoTier();
       const next = tier >= 2 ? "已满阶" : `下一阶 ${tier === 0 ? STACK_T1 : STACK_T2}`;
-      const ramHint = tier >= 1 ? " · E 可撞击" : "";
+      const touchMoba = window.SpiritInputAdapter && SpiritInputAdapter.getMode() === "touchMOBA";
+      const ramHint = tier >= 1 ? (touchMoba ? " · 可撞击" : " · E 可撞击") : "";
+      if (mobaRamEl) {
+        const unlocked = tier >= 1;
+        mobaRamEl.classList.toggle("locked", !unlocked);
+        mobaRamEl.setAttribute("aria-disabled", unlocked ? "false" : "true");
+        mobaRamEl.title = unlocked ? "撞击" : "叠层解锁后可用";
+      }
       const left = isBreathing() ? Math.max(0, (breathUntil - Date.now()) / 1000) : 0;
       const breath = left > 0 ? ` · 整备${left.toFixed(1)}s` : "";
       const mutTag = (window.SpiritMutation && SpiritMutation.shortLabel)
@@ -2978,6 +3145,7 @@
         defeatPanelEl.setAttribute("aria-hidden", "false");
       }
       showToast(campaignMode ? "灵光消散 · 养成保留" : "灵光消散 · 选择重新开始或返回");
+      syncMobaUi();
     }
 
     function closeDefeat() {
@@ -3209,9 +3377,14 @@
         }
         if (!localStorage.getItem("mtg_sector0_tip_v1") && currentSectorIdx === 0) {
           localStorage.setItem("mtg_sector0_tip_v1", "1");
-          if (hintEl) hintEl.textContent = "首星区：点星门开战 · 关内点画面开火 · 点弹药钮切弹";
+          if (hintEl) {
+            hintEl.textContent = (window.SpiritInputAdapter && SpiritInputAdapter.getMode() === "touchMOBA")
+              ? "首星区：点星门开战 · 横屏左摇杆移动 · 右开火/闪避/撞击"
+              : "首星区：点星门开战 · 关内点画面开火 · 点弹药钮切弹";
+          }
         }
       } catch { /* */ }
+      syncMobaUi();
     }
 
     function closeCampaign() {
@@ -3220,6 +3393,7 @@
         campaignPanelEl.classList.remove("show");
         campaignPanelEl.setAttribute("aria-hidden", "true");
       }
+      syncMobaUi();
     }
 
     // ---- I66 远征局养成 + 节点结算 ----
@@ -3303,6 +3477,7 @@
         nodeSettlePanelEl.setAttribute("aria-hidden", "false");
       }
       showToast(already ? "可继续清剿或回星图" : "清场 · 选继续清剿或回星图升级");
+      syncMobaUi();
     }
 
     function closeNodeSettle() {
@@ -3311,6 +3486,7 @@
         nodeSettlePanelEl.classList.remove("show");
         nodeSettlePanelEl.setAttribute("aria-hidden", "true");
       }
+      syncMobaUi();
     }
 
     function farmCurrentNode() {
@@ -3654,6 +3830,7 @@
         for (let i = 0; i < 5; i++) spawnNote();
         spawnWave(wave);
         if (preserveRun) saveCampaignRunSnap();
+        syncMobaUi();
       } finally {
         startGame.locking = false;
       }
@@ -3661,6 +3838,8 @@
 
     function update(dt) {
       if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen || campaignOpen || defeatOpen || finaleOpen || nodeSettleOpen) return;
+      // I71：竖屏旋转门开启时冻结战斗，避免无操作被秒
+      if (rotateGateOpen) return;
       // 轻打击反馈：击杀顿帧
       if (Date.now() < hitStopUntil) dt *= 0.12;
       let dx = 0, dy = 0;
@@ -3668,6 +3847,14 @@
       if (keys.s || keys.arrowdown) dy += 1;
       if (keys.a || keys.arrowleft) dx -= 1;
       if (keys.d || keys.arrowright) dx += 1;
+      // I71 touchMOBA 摇杆 → 同一套位移（不改键盘分支）
+      if (window.SpiritInputAdapter && SpiritInputAdapter.getMode() === "touchMOBA") {
+        const st = SpiritInputAdapter.getStick();
+        if (st) {
+          if (Math.abs(st.vx) > 0.001) dx += st.vx;
+          if (Math.abs(st.vy) > 0.001) dy += st.vy;
+        }
+      }
       const now = Date.now();
       const ramming = now < ramUntil;
       const dodging = now < dodgeUntil;
@@ -4541,11 +4728,55 @@
       if (e.target.closest("#modePick")) return;
       /* 需点练习房/远征；空格仍可用上次模式开局 */
     });
-    canvas.addEventListener("pointerdown", () => {
+    canvas.addEventListener("pointerdown", (e) => {
+      // I71 MOBA：完全禁用点画布开火（与右开火钮互斥，不共存）
+      if (window.SpiritInputAdapter && !SpiritInputAdapter.canvasTouchEnabled) {
+        e.preventDefault();
+        return;
+      }
       if (!started) return;
       else if (!timeStopped && !victoryOpen && !paused && !whyOpen && !evoChoosing && !mutationChoosing && !recruitOpen && !teachOpen && !bossTeachOpen && !megaRewardOpen && !sectorFlowOpen && !practiceClearOpen) fire();
     });
-    window.addEventListener("resize", resize);
+    canvas.addEventListener("touchstart", (e) => {
+      if (window.SpiritInputAdapter && !SpiritInputAdapter.canvasTouchEnabled) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+    window.addEventListener("resize", () => {
+      resize();
+      syncMobaUi();
+    });
+
+    // ---- I71 InputAdapter 接线 ----
+    if (window.SpiritInputAdapter) {
+      SpiritInputAdapter.init();
+      SpiritInputAdapter.bindStick(mobaStickEl, mobaStickKnobEl);
+      SpiritInputAdapter.bindPressButton(mobaFireEl, () => {
+        if (isBreathing()) skipBreath();
+        else fire();
+      }, { holdMs: FIRE_COOLDOWN_MS });
+      SpiritInputAdapter.bindPressButton(mobaDodgeEl, () => { tryDodge(); });
+      SpiritInputAdapter.bindPressButton(mobaRamEl, () => { tryRam(); });
+      if (mobaAmmoBtn) {
+        SpiritInputAdapter.bindPressButton(mobaAmmoBtn, () => { cycleAmmoCf(); }, { always: true });
+      }
+      SpiritInputAdapter.onModeChange(() => { syncMobaUi(); });
+      if (enterLandscapeBtn) {
+        enterLandscapeBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          try { await SpiritInputAdapter.enterLandscapePlay(); } catch { /* */ }
+          syncMobaUi();
+          if (SpiritInputAdapter.isPortrait()) {
+            showToast("请旋转手机至横屏");
+          }
+        });
+      }
+      // 触屏模式提示键位文案
+      if (SpiritInputAdapter.getMode() === "touchMOBA" && hintEl) {
+        hintEl.textContent = "横屏游玩 · 左摇杆移动 · 右开火/闪避/撞击 · 顶栏切弹";
+      }
+    }
+    syncMobaUi();
 
     syncSpiritFromStore();
     loadSkills();
