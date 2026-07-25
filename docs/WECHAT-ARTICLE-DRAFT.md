@@ -1,11 +1,13 @@
 # 公众号推文草稿 · 乐理小达人试玩 + 正式问卷邀请
 
 > **用途**：公众号「洞见百晓纯」发文；朋友圈只贴短导语 + 推文链接。  
-> **对齐版本**：**v1.7.20** · 问卷为浅色简约 7 题页  
+> **对齐版本**：**v1.7.24** · 问卷走腾讯问卷（提交即入库）；站内可选中文 / English  
 > **试玩（推荐无锁定）**：https://music-theory-game-br5.pages.dev/?dev=1  
-> **问卷**：https://music-theory-game-br5.pages.dev/survey.html  
+> **问卷入口（中|EN）**：https://music-theory-game-br5.pages.dev/survey.html  
+> **中文直达**：https://wj.qq.com/s2/27402422/a11b/  
+> **English**：https://wj.qq.com/s2/27402528/b2ad/  
 > **语气**：对人讲故事，少写 Harness/简历黑话；收尾再轻提「下一版按你们的反馈改」。  
-> **建议篇幅**：800–1200 字；配 2–3 张图（首页双卡、星图战斗、浅色问卷页）。
+> **建议篇幅**：800–1200 字；配 2–3 张图（首页双卡、星图战斗、问卷页）。
 
 ---
 
@@ -71,11 +73,14 @@
    建议：首页点「玩」→ 灵气星图 → 先选「练习房」熟悉手感；也可以点「学」跟一条路径点几课。  
    （正式版仍需识谱课后解锁星图；问卷试玩用无锁定链接就好。）
 
-2. **填问卷（7 题 · 约 2 分钟）**  
+2. **填问卷（约 2 分钟 · 可选中文 / English）**  
    https://music-theory-game-br5.pages.dev/survey.html  
-   「最想改的一点」和「下次还想打开吗」对我特别重要。答完可一键复制，发我也行。
+   中文也可直达：https://wj.qq.com/s2/27402422/a11b/  
+   English：https://wj.qq.com/s2/27402528/b2ad/  
+   「最想改的一点」和「下次还想打开吗」对我特别重要。  
+   填完点提交即可——答卷会进腾讯问卷后台（默认仅我可见），不用再复制发微信。
 
-你的反馈不会进某个冷冰冰的后台黑盒——我会收进改版清单，按「大家最想改」排下一刀。
+你的反馈我会手抄进改版清单，按「大家最想改」排下一刀。
 
 ### 玩的时候可以这样走（可选）
 
@@ -95,7 +100,9 @@
 试玩与问卷链接再放一次：
 
 - 试玩（无锁定·推荐）：https://music-theory-game-br5.pages.dev/?dev=1  
-- 问卷：https://music-theory-game-br5.pages.dev/survey.html  
+- 问卷（中|EN）：https://music-theory-game-br5.pages.dev/survey.html  
+- 中文直达：https://wj.qq.com/s2/27402422/a11b/  
+- English：https://wj.qq.com/s2/27402528/b2ad/  
 
 ——邹翔 / 洞见百晓纯  
 2026.7

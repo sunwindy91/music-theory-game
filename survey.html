@@ -3,258 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>乐理小达人 · 试玩反馈</title>
+  <title>乐理小达人 · Feedback / 试玩反馈</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #f7f6f3;
-      --paper: #ffffff;
       --ink: #1c1917;
       --muted: #78716c;
-      --line: #e7e5e4;
       --accent: #ea580c;
       --accent-soft: #fff7ed;
-      --focus: #c2410c;
+      --line: #e7e5e4;
     }
-    * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
       font-family: "Fredoka", "Segoe UI", sans-serif;
       color: var(--ink);
-      background: var(--bg);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, #ffedd5 0%, transparent 55%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 24px;
       line-height: 1.55;
     }
-    .wrap {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 32px 20px 64px;
+    .card {
+      max-width: 26rem;
+      width: 100%;
+      text-align: center;
+    }
+    h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    .sub { margin: 0 0 22px; color: var(--muted); font-size: 0.92rem; }
+    .lang-row {
+      display: grid;
+      gap: 12px;
+    }
+    a.btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #fff;
+      background: var(--accent);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1.05rem;
+    }
+    a.btn.secondary {
+      color: var(--ink);
+      background: var(--accent-soft);
+      border: 1px solid var(--line);
+    }
+    a.btn:hover { filter: brightness(0.97); }
+    a.btn .hint {
+      font-weight: 500;
+      font-size: 0.78rem;
+      opacity: 0.85;
     }
     .back {
+      display: inline-block;
+      margin-top: 20px;
       color: var(--muted);
-      text-decoration: none;
       font-size: 0.9rem;
       font-weight: 600;
+      text-decoration: none;
     }
     .back:hover { color: var(--accent); }
-    h1 {
-      margin: 16px 0 8px;
-      font-size: clamp(1.55rem, 4vw, 1.95rem);
-      letter-spacing: 0.01em;
-      color: var(--ink);
-    }
-    .lead {
-      margin: 0 0 24px;
-      color: var(--muted);
-      font-size: 0.98rem;
-      max-width: 38em;
-    }
-    .lead a { color: var(--accent); font-weight: 600; }
-    form {
-      display: grid;
-      gap: 14px;
-    }
-    .q {
-      margin: 0;
-      padding: 16px 18px 14px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: var(--paper);
-      box-shadow: 0 1px 0 rgba(28, 25, 23, 0.03);
-    }
-    .q h2 {
-      margin: 0 0 12px;
-      font-size: 1rem;
-      font-weight: 700;
-      line-height: 1.4;
-      color: var(--ink);
-    }
-    .q .hint {
-      margin: -4px 0 10px;
-      font-size: 0.85rem;
-      color: var(--muted);
-      font-weight: 400;
-    }
-    label.opt {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      margin: 0;
-      padding: 8px 10px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-    label.opt:hover { background: var(--accent-soft); }
-    label.opt + label.opt { margin-top: 2px; }
-    label.opt input { margin-top: 3px; accent-color: var(--accent); }
-    textarea, input[type="text"] {
-      width: 100%;
-      margin-top: 4px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      background: #fafaf9;
-      color: var(--ink);
-      font: inherit;
-      resize: vertical;
-      min-height: 72px;
-    }
-    input[type="text"].short { min-height: 44px; }
-    textarea:focus, input[type="text"]:focus {
-      outline: 2px solid rgba(234, 88, 12, 0.35);
-      border-color: var(--accent);
-      background: #fff;
-    }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 8px;
-    }
-    button, .btn {
-      font: inherit;
-      font-weight: 700;
-      border: none;
-      border-radius: 999px;
-      padding: 12px 20px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-    }
-    .primary {
-      background: var(--accent);
-      color: #fff;
-    }
-    .primary:hover { background: var(--focus); }
-    .ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--line);
-    }
-    .note {
-      margin-top: 18px;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-    #out {
-      display: none;
-      margin-top: 16px;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px dashed var(--accent);
-      background: var(--accent-soft);
-      color: var(--ink);
-      white-space: pre-wrap;
-      font-size: 0.85rem;
-    }
+    .note { margin-top: 16px; font-size: 0.78rem; color: var(--muted); }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <a class="back" href="index.html">← 回乐理小达人</a>
-    <h1>试玩反馈 · 7 题</h1>
-    <p class="lead">
-      先玩 5–10 分钟（首页「学 ‖ 玩」任选），再填本页（约 2 分钟）。
-      答完可一键复制；也可先打开
-      <a href="https://music-theory-game-br5.pages.dev/" target="_blank" rel="noopener">线上试玩</a>。
-    </p>
-
-    <form id="surveyForm">
-      <section class="q">
-        <h2>1. 你主要从哪边进来？</h2>
-        <label class="opt"><input type="radio" name="entry" value="learn" /> 学习路径 / 识谱课</label>
-        <label class="opt"><input type="radio" name="entry" value="play" /> 星图 / 演奏</label>
-        <label class="opt"><input type="radio" name="entry" value="both" /> 两边都试了</label>
-      </section>
-
-      <section class="q">
-        <h2>2. 有没有「会选但对原理不懂」的题？</h2>
-        <textarea name="confused" placeholder="随便写一题或一关，没有就写「没有」"></textarea>
-      </section>
-
-      <section class="q">
-        <h2>3. 星图凑成大三/小三时，你知不知道为什么算凑成？</h2>
-        <label class="opt"><input type="radio" name="chordWhy" value="yes" /> 知道 / 游戏有说清</label>
-        <label class="opt"><input type="radio" name="chordWhy" value="kinda" /> 半懂</label>
-        <label class="opt"><input type="radio" name="chordWhy" value="no" /> 不知道，只觉得加分了</label>
-      </section>
-
-      <section class="q">
-        <h2>4. 更想多要什么？（可多选）</h2>
-        <label class="opt"><input type="checkbox" name="want" value="teach" /> 教学引导</label>
-        <label class="opt"><input type="checkbox" name="want" value="battle" /> 可玩战斗</label>
-        <label class="opt"><input type="checkbox" name="want" value="sight" /> 识谱练习</label>
-        <label class="opt"><input type="checkbox" name="want" value="perform" /> 演奏手感</label>
-      </section>
-
-      <section class="q">
-        <h2>5. 一句话：最想改的一点？</h2>
-        <input type="text" class="short" name="onefix" placeholder="例如：远征规则不清 / 某关太难 / 手机扫弦…" />
-      </section>
-
-      <section class="q">
-        <h2>6. 你大概玩到哪一步了？</h2>
-        <label class="opt"><input type="radio" name="depth" value="home" /> 主要在首页转转</label>
-        <label class="opt"><input type="radio" name="depth" value="learn" /> 主要走了学习路径 / 识谱</label>
-        <label class="opt"><input type="radio" name="depth" value="spirit_few" /> 进了星图，打了几波</label>
-        <label class="opt"><input type="radio" name="depth" value="spirit_boss" /> 打到过领主 / Boss</label>
-        <label class="opt"><input type="radio" name="depth" value="perform" /> 主要在演奏练习</label>
-      </section>
-
-      <section class="q">
-        <h2>7. 下次还想打开吗？</h2>
-        <label class="opt"><input type="radio" name="return" value="yes" /> 会</label>
-        <label class="opt"><input type="radio" name="return" value="maybe" /> 看心情</label>
-        <label class="opt"><input type="radio" name="return" value="no" /> 不太会</label>
-        <input type="text" class="short" name="returnWhy" placeholder="可选：半句原因（太难 / 好玩 / 没时间…）" />
-      </section>
-
-      <section class="q">
-        <h2>可选 · 愿意的话留下联系方式</h2>
-        <p class="hint">若方便深聊 10 分钟，可留微信或邮箱（不填也完全没问题）。</p>
-        <input type="text" class="short" name="contact" placeholder="微信 / 邮箱（可选）" />
-      </section>
-
-      <div class="actions">
-        <button type="submit" class="primary">生成并复制答卷</button>
-        <a class="btn ghost" href="index.html">回去再玩一局</a>
-      </div>
-    </form>
-
-    <pre id="out" aria-live="polite"></pre>
-    <p class="note">本地不上传服务器：答卷只在你浏览器里生成文本，方便粘贴到微信/邮件/表格。版本见游戏页脚 APP_VERSION。</p>
+  <div class="card">
+    <h1>试玩反馈 / Feedback</h1>
+    <p class="sub">选语言 · Choose language<br />约 2 分钟 · answers go to the author’s Tencent Survey</p>
+    <div class="lang-row">
+      <a class="btn" id="btnZh" href="https://wj.qq.com/s2/27402422/a11b/">
+        中文问卷
+        <span class="hint">提交即入库</span>
+      </a>
+      <a class="btn secondary" id="btnEn" href="survey-en.html">
+        English survey
+        <span class="hint">same questions</span>
+      </a>
+    </div>
+    <div><a class="back" href="index.html">← 回乐理小达人 / Back</a></div>
+    <p class="note">站内入口：页脚「试玩反馈」· Site entry: footer Feedback</p>
   </div>
+  <script src="core/features.js"></script>
   <script>
-    document.getElementById("surveyForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const wants = fd.getAll("want").join(", ") || "（未选）";
-      const lines = [
-        "【乐理小达人 · 试玩反馈】",
-        "1 入口: " + (fd.get("entry") || "（未选）"),
-        "2 会选不懂: " + ((fd.get("confused") || "").trim() || "（空）"),
-        "3 和弦为什么: " + (fd.get("chordWhy") || "（未选）"),
-        "4 更想要: " + wants,
-        "5 最想改: " + ((fd.get("onefix") || "").trim() || "（空）"),
-        "6 玩到哪: " + (fd.get("depth") || "（未选）"),
-        "7 还会打开: " + (fd.get("return") || "（未选）") +
-          (((fd.get("returnWhy") || "").trim()) ? (" · " + (fd.get("returnWhy") || "").trim()) : ""),
-        "联系(可选): " + ((fd.get("contact") || "").trim() || "（无）"),
-        "时间: " + new Date().toISOString()
-      ];
-      const text = lines.join("\n");
-      const out = document.getElementById("out");
-      out.style.display = "block";
-      out.textContent = text;
-      try {
-        await navigator.clipboard.writeText(text);
-        out.textContent = text + "\n\n✓ 已复制到剪贴板";
-      } catch {
-        out.textContent = text + "\n\n（复制失败时请手动全选上方文本）";
+    (function () {
+      var zh = (typeof SURVEY_URL_ZH === "string" && SURVEY_URL_ZH) || "https://wj.qq.com/s2/27402422/a11b/";
+      var enPage = "survey-en.html";
+      var btnZh = document.getElementById("btnZh");
+      var btnEn = document.getElementById("btnEn");
+      if (btnZh) btnZh.href = zh;
+      if (btnEn) {
+        var en = (typeof SURVEY_URL_EN === "string" && SURVEY_URL_EN.trim()) || "";
+        btnEn.href = en || enPage;
       }
-    });
+      try {
+        var lang = new URLSearchParams(location.search).get("lang");
+        if (lang === "zh" || lang === "cn") {
+          location.replace(zh);
+          return;
+        }
+        if (lang === "en") {
+          var enUrl = (typeof SURVEY_URL_EN === "string" && SURVEY_URL_EN.trim()) || "";
+          location.replace(enUrl || enPage);
+        }
+      } catch (e) { /* ignore */ }
+    })();
   </script>
 </body>
 </html>

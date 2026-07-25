@@ -21,7 +21,11 @@ const AppFeatures = {
   midiInput: false
 };
 
-const APP_VERSION = "v1.7.20";
+const APP_VERSION = "v1.7.24";
+
+/** 试玩问卷 · 腾讯问卷（中/英分表；EN 空则 survey-en.html 显示 pending） */
+const SURVEY_URL_ZH = "https://wj.qq.com/s2/27402422/a11b/";
+const SURVEY_URL_EN = "https://wj.qq.com/s2/27402528/b2ad/";
 
 /** 部署 Cloudflare 后若域名不同，改 domestic 为实际 pages.dev 地址 */
 const AppUrls = {
@@ -41,6 +45,8 @@ function isDevUnlock() {
 if (typeof window !== "undefined") {
   window.AppFeatures = AppFeatures;
   window.APP_VERSION = APP_VERSION;
+  window.SURVEY_URL_ZH = SURVEY_URL_ZH;
+  window.SURVEY_URL_EN = SURVEY_URL_EN;
   window.AppUrls = AppUrls;
   window.isDevUnlock = isDevUnlock;
 }

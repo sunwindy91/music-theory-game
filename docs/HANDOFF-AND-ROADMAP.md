@@ -1,7 +1,7 @@
 # 乐理小达人 · 交接与路线图
 
 > **用途**：新 Cursor 对话 / 新协作者快速接手。用户会基于实际上线情况把关，本文档为「计划 + 现状」参考，非硬性合同。  
-> **最后更新**：2026-07-23 · 代码版本 **v1.7.20**（问卷简约 UI）
+> **最后更新**：2026-07-25 · 代码版本 **v1.7.24**（EN 腾讯问卷已接线）
 
 ---
 
@@ -312,8 +312,23 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 **哲学**：学路径与星图世界是**两个功能模块、不是两个产品**——分模块交付是为每侧体验做到极致（有意双核）。开源/问卷/求职展示/Agent 飞轮见 Skill 与 `IDEA-BACKLOG`。
 
-**当前代码**：v1.7.20 —
-- **问卷 UI**：浅底简约卡片；题干在框内（告别 fieldset legend 飘出）；保留 7 题 + 可选联系。SHARE / 桌面分享包同步。
+**当前代码**：v1.7.24 —
+- **EN 腾讯问卷接线**：`SURVEY_URL_EN` = https://wj.qq.com/s2/27402528/b2ad/ （标题 Music Theory Explorer · Playtest Feedback）；`survey.html` / `survey-en.html` 选 EN 直达腾讯；ZH 仍为 https://wj.qq.com/s2/27402422/a11b/ 。SHARE / 推文 / README / SURVEY-EN-TENCENT-FORM 已对齐。
+
+**前作**：v1.7.23 —
+- **I72 问卷薄片**：`survey.html` 中|EN 语言网关；`SURVEY_URL_ZH` / `SURVEY_URL_EN` 集中在 `core/features.js`；CN→腾讯 https://wj.qq.com/s2/27402422/a11b/ ；EN 空则 `survey-en.html` pending + 题预览；粘贴稿 `docs/SURVEY-EN-TENCENT-FORM.md`。页脚「试玩反馈」旁 **中|EN**。SHARE / 推文 / README 已对齐本更新点。
+- **整站 i18n 仍愿景**：学+玩全文案字典未开；本刀仅问卷入口分流。
+
+**前作**：v1.7.22 —
+- **问卷自动归集**：`survey.html` → 腾讯问卷 https://wj.qq.com/s2/27402422/a11b/ ；答卷在腾讯后台（默认仅作者可见）。SHARE 话术已改「提交即入库」。
+- **I72 记入积压**：整站中英一体可切换（学+玩+问卷）；与双核正交；本轮不抢刀。
+
+**前作**：v1.7.21 —
+- **I69 三门入口**：首页「学 ‖ 玩 ‖ 复习」对等大类；点开后再露对应面板（首屏不铺路径墙）。
+- **I70 正式版焦点卡**：无 `?dev=1` 时学习路径默认「现在这一关」+ 下一关预告；可展开完整路线图。dev 默认全图。
+
+**前作**：v1.7.20 —
+- **问卷 UI**：浅底简约卡片；题干在框内；7 题 + 可选联系。
 
 **前作**：v1.7.19 —
 - **问卷加厚**：`survey.html` 核心 5 题 +「玩到哪」+「还会打开」(+可选联系)；SHARE / 推文草稿同步「7 题·约2分钟」。
@@ -382,9 +397,10 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 **两天冲刺** Day1 手感 + Day2 名场面/台词/死亡修复/Boss 层级校正 + I63 命名 + I64 君主多阶段 + I62 战役星图 MVP 已落地。
 
 **下一刀（可照抄配方 · 详见 SKILL「Auto 续航手册」）**：
-1. ~~复盘章节 v1.7.15~~；~~中期 Day A/B 产品+材料 v1.7.16~~；~~简历对齐+分享话术 v1.7.17~~；~~I68 A2A·v1.7.18~~
-2. **Day C（仅你）**：发问卷 8–15 人；过目 STAR/resume-snippet；回收 Top3 → IDEA（功能刀等数据；开源等回收+点名）
-3. 之后：按问卷 Top3；卫星分化 / 演奏手感仅作候选；GitHub remote（须点名）
+1. ~~复盘章节～A2A~~ 已落地；问卷证据闭环仍进行中
+2. ~~I69/I70 三门+焦点卡~~ **v1.7.21**；下一刀 **I71 手机横屏+左摇杆+右开火**（见 `UX-LAZY-USER`；可选 Codex 审分区）
+3. **I72 中英一体**（愿景·P2）：问卷中|EN 双链已落 **v1.7.24**；整站 `core/i18n` 仍确认后再开
+4. 功能大刀仍等问卷 Top3；GitHub remote 须点名；**Pages 部署 v1.7.24 须点名**（口令：`我授权你 push`）
 
 **Auto 续航**：切 Auto 后每刀独立可验收；避坑见 SKILL「Auto 模式续航手册」。
 

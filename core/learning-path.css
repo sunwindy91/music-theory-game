@@ -244,3 +244,58 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+/* I70 正式版焦点卡 */
+.lp-focus-lead {
+  margin: 0 0 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-light, #7a728f);
+  text-align: center;
+}
+.lp-focus-card {
+  max-width: 400px;
+  margin: 0 auto 10px;
+}
+.lp-node.lp-focus-main {
+  padding: 16px 16px;
+  border-width: 3px;
+}
+.lp-focus-cta {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-dark, #c97810);
+}
+.lp-focus-next {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-light, #7a728f);
+  margin: 0 0 12px;
+}
+.lp-focus-next span {
+  font-weight: 500;
+  opacity: 0.8;
+}
+.lp-toggle-mode {
+  display: block;
+  margin: 4px auto 10px;
+  border: 0;
+  background: transparent;
+  color: var(--primary, #7c5cff);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+.lp-toggle-mode:hover { opacity: 0.85; }
+.lp-hint code {
+  font-size: 0.85em;
+  background: #f5f0ff;
+  padding: 1px 5px;
+  border-radius: 4px;
+}

@@ -7,20 +7,28 @@ description: >-
   flywheel/skill crystallization with this user.
 ---
 
+# 启动必读：每次操作前检查本节禁止项
+
+- 禁止 git push/commit/deploy/建 remote（必须用户点名，`必须用户说"我授权你 push" 才算点名`）
+- 禁止覆盖用户传入的引用文件
+- 禁止重写已交付系统
+
 # 乐理小达人 · 项目 Skill（含成长飞轮）
 
 ## 项目位置
 
-| 项 | 路径 |
-|----|------|
-| **根目录** | `C:\Users\23017\music-theory-game` |
-| **交接与路线图** | `docs/HANDOFF-AND-ROADMAP.md` |
-| **想法积压** | `docs/IDEA-BACKLOG.md` |
-| **部署** | `docs/DEPLOY-CLOUDFLARE.md` |
-| **本地启动** | `start-local.bat` → `http://localhost:8080`（可用 `?dev=1`） |
-| **版本** | `core/features.js` → `APP_VERSION` |
-| **国内站** | https://music-theory-game-br5.pages.dev/ |
-| **代码备份** | Gitee；可同步 GitHub 做开源社区 |
+
+| 项          | 路径                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------ |
+| **根目录**    | `C:\Users\23017\music-theory-game`                                                   |
+| **交接与路线图** | `docs/HANDOFF-AND-ROADMAP.md`                                                        |
+| **想法积压**   | `docs/IDEA-BACKLOG.md`                                                               |
+| **部署**     | `docs/DEPLOY-CLOUDFLARE.md`                                                          |
+| **本地启动**   | `start-local.bat` → `http://localhost:8080`（可用 `?dev=1`）                             |
+| **版本**     | `core/features.js` → `APP_VERSION`                                                   |
+| **国内站**    | [https://music-theory-game-br5.pages.dev/](https://music-theory-game-br5.pages.dev/) |
+| **代码备份**   | Gitee；可同步 GitHub 做开源社区                                                               |
+
 
 ## 产品一句话（重要）
 
@@ -30,41 +38,47 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 
 ## 三层时间尺度（用户人生/求职对齐）
 
-| 层 | 目标 | Agent 默认动作 |
-|----|------|----------------|
-| **当下** | 游戏可玩可学、星图战斗打磨 | 短计划 → 确认 → 小步代码；测法+版本号 |
+
+| 层      | 目标                                         | Agent 默认动作                 |
+| ------ | ------------------------------------------ | -------------------------- |
+| **当下** | 游戏可玩可学、星图战斗打磨                              | 短计划 → 确认 → 小步代码；测法+版本号     |
 | **中期** | 问卷/访谈 → 优化；沉淀为 DeepSeek harness / 产品经理求职展示 | 问卷方案、信息架构、案例叙事；**仍先计划后实现** |
-| **长远** | Skill/Agent 飞轮、多 Agent、甚至自训模型；融入学习工作生活 | 把稳定流程写成 Skill；工具只在有明确痛点时引入 |
+| **长远** | Skill/Agent 飞轮、多 Agent、甚至自训模型；融入学习工作生活     | 把稳定流程写成 Skill；工具只在有明确痛点时引入 |
+
 
 用户当次消息可覆盖优先级。
 
 ## 协作铁律
 
-1. **大功能**：短计划 → 用户确认 → 再写代码（总架构师模式下：节点确认即可，不必每小步都问）  
-2. **不要 git commit / push**，除非用户明确要求  
-3. **问卷/后端**：不再「永远最后」——属中期；但 **仍须用户点名再开做**  
-4. **最小 diff**：Fredoka 紫橙；无构建链；新玩法用 `AppShell` + 模块挂载  
-5. **里程碑结束**：改了什么 +（用户要求测时）如何测 +（用户要求时）部署命令  
-6. **新想法**：先记入 `docs/IDEA-BACKLOG.md`，再排期；不擅自开大坑  
-7. **部署**：默认 **本地调稳后再** Cloudflare Pages；用户未点名不部署  
-8. **用量有效性**：优先「可沉淀产出」（Skill/HANDOFF/积木接口），禁止空转重写与重复读盘  
+1. **大功能**：短计划 → 用户确认 → 再写代码（总架构师模式下：节点确认即可，不必每小步都问）
+2. **不要 git commit / push**，除非用户明确要求
+3. **问卷/后端**：不再「永远最后」——属中期；但 **仍须用户点名再开做**
+4. **最小 diff**：Fredoka 紫橙；无构建链；新玩法用 `AppShell` + 模块挂载
+5. **里程碑结束**：改了什么 +（用户要求测时）如何测 +（用户要求时）部署命令
+6. **新想法**：先记入 `docs/IDEA-BACKLOG.md`，再排期；不擅自开大坑
+7. **部署**：默认 **本地调稳后再** Cloudflare Pages；用户未点名不部署
+8. **用量有效性**：优先「可沉淀产出」（Skill/HANDOFF/积木接口），禁止空转重写与重复读盘
 
 ## 总架构师模式（用户授权后启用）
 
 用户说 **「授权总架构」** 或等价含义后：
 
-| 角色 | 职责 |
-|------|------|
-| **用户** | 关键节点拍板；授权 commit/检查点；反馈手感；AD-X 等见闻按需写入积压 |
-| **本 Agent（总架构）** | 拆轨、排期、开并行子 Agent、写接口约定、推进积木、更新飞轮文档 |
+
+| 角色               | 职责                                       |
+| ---------------- | ---------------------------------------- |
+| **用户**           | 关键节点拍板；授权 commit/检查点；反馈手感；AD-X 等见闻按需写入积压 |
+| **本 Agent（总架构）** | 拆轨、排期、开并行子 Agent、写接口约定、推进积木、更新飞轮文档       |
+
 
 **双轨并行（防互踩）**
 
-| 轨 | 范围 | 文件领地 |
-|----|------|----------|
-| **A 乐理图谱** | 路径、课、巩固、关卡解锁表 | `core/learning-path*`、`lesson-engine*`、`theory-*`、桥接 |
-| **B 星图世界** | 波次/Boss/掉落/僚机/成长 | `modules/spirit-journey/`（优先拆成多 js 积木） |
-| **共享** | 版本、积压、交接 | `features.js`、`IDEA-BACKLOG`、`HANDOFF` —— **仅总架构写** |
+
+| 轨          | 范围               | 文件领地                                                 |
+| ---------- | ---------------- | ---------------------------------------------------- |
+| **A 乐理图谱** | 路径、课、巩固、关卡解锁表    | `core/learning-path`*、*`lesson-engine`、`theory-`*、桥接 |
+| **B 星图世界** | 波次/Boss/掉落/僚机/成长 | `modules/spirit-journey/`（优先拆成多 js 积木）               |
+| **共享**     | 版本、积压、交接         | `features.js`、`IDEA-BACKLOG`、`HANDOFF` —— **仅总架构写**  |
+
 
 子 Agent 节点：做完切片 → 停问用户（或总架构代问）→ 不默认浏览器深测（用户说「暂不测」则跳过）。
 
@@ -91,12 +105,12 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 
 **稳态仪式（强制 · 每轮动手前）**
 
-1. 读本 Skill 本节 +「星图锚点」末尾当前版本/下一刀  
-2. 读 `HANDOFF-AND-ROADMAP.md` 文末「当前断点」  
-3. 扫 `IDEA-BACKLOG.md` 置顶与审校表最近 3 行  
-4. 用户当次消息覆盖优先级  
-5. **里程碑结束三件套**（不可省）：`APP_VERSION` bump · HANDOFF §12 · IDEA 状态行；玩家可见文案禁外部作品名（串台扫一遍）  
-6. 同一流程用满 2 次 → 写入本 Skill，不把稳态只留在聊天  
+1. 读本 Skill 本节 +「星图锚点」末尾当前版本/下一刀
+2. 读 `HANDOFF-AND-ROADMAP.md` 文末「当前断点」
+3. 扫 `IDEA-BACKLOG.md` 置顶与审校表最近 3 行
+4. 用户当次消息覆盖优先级
+5. **里程碑结束三件套**（不可省）：`APP_VERSION` bump · HANDOFF §12 · IDEA 状态行；玩家可见文案禁外部作品名（串台扫一遍）
+6. 同一流程用满 2 次 → 写入本 Skill，不把稳态只留在聊天
 
 **「继续」协议（已稳定 · 自动执行）**
 
@@ -115,19 +129,21 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 
 用户说 **「A2A / 让 Codex 看 / 双顾问」** 时：
 
-1. 读 [`docs/A2A-PROTOCOL.md`](../../docs/A2A-PROTOCOL.md)；用 [`A2A-HANDOFF-TEMPLATE`](../../docs/A2A-HANDOFF-TEMPLATE.md) 信封，不另发明格式。  
-2. Codex = 战略/审阅；Cursor = 实现；用户 = 拍板与文件传递（粘贴/提交）。  
-3. 顾问结论 → 记入 [`docs/A2A-DECISION-LOG.md`](../../docs/A2A-DECISION-LOG.md) → 再改代码。  
+1. 读 `[docs/A2A-PROTOCOL.md](../../docs/A2A-PROTOCOL.md)`；用 `[A2A-HANDOFF-TEMPLATE](../../docs/A2A-HANDOFF-TEMPLATE.md)` 信封，不另发明格式。
+2. Codex = 战略/审阅；Cursor = 实现；用户 = 拍板与文件传递（粘贴/提交）。
+3. 顾问结论 → 记入 `[docs/A2A-DECISION-LOG.md](../../docs/A2A-DECISION-LOG.md)` → 再改代码。
 4. 对齐入口仍是 `ALIGNMENT-BRIEF-FOR-CODEX.md`；**不做**网络 A2A 服务端/OAuth/全量 SDK，除非用户另点名。
 
 **自动提炼触发（做完刀就扫一遍）**
 
-| 若本轮出现… | 写到 |
-|-------------|------|
-| 新积木/LS key/body 属性 | `MODULE-CONTRACTS` + Skill 技术表 |
-| 稳定协作口令（如「继续」「A2A / 双顾问」） | 本 Skill 飞轮节 |
-| 设计锚点验证（节奏/星区/双肤） | Skill「星图锚点」或壳锚点 |
-| 玩家可见串台词 | IDEA 审校表 + 立刻清 UI |
+
+| 若本轮出现…                   | 写到                             |
+| ------------------------ | ------------------------------ |
+| 新积木/LS key/body 属性       | `MODULE-CONTRACTS` + Skill 技术表 |
+| 稳定协作口令（如「继续」「A2A / 双顾问」） | 本 Skill 飞轮节                    |
+| 设计锚点验证（节奏/星区/双肤）         | Skill「星图锚点」或壳锚点                |
+| 玩家可见串台词                  | IDEA 审校表 + 立刻清 UI              |
+
 
 **双端 UX 原则（用户 2026-07-22 指定 · 强制）**
 
@@ -140,20 +156,20 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 
 **新对话接手清单**（按序）：
 
-1. 读本 Skill（含总架构师模式是否已授权、稳态仪式）  
-2. 读 `HANDOFF-AND-ROADMAP.md` §4–§6 + 文末「当前断点」  
-3. 扫 `IDEA-BACKLOG.md` 置顶 5 条  
-4. 用用户当次消息覆盖优先级  
+1. 读本 Skill（含总架构师模式是否已授权、稳态仪式）
+2. 读 `HANDOFF-AND-ROADMAP.md` §4–§6 + 文末「当前断点」
+3. 扫 `IDEA-BACKLOG.md` 置顶 5 条
+4. 用用户当次消息覆盖优先级
 
 **沉淀规则**：同一流程被用 ≥2 次且稳定 → 写入本 Skill 或拆 `reference.md`；不要只留在聊天里。
 
 **用户前置配合（最少集）**
 
-1. 一句授权：「授权总架构」  
-2. 一句备份：「可以 commit 打检查点」（否则只改文件不留 git 快照）  
-3. 节点回复：继续 / 改方向 / 暂停（各一行即可）  
-4. 部署：另说「可以部署」——默认不部署  
-5. 可选：把 Copilot/他人审查结论贴回来，总架构消化进积压  
+1. 一句授权：「授权总架构」
+2. 一句备份：「可以 commit 打检查点」（否则只改文件不留 git 快照）
+3. 节点回复：继续 / 改方向 / 暂停（各一行即可）
+4. 部署：另说「可以部署」——默认不部署
+5. 可选：把 Copilot/他人审查结论贴回来，总架构消化进积压
 
 用户不必自己写代码、不必每小时在线；AD-X 见闻有则记、无则跳过。
 
@@ -161,10 +177,10 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 
 用户常以「像某游戏/动画」描述手感。Agent 应：
 
-1. 记入 `docs/IDEA-BACKLOG.md`  
-2. 用 `docs/REFERENCE-TO-MECHANICS.md` 拆成系统字段（爽点 / 乐理挂钩 / MVP 切片）  
-3. **不要**去扒源码或全集；wiki 机制摘要可用，资源文件不可用  
-4. 这不是机器学习训练，是**世界观架构 + 外化记忆飞轮**（见该文档）  
+1. 记入 `docs/IDEA-BACKLOG.md`
+2. 用 `docs/REFERENCE-TO-MECHANICS.md` 拆成系统字段（爽点 / 乐理挂钩 / MVP 切片）
+3. **不要**去扒源码或全集；wiki 机制摘要可用，资源文件不可用
+4. 这不是机器学习训练，是**世界观架构 + 外化记忆飞轮**（见该文档）
 5. **游戏内 UI 禁止出现外部作品名**（含进化描述、演奏旁注）
 
 ## 星图战斗 · 设计锚点（已验证方向）
@@ -175,13 +191,13 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 - **教学节奏（I43）**：偏慢；一波一主题怪；关卡条教案；错开刷怪；清场整备≠定身  
 - **星区制（I44）**：每区 6 波（教→练→小领主→综合→加压→区末）；槽 3/6 领主，二区起槽 6 君主；领主回血；君主成长奖励；进新区满状态 + 区末知识卡  
 - **探险层**：全屏世界；坑/雾/晶石/遗迹柱；听辨收编；Boss 来袭  
-- **mewo（I38）**：待用户提供工具  
+- **mewo（I38）**：待用户提供工具
 
-检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.18**）。
+检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.24**）。
 **死亡交互（v1.7.3）**：死亡→`openDefeat()` 清战场/计时/Boss 面板→「灵光消散」面板（重新开始/返回菜单）；勿再用 `startBreath` 静默复活（会在刷怪计时未清时卡死）。
 **Boss 层级（v1.7.3）**：激光仅 `isMega`（终局君主）；领主是附庸，刚石=蓄力重装·重砸（`pendingSlamAt` 预警后重砸），雾灵=弹幕。命名/tip 按元素。
 **Boss 台词（v1.7.2 · I54-B）**：`spirit-data.js` `BOSS_LINES{entrance/mega/laser/enrage}`；`spirit-boss.js` `pickLine()`；出场画面渲染 taunt，狂暴/聚能经回调在 Boss 头顶浮字。纯氛围，与捡音/伤害解耦。
-**Boss 聚能激光（v1.7.1 · spirit-boss.js）**：吞音→`beamCharge`；满值→`beam`（charge 后摇 telegraph→fire 白热束）。命中调 `onHurt`（尊重 `invulnUntil`），Shift/E i-frames 均可躲。Boss 死/reset→`clearBeam`。参数 `spirit-data.js` `BOSS_BEAM_*`；三条范式主线见 `REFERENCE-TO-MECHANICS.md`。
+**Boss 聚能激光（v1.7.1 · spirit-boss.js）**：吞音→`beamCharge`；满值→`beam`（charge 后摇 telegraph→fire 白热束）。命中调 `onHurt`（尊重 `invulnUntil`），Shift/E i-frames 均可躲。Boss 死/reset→`clearBeam`。参数 `spirit-data.js` `BOSS_BEAM_`*；三条范式主线见 `REFERENCE-TO-MECHANICS.md`。
 **命名体系（v1.7.4）**：小怪 暗涌/刚石/雾灵/流曜（刚石·雾灵=教学锚点保留）；领主/君主专名 磐岳·刚石领主 / 幽岚·雾灵领主 / 噬律·失谐君主。改名走 spirit-data(ENEMY_TYPES+WAVE_STAGES)、spirit-boss(名)、spirit-waves(fallback)、spirit-drones(label)、teach 文案。
 **君主多阶段（v1.7.5·I64）**：`boss.megaStage` 由 hp 比算（>0.66=1 弹幕 / >0.33=2 弹幕+蓄力重装 / else=3 解锁激光）；进阶 `justStagedTo`→主循环浮字+台词 `BOSS_LINES.stage2/stage3`。激光触发加 `megaStage>=3` 门槛。
 **战役星图（v1.7.5·I62 MVP，v1.7.6 多星区）**：`spirit-campaign.js`（星区/节点 + 解锁进度 localStorage `mtg_spirit_campaign_v1`；`isSectorUnlocked/firstOpenSector`）；`#campaignPanel` DOM 地图 + `#campaignNav` 星区切换（`currentSectorIdx` 驱动）；远征→`openCampaign()`；选节点→`startNodeBattle()`（`pendingStartWave`）；`campaignMode` 清场→结算（见 I66）；循环守卫加 `campaignOpen`。
@@ -196,7 +212,8 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 **中期 48h（v1.7.16）**：双核窄屏热区；吉他「↓↑ 续扫」触控；`CAREER-ALIGN`；Issue 模板；README 分享块。
 **中期续推（v1.7.17）**：简历对齐 + `resume-snippet`；`SHARE-SCRIPT`；双核 hint；首星区 tip；整备横幅点跳过文案。
 **A2A 文件协议（v1.7.18·I68）**：`docs/A2A-PROTOCOL.md` + 模板 + 决策日志；口令「A2A / 让 Codex 看 / 双顾问」。
-**当前下一刀**：Day C 发问卷（仅你）；过目 STAR/简历粘贴稿；把 Codex 首轮回传写入 `A2A-DECISION-LOG`。其后：演奏手感；卫星能力再分化。
+**问卷中|EN（v1.7.23 薄片 · v1.7.24 接线）**：`SURVEY_URL_ZH`/`SURVEY_URL_EN`（`core/features.js`）；`survey.html` 语言网关；EN→https://wj.qq.com/s2/27402528/b2ad/ ；粘贴稿 `docs/SURVEY-EN-TENCENT-FORM.md`。非整站 i18n。
+**当前下一刀**：发问卷收 Top3→IDEA。I71 手机操控仍 P0。功能大刀等问卷；开源等回收+点名。部署须「我授权你 push」。
 
 ## 两天冲刺 + 终局愿景（2026-07-23）
 
@@ -231,19 +248,21 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 
 ## 技术模式（复用）
 
-| 模式 | 位置 | 用途 |
-|------|------|------|
-| `AppShell` + `#*Root` | `index.html` | 模块切换 |
-| `UiDensity` | `core/ui-density.js` | 壳儿童/标准双肤 |
-| `attachStrum` | `modules/perform/perform.js` | 弦乐扫空弦手势（Pointer，鼠标+触屏） |
-| 和弦扫弦模式 / `Audio.strumChord` | `modules/perform/perform.js` | 选和弦+任意位置上下滑扫弦；单音静音 |
-| `attachBow` / `Audio.*Bow` | `modules/perform/perform.js` | 小提琴运弓（按住来回拉动持续发声） |
-| `LessonEngine` | `core/lesson-engine.js` | MCQ 课 |
-| `topicId` + Bridge | `core/learn-practice-bridge.js` | 学练联动 |
-| `LearningPath` | `core/learning-path.js` | 路径；`?dev=1` |
-| 星图 | `modules/spirit-journey/` | iframe Canvas 世界 |
-| 灵气 | `core/spirit-progress.js` | localStorage + skills |
-| 开关 | `core/features.js` | `AppFeatures.*` |
+
+| 模式                          | 位置                              | 用途                     |
+| --------------------------- | ------------------------------- | ---------------------- |
+| `AppShell` + `#*Root`       | `index.html`                    | 模块切换                   |
+| `UiDensity`                 | `core/ui-density.js`            | 壳儿童/标准双肤               |
+| `attachStrum`               | `modules/perform/perform.js`    | 弦乐扫空弦手势（Pointer，鼠标+触屏） |
+| 和弦扫弦模式 / `Audio.strumChord` | `modules/perform/perform.js`    | 选和弦+任意位置上下滑扫弦；单音静音     |
+| `attachBow` / `Audio.*Bow`  | `modules/perform/perform.js`    | 小提琴运弓（按住来回拉动持续发声）      |
+| `LessonEngine`              | `core/lesson-engine.js`         | MCQ 课                  |
+| `topicId` + Bridge          | `core/learn-practice-bridge.js` | 学练联动                   |
+| `LearningPath`              | `core/learning-path.js`         | 路径；`?dev=1`            |
+| 星图                          | `modules/spirit-journey/`       | iframe Canvas 世界       |
+| 灵气                          | `core/spirit-progress.js`       | localStorage + skills  |
+| 开关                          | `core/features.js`              | `AppFeatures.*`        |
+
 
 ## 开源 / 分享
 
@@ -253,23 +272,27 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 
 ## 工具阶梯（按需，不预装全家桶）
 
-| 阶段痛点 | 建议 | 暂不需要 |
-|----------|------|----------|
-| 对话失忆 / 缺项 | **本 Skill + HANDOFF + IDEA-BACKLOG** | — |
-| 收集反馈 | Tally / 金数据外链问卷 | 先别上后端 |
-| 问卷→表格自动归集 | 以后再 **n8n** | 现在手抄也行 |
-| 女神/角色原画批量 | 以后再 **ComfyUI** / Meowa | MVP 用占位或单张 |
+
+| 阶段痛点       | 建议                                   | 暂不需要                          |
+| ---------- | ------------------------------------ | ----------------------------- |
+| 对话失忆 / 缺项  | **本 Skill + HANDOFF + IDEA-BACKLOG** | —                             |
+| 收集反馈       | Tally / 金数据外链问卷                      | 先别上后端                         |
+| 问卷→表格自动归集  | 以后再 **n8n**                          | 现在手抄也行                        |
+| 女神/角色原画批量  | 以后再 **ComfyUI** / Meowa              | MVP 用占位或单张                    |
 | 多 Agent 编排 | **I68 文件 A2A**（粘贴/MD）已可用；正式 SDK 中期以后 | WorkBuddy / Google A2A 服务端非必须 |
+
 
 用户若主动提供 n8n/ComfyUI/自动化能力，Agent 可在对应里程碑接入，仍遵守「计划→确认→做」。
 
 ## 测试与部署
 
-| 模式 | 操作 |
-|------|------|
-| 快测 | `http://localhost:8080/?dev=1` |
-| 正式锁 | 无 `dev`，识谱 7 课后门禁星图 |
-| 部署后 | Ctrl+F5，页脚 = `APP_VERSION` |
+
+| 模式  | 操作                             |
+| --- | ------------------------------ |
+| 快测  | `http://localhost:8080/?dev=1` |
+| 正式锁 | 无 `dev`，识谱 7 课后门禁星图            |
+| 部署后 | Ctrl+F5，页脚 = `APP_VERSION`     |
+
 
 ```powershell
 Set-Location C:\Users\23017\music-theory-game
@@ -278,12 +301,12 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 ## 路线图优先级（默认，可被当次消息覆盖）
 
-1. 星图：和弦「为什么」反馈 → B3 抗性怪 → B4 关卡/Boss  
-2. 教学：反刷题（先点谱/听再 MCQ）  
-3. 双端壳（手机路径 / PC 泡泡）  
-4. 问卷 + 求职案例叙事（中期）  
-5. 开源 GitHub + 社区贡献指南  
-6. 角色/女神/编曲厅（愿景，拆小步）  
+1. 星图：和弦「为什么」反馈 → B3 抗性怪 → B4 关卡/Boss
+2. 教学：反刷题（先点谱/听再 MCQ）
+3. 双端壳（手机路径 / PC 泡泡）
+4. 问卷 + 求职案例叙事（中期）
+5. 开源 GitHub + 社区贡献指南
+6. 角色/女神/编曲厅（愿景，拆小步）
 
 ## Auto 模式续航手册（弱模型接手也能干 · 2026-07-23 结晶）
 
@@ -299,7 +322,7 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 **避坑清单（本会话踩过的）**
 
 - **本机 shell 不稳**：`node --check`/python 输出常被吞、`&&` 在 PowerShell 不通。**别依赖命令行验证**，用浏览器 + 截图 + CDP。
-- **波次循环脆弱**（`spirit-journey.html` 主 loop）：清场推进的守卫顺序必须是 ① `xxxOpen` 结算面板 return → ② `campaignMode` 关卡完成 intercept → ③ 正常波次推进。**新增任何模态面板，都要同时加进 `update()` 守卫和主循环推进守卫两处**，否则世界不冻结。
+- **波次循环脆弱**（`spirit-journey.html` 主 loop）：清场推进的守卫顺序必须是 ① `xxxOpen` 结算面板 return → ② `campaignMode` 关卡完成 intercept → ③ 正常波次推进。**新增任何模态面板，都要同时加进** `update()` **守卫和主循环推进守卫两处**，否则世界不冻结。
 - **闭包私有**：`enemies/bullets/wave/player` 在 IIFE 内，CDP `Runtime.evaluate` 打不到；要测战斗效果只能实机玩，或临时把变量挂到 `window` 做调试钩子（用完删）。
 - **验 Boss 触发的 UI**（如 I65 回应钮）：静置玩家会在 Boss 波 1–2 秒内被打死→`openDefeat` 会立刻收起该 UI，截图常扑空。判「是否触发」看 DOM 文案是否更新（如 `bossReplyLine.textContent` 每次出场都换台词）；要**看外观**就 CDP 强制 `classList.add('show')` 单独截 UI，或先按 P 冻结再截。
 - **面板假死（v1.7.10）**：灵气已满时禁止在 `startGame`/`sync` 弹胜利窗；进关/回星图必须 `forceCloseAllPanels`；Esc 可紧急关。新增任何 `*Open` 模态 → 同步写入 `forceCloseAllPanels` + `update()` 守卫 + 波次推进守卫。
@@ -313,18 +336,21 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 **下一刀配方（按序 · 每条可独立交付）**
 
 **① I62 深化 · 关底结算 + 多星区**
+
 - 目标：领主节点（n3/n6）通关弹知识卡；首星区 6 节点全清 → 解锁「次星区」。
 - 动：`spirit-campaign.js`（新增 `SECTORS[1]` 次星区，wave 7–12，节点坐标仿首区）；`spirit-journey.html`（`renderCampaignMap`/`openCampaign` 里把写死的 `0` 换成 `currentSectorIdx` 变量；`onNodeCleared` 对 lord 节点调 `openSectorReview` 或弹卡；全清后地图给「进入次星区」入口）。
 - 验收：清完 6 节点 → 出现次星区可选；领主通关有一张知识卡。
 - 坑：`renderCampaignMap` 现在硬编码 `SC.nodes(0)`；先加 `currentSectorIdx` 再泛化。
 
 **② I65 台词交互**
+
 - 目标：Boss 关键台词（出场/狂暴/阶段3）时，屏幕给 2–3 个回应钮（挑衅/安抚/沉默），点击给浮字 + 微 buff（如短暂 `swiftUntil` 或让 Boss 下次技能 CD +少许）。
 - 动：`spirit-journey.html`（非模态小面板，`pointer-events` 只在钮上，几秒自动消失，**不冻结主 loop**）；`spirit-data.js`（可加 `BOSS_REPLIES`）。
 - 验收：出场时回应钮出现，点一个有浮字+微效果，自动消失；不卡战斗。
 - 坑：别做成模态；务必自动 timeout，避免忘关挡操作。
 
 **③ I55 卫星进化 + 血量阶梯**（大 · 拆 3 小步做）
+
 - 3a 多僚机槽：`spirit-drones.js` 支持 >1 drone（先读它现有 API/reset/update）。
 - 3b 卫星进化：3 个同型僚机 → 合成「卫星」，改为**绕玩家周期公转**（更大、更慢、独立属性）。
 - 3c 血量阶梯：`spirit-data.js` 定义按星区递增的 `player.maxLives` 与 Boss HP 倍率（越后期涨越慢）。
@@ -332,16 +358,19 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 - 坑：先 Read `spirit-drones.js` 摸清接口再改。
 
 **④ I60 终局 + 女神寄语** — **已消化·v1.7.9**
+
 - 目标：击破终局君主（`isMega`）后播叙事：君主前尘→醒悟→女神寄语（努力/优秀/摘星）→回图谱演奏或导入想听的歌。
 - 动：`spirit-journey.html` 新增 `openFinale()`（多段叙事面板，仿 `openDefeat` 结构）；文案放 `spirit-data.js`。
 - 验收：**仅**在击破 mega 时触发，不与「灵气达标 victory」混淆。
 - 坑：触发点要判 `isMega` 且是真正击破，不是灵气达标。
 
-**⑤ 下一刀候选（v1.7.18 后）**
-- **Day C（仅用户）**：发问卷；过目 STAR/`resume-snippet`；Top3 回 IDEA（`docs/SPRINT-0726.md`）
+**⑤ 下一刀候选（v1.7.24 后）**
+
+- **仅用户**：发问卷 8–15 人；过目 STAR/`resume-snippet`；Top3 回 IDEA（`docs/SPRINT-0726.md`）
+- **I71**：手机横屏+左摇杆+右开火（见 `UX-LAZY-USER`）
 - **A2A**：模板 A→Codex → 回传写入 `A2A-DECISION-LOG`
 - 卫星能力分化；演奏余下手感
-- ~~复盘章节 / 中期 Day A·B / 简历对齐+分享 / I68 A2A~~ 已消化·v1.7.15–18
+- ~~复盘章节 / 中期 Day A·B / 简历对齐+分享 / I68 A2A / 问卷中|EN 薄片 / EN 腾讯接线~~ 已消化·v1.7.15–24
 
 **之后**：问卷归集后再排大功能。GitHub 开源仍须用户点名「开源到 GitHub」。
 

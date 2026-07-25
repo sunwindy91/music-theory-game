@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Music Theory Buddy · Playtest Feedback</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f6f3;
+      --ink: #1c1917;
+      --muted: #78716c;
+      --accent: #ea580c;
+      --line: #e7e5e4;
+      --soft: #fff7ed;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Fredoka", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, #ffedd5 0%, transparent 55%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      line-height: 1.55;
+    }
+    .card {
+      max-width: 28rem;
+      width: 100%;
+      text-align: center;
+    }
+    h1 { margin: 0 0 8px; font-size: 1.35rem; }
+    p { margin: 0 0 14px; color: var(--muted); font-size: 0.95rem; }
+    a.btn {
+      display: inline-flex;
+      font-weight: 700;
+      text-decoration: none;
+      color: #fff;
+      background: var(--accent);
+      border-radius: 999px;
+      padding: 12px 20px;
+    }
+    a.btn:hover { filter: brightness(0.95); }
+    a.btn.ghost {
+      color: var(--ink);
+      background: var(--soft);
+      border: 1px solid var(--line);
+      margin-left: 8px;
+    }
+    .back {
+      display: inline-block;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .back:hover { color: var(--accent); }
+    .note { margin-top: 16px; font-size: 0.8rem; color: var(--muted); }
+    #pending { display: none; }
+    #pending.show { display: block; }
+    #jumping { display: none; }
+    #jumping.show { display: block; }
+    ul.preview {
+      text-align: left;
+      margin: 16px 0 0;
+      padding: 14px 14px 14px 1.4rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 0.82rem;
+      color: var(--ink);
+    }
+    ul.preview li { margin: 0.35em 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="jumping">
+      <h1>Opening English survey…</h1>
+      <p>Answers submit to the author’s Tencent Survey (author-only by default).</p>
+      <a class="btn" id="btnJump" href="#">If it doesn’t open, tap here</a>
+      <div><a class="back" href="survey.html">← Language / 语言</a></div>
+    </div>
+    <div id="pending">
+      <h1>English survey · almost ready</h1>
+      <p>
+        The Chinese form is live. The English Tencent link is being set up —
+        same questions, same auto-collect once the URL is wired.
+      </p>
+      <p>
+        <strong>CN (available now):</strong>
+        pick 中文 on the language page, or open the Chinese form directly.
+      </p>
+      <a class="btn" href="survey.html">← Choose 中文 / English</a>
+      <a class="btn ghost" id="btnZhFallback" href="https://wj.qq.com/s2/27402422/a11b/">Open Chinese form</a>
+      <ul class="preview" aria-label="Question preview">
+        <li>Name / nickname</li>
+        <li>Do you know the author? (Family / Friend / Music buddy / Stranger)</li>
+        <li>Entry: Learn / Play / Both</li>
+        <li>Confused on a principle?</li>
+        <li>Chord: why major vs minor?</li>
+        <li>Want more: teach / battle / sight / perform</li>
+        <li>One thing to fix</li>
+        <li>How far did you play?</li>
+        <li>Would you open again? (+ optional why)</li>
+        <li>Optional contact</li>
+      </ul>
+      <p class="note">
+        Author: paste EN <code>wj.qq.com</code> URL into <code>SURVEY_URL_EN</code>
+        (<code>core/features.js</code>). Paste-ready copy:
+        <code>docs/SURVEY-EN-TENCENT-FORM.md</code>
+      </p>
+      <div><a class="back" href="index.html">← Back to Music Theory Buddy</a></div>
+    </div>
+  </div>
+  <script src="core/features.js"></script>
+  <script>
+    (function () {
+      var en = (typeof SURVEY_URL_EN === "string" && SURVEY_URL_EN.trim()) || "";
+      var zh = (typeof SURVEY_URL_ZH === "string" && SURVEY_URL_ZH) || "https://wj.qq.com/s2/27402422/a11b/";
+      var btnZh = document.getElementById("btnZhFallback");
+      if (btnZh) btnZh.href = zh;
+      if (en) {
+        document.getElementById("jumping").classList.add("show");
+        var btn = document.getElementById("btnJump");
+        if (btn) btn.href = en;
+        location.replace(en);
+      } else {
+        document.getElementById("pending").classList.add("show");
+      }
+    })();
+  </script>
+</body>
+</html>

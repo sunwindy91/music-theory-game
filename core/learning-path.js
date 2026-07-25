@@ -225,6 +225,23 @@ const LearningPath = (() => {
     return NODES.filter(n => n.kind === "lesson" || n.kind === "hub").length;
   }
 
+  /** 正式版焦点：当前课 → 可点巩固 → 已解锁星图 → 第一课 */
+  function getFocusNode() {
+    const current = NODES.find((n) => getNodeState(n) === "current");
+    if (current) return current;
+    const practice = NODES.find((n) =>
+      (n.kind === "practice" || n.kind === "drill") && getNodeState(n) === "available"
+    );
+    if (practice) return practice;
+    const spirit = NODES.find((n) => n.id === "spirit-map" && getNodeState(n) !== "locked");
+    if (spirit) return spirit;
+    return NODES.find((n) => n.kind === "lesson") || NODES[0];
+  }
+
+  function defaultPathMode() {
+    return isDevMode() ? "full" : "focus";
+  }
+
   function handleNodeClick(node) {
     if (getNodeState(node) === "locked") return;
     if (node.kind === "practice" && typeof window.startTopicPractice === "function") {
@@ -264,53 +281,121 @@ const LearningPath = (() => {
     }
   }
 
-  function render(container) {
-    if (!container) return;
-    const done = completedCount();
-    const total = totalLessonNodes();
-    const spirit = window.SpiritProgressStore ? SpiritProgressStore.getTotal() : 0;
-    const spiritGoal = window.SpiritProgressStore ? SpiritProgressStore.GOAL : 30;
+  function nodeButtonHtml(node, opts) {
+    opts = opts || {};
+    const state = getNodeState(node);
+    const badge = state === "done" ? '<span class="lp-badge">✓</span>'
+      : state === "current" ? '<span class="lp-badge current">继续</span>'
+      : state === "locked" ? '<span class="lp-badge lock">🔒</span>' : "";
+    const spiritHint = opts.showSpiritHint !== false ? getSpiritSuggestionLabel(node) : null;
+    const spiritHintHtml = spiritHint
+      ? `<span class="lp-spirit-hint">星图建议：${spiritHint}</span>`
+      : "";
+    const cta = opts.cta
+      ? `<span class="lp-focus-cta">${opts.cta}</span>`
+      : "";
+    return `
+      <button type="button" class="lp-node ${state} ${node.kind} ${opts.extraClass || ""}" data-node-id="${node.id}" ${state === "locked" ? "disabled" : ""}>
+        <span class="lp-emoji">${node.emoji}</span>
+        <span class="lp-body">
+          <span class="lp-title">${node.title}</span>
+          <span class="lp-sub">${node.sub}</span>
+          ${spiritHintHtml}
+          ${cta}
+        </span>
+        ${badge}
+      </button>`;
+  }
 
+  function bindNodeClicks(container) {
+    container.querySelectorAll(".lp-node:not([disabled])").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const node = NODES.find((n) => n.id === btn.getAttribute("data-node-id"));
+        if (node) handleNodeClick(node);
+      });
+    });
+  }
+
+  function renderFullTrack(container, done, total, spirit, spiritGoal) {
     const rows = NODES.map((node, i) => {
       const state = getNodeState(node);
       const connector = i < NODES.length - 1
         ? `<div class="lp-connector ${state === "done" ? "done" : ""}" aria-hidden="true"></div>`
         : "";
-      const badge = state === "done" ? '<span class="lp-badge">✓</span>'
-        : state === "current" ? '<span class="lp-badge current">继续</span>'
-        : state === "locked" ? '<span class="lp-badge lock">🔒</span>' : "";
-      const spiritHint = getSpiritSuggestionLabel(node);
-      const spiritHintHtml = spiritHint
-        ? `<span class="lp-spirit-hint">星图建议：${spiritHint}</span>`
-        : "";
-      return `
-        <div class="lp-row">
-          <button type="button" class="lp-node ${state} ${node.kind}" data-node-id="${node.id}" ${state === "locked" ? "disabled" : ""}>
-            <span class="lp-emoji">${node.emoji}</span>
-            <span class="lp-body">
-              <span class="lp-title">${node.title}</span>
-              <span class="lp-sub">${node.sub}</span>
-              ${spiritHintHtml}
-            </span>
-            ${badge}
-          </button>
-        </div>${connector}`;
+      return `<div class="lp-row">${nodeButtonHtml(node)}</div>${connector}`;
     }).join("");
 
     container.innerHTML = `
       <div class="lp-header">
-        <span class="lp-progress-label">学习路径</span>
+        <span class="lp-progress-label">完整路线图</span>
         <span class="lp-progress-count">${done}/${total} 完成 · ✨ ${spirit}/${spiritGoal}</span>
       </div>
       <div class="lp-track">${rows}</div>
-      <p class="lp-hint">按路径学习 · 🎯 巩固 · ⚡ 快练 · 支线 🥁 · 识谱 7 课完成后解锁 <strong>灵气星图</strong>（WASD 捡音符）</p>`;
+      <p class="lp-hint">按路径学习 · 识谱 7 课完成后解锁 <strong>灵气星图</strong>。正式版默认只显示当前一关，减少压力。</p>
+      <button type="button" class="lp-toggle-mode" data-lp-mode="focus">只看当前一关</button>`;
 
-    container.querySelectorAll(".lp-node:not([disabled])").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const node = NODES.find(n => n.id === btn.getAttribute("data-node-id"));
-        if (node) handleNodeClick(node);
-      });
+    bindNodeClicks(container);
+    container.querySelector("[data-lp-mode=focus]")?.addEventListener("click", () => {
+      render(container, { mode: "focus" });
     });
+  }
+
+  function renderFocus(container, done, total, spirit, spiritGoal) {
+    const focus = getFocusNode();
+    const state = focus ? getNodeState(focus) : "available";
+    const action =
+      state === "current" ? "继续这一关"
+        : state === "done" ? "再看一眼 / 去下一环"
+        : state === "locked" ? "尚未解锁"
+        : "开始";
+    let nextPreview = null;
+    if (focus) {
+      const idx = NODES.indexOf(focus);
+      for (let i = idx + 1; i < NODES.length; i++) {
+        const n = NODES[i];
+        if ((n.kind === "lesson" || n.kind === "hub") && !isLessonDone(n)) {
+          nextPreview = n;
+          break;
+        }
+      }
+    }
+
+    container.innerHTML = `
+      <div class="lp-header">
+        <span class="lp-progress-label">现在这一关</span>
+        <span class="lp-progress-count">${done}/${total} · ✨ ${spirit}/${spiritGoal}</span>
+      </div>
+      <p class="lp-focus-lead">一次只看一件事 · 做完再解锁下一关</p>
+      <div class="lp-focus-card">
+        ${focus ? nodeButtonHtml(focus, { cta: action, extraClass: "lp-focus-main", showSpiritHint: false }) : ""}
+      </div>
+      ${nextPreview
+        ? `<p class="lp-focus-next">下一关预告：${nextPreview.emoji} ${nextPreview.title}<span>（完成后出现）</span></p>`
+        : ""}
+      <button type="button" class="lp-toggle-mode" data-lp-mode="full">查看完整路线图</button>
+      <p class="lp-hint">不想被「好多课」吓到？先点上面这一关。测试可用 <code>?dev=1</code> 默认展开全图。</p>`;
+
+    bindNodeClicks(container);
+    container.querySelector("[data-lp-mode=full]")?.addEventListener("click", () => {
+      render(container, { mode: "full" });
+    });
+  }
+
+  function render(container, opts) {
+    if (!container) return;
+    opts = opts || {};
+    const mode = opts.mode || container.dataset.lpMode || defaultPathMode();
+    container.dataset.lpMode = mode;
+    const done = completedCount();
+    const total = totalLessonNodes();
+    const spirit = window.SpiritProgressStore ? SpiritProgressStore.getTotal() : 0;
+    const spiritGoal = window.SpiritProgressStore ? SpiritProgressStore.GOAL : 30;
+
+    if (mode === "full") {
+      renderFullTrack(container, done, total, spirit, spiritGoal);
+    } else {
+      renderFocus(container, done, total, spirit, spiritGoal);
+    }
 
     maybeShowCompleteBridgeCard();
   }
@@ -319,6 +404,8 @@ const LearningPath = (() => {
     NODES,
     PATH_SPIRIT_SUGGESTIONS,
     getSpiritSuggestionLabel,
+    getFocusNode,
+    defaultPathMode,
     render,
     completedCount,
     totalLessonNodes,

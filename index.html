@@ -162,10 +162,10 @@
       padding: 36px 32px 32px; border: 3px solid #f0ebff;
     }
 
-    /* I61 壳双核入口：学 ‖ 玩 并行，非单列学习 */
+    /* I69 壳三门：学 ‖ 玩 ‖ 复习（对等大类） */
     .dual-gate {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 10px;
       margin: 0 0 18px;
     }
@@ -174,16 +174,17 @@
       text-align: left; cursor: pointer; touch-action: manipulation;
       border-radius: 16px; padding: 14px 14px 12px;
       border: 2px solid transparent; font-family: inherit;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
     }
     .dual-card strong {
-      font-size: 1.35rem; letter-spacing: 0.12em; line-height: 1.1;
+      font-size: 1.25rem; letter-spacing: 0.12em; line-height: 1.1;
     }
     .dual-card span {
-      font-size: 0.78rem; line-height: 1.35; opacity: 0.88; font-weight: 500;
+      font-size: 0.72rem; line-height: 1.35; opacity: 0.88; font-weight: 500;
     }
     .dual-card:hover { transform: translateY(-2px); }
     .dual-card:active { transform: translateY(0); }
+    .dual-card.is-active { outline: 2px solid rgba(124, 92, 255, 0.45); outline-offset: 2px; }
     .dual-learn {
       background: linear-gradient(145deg, #f3eeff 0%, #e8f4ff 100%);
       border-color: rgba(124, 92, 255, 0.35);
@@ -196,8 +197,14 @@
       color: #a04020;
       box-shadow: 0 6px 18px rgba(200, 90, 40, 0.12);
     }
-    body[data-density="kid"] .dual-card strong { font-size: 1.55rem; }
-    body[data-density="kid"] .dual-card span { font-size: 0.9rem; }
+    .dual-review {
+      background: linear-gradient(145deg, #eefaf3 0%, #e8f7ff 100%);
+      border-color: rgba(46, 160, 110, 0.35);
+      color: #1f6b4a;
+      box-shadow: 0 6px 18px rgba(40, 140, 90, 0.1);
+    }
+    body[data-density="kid"] .dual-card strong { font-size: 1.4rem; }
+    body[data-density="kid"] .dual-card span { font-size: 0.85rem; }
     body[data-density="std"] .dual-card { border-radius: 12px; }
     .dual-gate-hint {
       grid-column: 1 / -1;
@@ -208,6 +215,8 @@
       color: var(--muted, #6b6280);
       text-align: center;
     }
+    .gate-panel.hidden-gate { display: none !important; }
+    .setup-group.setup-secondary { opacity: 0.92; }
     @media (max-width: 560px) {
       .dual-gate { grid-template-columns: 1fr; gap: 12px; }
       .dual-card {
@@ -215,7 +224,7 @@
         min-height: 72px;
         -webkit-tap-highlight-color: transparent;
       }
-      .dual-card strong { font-size: 1.5rem; }
+      .dual-card strong { font-size: 1.45rem; }
       .dual-card span { font-size: 0.85rem; }
       .dual-gate-hint { font-size: 0.8rem; opacity: 0.85; text-align: left; }
     }
@@ -534,6 +543,15 @@
       cursor: pointer; text-decoration: underline; padding: 4px 8px;
     }
     .footer-link:hover { color: var(--primary-dark); }
+    .footer-survey-langs {
+      display: inline-flex; align-items: center; gap: 2px;
+      font-size: 0.72rem; font-weight: 600; color: #9a8fc0;
+    }
+    .footer-survey-langs a {
+      color: var(--primary); text-decoration: none; padding: 2px 4px;
+    }
+    .footer-survey-langs a:hover { color: var(--primary-dark); text-decoration: underline; }
+    .footer-survey-langs .sep { opacity: 0.5; user-select: none; }
 
     .app-footer {
       text-align: center; margin-top: 20px; padding-top: 14px;
@@ -612,19 +630,23 @@
     <!-- 开始设置 -->
     <section class="setup-panel" id="setupPanel">
     <!-- I61 双核入口：理论 ‖ 游戏并行（随 setup 显隐） -->
-    <section class="dual-gate" id="dualGate" aria-label="学与玩双核入口">
+    <section class="dual-gate" id="dualGate" aria-label="学玩复习三门入口">
       <button type="button" class="dual-card dual-learn" id="gateLearn">
         <strong>学</strong>
-        <span>学习路径 · 乐理、识谱、乐器</span>
+        <span>现在这一关 · 做完再往下</span>
       </button>
       <button type="button" class="dual-card dual-play" id="gatePlay">
         <strong>玩</strong>
         <span>灵气星图 · 练习房 / 远征</span>
       </button>
-      <p class="dual-gate-hint" id="dualGateHint">手机也行：点「学」或「玩」进入 · 星图里点画面开火、点弹药钮切弹</p>
+      <button type="button" class="dual-card dual-review" id="gateReview">
+        <strong>复习</strong>
+        <span>错题本 · 每日巩固</span>
+      </button>
+      <p class="dual-gate-hint" id="dualGateHint">先选一个大类 · 正式版默认只露出当前一关，避免一屏课太多</p>
     </section>
-      <div class="setup-group" id="learnGroup">
-        <div class="setup-label">📘 学习中心 · 学习路径</div>
+      <div class="setup-group gate-panel hidden-gate" id="learnGroup">
+        <div class="setup-label">📘 学 · 当前焦点</div>
         <div id="learningPathRoot"></div>
         <div class="chip-row lp-quick-fallback hidden" id="learnChipFallback" aria-hidden="true">
           <button class="chip chip-learn" type="button" data-module="theory" id="chipTheory">📖 乐理入门<span class="chip-badge hidden" id="theoryProgressBadge"></span></button>
@@ -635,12 +657,12 @@
           <button class="chip chip-learn" type="button" data-module="violin" id="chipViolin">🎻 小提琴</button>
         </div>
       </div>
-      <div class="learn-recommend hidden" id="learnRecommend" aria-live="polite">
+      <div class="learn-recommend hidden gate-panel hidden-gate" id="learnRecommend" aria-live="polite">
         <div class="learn-recommend-label">💡 学练推荐</div>
         <div class="learn-recommend-row" id="learnRecommendRow"></div>
       </div>
-      <div class="setup-group">
-        <div class="setup-label">🎯 练习中心</div>
+      <div class="setup-group setup-secondary gate-panel hidden-gate" id="practiceGroup">
+        <div class="setup-label">🎯 更多练习（可选）</div>
         <div class="chip-row">
           <button class="chip chip-mode selected" type="button" data-mode="quiz">📚 综合练习</button>
           <button class="chip chip-mode" type="button" data-mode="audio">🎧 听音识名</button>
@@ -649,8 +671,8 @@
           <button class="chip chip-mode" type="button" data-module="rhythm" id="chipRhythm">🥁 节奏闯关</button>
         </div>
       </div>
-      <div class="setup-group density-advanced" id="reviewGroup">
-        <div class="setup-label">复习巩固</div>
+      <div class="setup-group gate-panel hidden-gate" id="reviewGroup">
+        <div class="setup-label">📗 复习巩固</div>
         <div class="chip-row">
           <button class="chip chip-review chip-soon" type="button" disabled id="chipWrongBook" data-module="wrongbook" title="Phase 2">📖 错题本<span class="chip-badge hidden" id="wrongBookDueBadge">0</span></button>
           <button class="chip chip-review chip-soon chip-daily" type="button" disabled id="chipDailyChallenge" data-module="daily" title="Phase 2">📅 每日挑战<span class="chip-badge hidden" id="dailyChallengeBadge">0</span></button>
@@ -719,6 +741,9 @@
       <div class="footer-links">
         <button class="footer-link" type="button" data-module="spirit" id="chipSpiritFooter">✨ 灵气星图</button>
         <a class="footer-link" href="survey.html">试玩反馈</a>
+        <span class="footer-survey-langs" aria-label="问卷语言">
+          <a href="survey.html?lang=zh" title="中文问卷">中</a><span class="sep">|</span><a href="survey.html?lang=en" title="English survey">EN</a>
+        </span>
       </div>
     </footer>
   </main>
@@ -876,20 +901,32 @@
 
       window.refreshLearnBadges = refreshLearnBadges;
 
+      function collapseHomeGatePanels() {
+        ["learnGroup", "practiceGroup", "reviewGroup", "learnRecommend"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.classList.add("hidden-gate");
+        });
+        ["gateLearn", "gatePlay", "gateReview"].forEach((id) => {
+          document.getElementById(id)?.classList.remove("is-active");
+        });
+      }
+      window.collapseHomeGatePanels = collapseHomeGatePanels;
+
       function showQuizModule() {
         activeModule = "quiz";
         hideAllModules();
         document.body.classList.remove("module-open");
         quizShell.classList.remove("hidden");
         difficultyGroup.classList.remove("hidden");
-        if (reviewGroup) reviewGroup.classList.remove("hidden");
+        collapseHomeGatePanels();
         btnStart.classList.remove("hidden");
         headerSub.textContent = homeSub();
         if (typeof refreshReviewHint === "function") refreshReviewHint();
         refreshLearnBadges();
-        if (typeof refreshLearnRecommend === "function") refreshLearnRecommend();
         if (window.LearningPath) {
-          LearningPath.render(document.getElementById("learningPathRoot"));
+          LearningPath.render(document.getElementById("learningPathRoot"), {
+            mode: LearningPath.defaultPathMode ? LearningPath.defaultPathMode() : "focus"
+          });
         }
         if (typeof state !== "undefined" && !state.playing) {
           scoreBar.classList.remove("hidden");
@@ -1232,11 +1269,35 @@
         spiritFooter.addEventListener("click", () => showSpiritModule());
       }
 
-      // I61 壳双核：学 → 路径；玩 → 星图（与页脚同入口，首页更显眼）
+      // I69 三门：学 → 焦点路径；玩 → 星图；复习 → 错题/每日
       const gateLearn = document.getElementById("gateLearn");
       const gatePlay = document.getElementById("gatePlay");
+      const gateReview = document.getElementById("gateReview");
+      function setGateActive(which) {
+        [gateLearn, gatePlay, gateReview].forEach((el) => el && el.classList.remove("is-active"));
+        if (which) which.classList.add("is-active");
+      }
+      function showGatePanel(name) {
+        const learn = document.getElementById("learnGroup");
+        const practice = document.getElementById("practiceGroup");
+        const review = document.getElementById("reviewGroup");
+        const recommend = document.getElementById("learnRecommend");
+        const showLearn = name === "learn";
+        const showReview = name === "review";
+        if (learn) learn.classList.toggle("hidden-gate", !showLearn);
+        if (practice) practice.classList.toggle("hidden-gate", !showLearn);
+        if (recommend) {
+          if (!showLearn) recommend.classList.add("hidden-gate");
+        }
+        if (review) {
+          review.classList.toggle("hidden-gate", !showReview);
+          if (showReview) review.classList.remove("hidden");
+        }
+      }
       if (gateLearn) {
         gateLearn.addEventListener("click", () => {
+          setGateActive(gateLearn);
+          showGatePanel("learn");
           const learn = document.getElementById("learnGroup");
           if (learn) {
             learn.classList.add("dual-gate-pulse");
@@ -1244,12 +1305,38 @@
             setTimeout(() => learn.classList.remove("dual-gate-pulse"), 1800);
           }
           if (window.LearningPath) {
-            LearningPath.render(document.getElementById("learningPathRoot"));
+            LearningPath.render(document.getElementById("learningPathRoot"), {
+              mode: LearningPath.defaultPathMode ? LearningPath.defaultPathMode() : "focus"
+            });
+          }
+          if (typeof refreshLearnRecommend === "function") refreshLearnRecommend();
+          const recommend = document.getElementById("learnRecommend");
+          if (recommend && !recommend.classList.contains("hidden")) {
+            recommend.classList.remove("hidden-gate");
           }
         });
       }
       if (gatePlay) {
-        gatePlay.addEventListener("click", () => showSpiritModule());
+        gatePlay.addEventListener("click", () => {
+          setGateActive(gatePlay);
+          showSpiritModule();
+        });
+      }
+      if (gateReview) {
+        gateReview.addEventListener("click", () => {
+          setGateActive(gateReview);
+          showGatePanel("review");
+          const review = document.getElementById("reviewGroup");
+          if (review) {
+            review.classList.add("dual-gate-pulse");
+            review.scrollIntoView({ behavior: "smooth", block: "start" });
+            setTimeout(() => review.classList.remove("dual-gate-pulse"), 1800);
+          }
+          const wb = document.getElementById("chipWrongBook");
+          if (wb && window.AppFeatures && AppFeatures.wrongBook && !wb.disabled) {
+            /* 有待复习时可一键进错题本 */
+          }
+        });
       }
 
       const bubbleHub = document.getElementById("bubbleHub");
@@ -1301,8 +1388,18 @@
       });
 
       refreshLearnBadges();
-      if (typeof refreshLearnRecommend === "function") refreshLearnRecommend();
-      if (window.LearningPath) LearningPath.render(document.getElementById("learningPathRoot"));
+      // I69/I70：首屏只露三门；学/复习面板点开后再展开（减少「课好多」压力）
+      const learnG = document.getElementById("learnGroup");
+      const practiceG = document.getElementById("practiceGroup");
+      const reviewG = document.getElementById("reviewGroup");
+      if (learnG) learnG.classList.add("hidden-gate");
+      if (practiceG) practiceG.classList.add("hidden-gate");
+      if (reviewG) reviewG.classList.add("hidden-gate");
+      if (window.LearningPath) {
+        LearningPath.render(document.getElementById("learningPathRoot"), {
+          mode: LearningPath.defaultPathMode ? LearningPath.defaultPathMode() : "focus"
+        });
+      }
     })();
   </script>
 
@@ -2048,7 +2145,7 @@
       audioZone.classList.add("hidden");
       questionPlaceholder.classList.remove("hidden");
       setupPanel.classList.remove("hidden");
-      if (reviewGroup) reviewGroup.classList.remove("hidden");
+      if (typeof window.collapseHomeGatePanels === "function") window.collapseHomeGatePanels();
       scoreBar.classList.add("hidden");
       diffBadge.textContent = "";
       resetQuestionArea();
@@ -2093,7 +2190,7 @@
       audioZone.classList.add("hidden");
       questionPlaceholder.classList.remove("hidden");
       setupPanel.classList.remove("hidden");
-      if (reviewGroup) reviewGroup.classList.remove("hidden");
+      if (typeof window.collapseHomeGatePanels === "function") window.collapseHomeGatePanels();
       scoreBar.classList.add("hidden");
       diffBadge.textContent = "";
       resetQuestionArea();
@@ -2126,7 +2223,7 @@
       audioZone.classList.add("hidden");
       questionPlaceholder.classList.remove("hidden");
       setupPanel.classList.remove("hidden");
-      if (reviewGroup) reviewGroup.classList.remove("hidden");
+      if (typeof window.collapseHomeGatePanels === "function") window.collapseHomeGatePanels();
       scoreBar.classList.add("hidden");
       diffBadge.textContent = "";
       refreshReviewHint();
