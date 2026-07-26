@@ -1,6 +1,5 @@
 # Cloudflare Pages 国内镜像部署
 
-Gitee Pages 目前多数账号不可用，用 **Cloudflare Pages** 作为国内访问补充（通常比 Vercel 更稳定）。
 
 ## 前置
 
@@ -63,7 +62,6 @@ cd C:\Users\23017\music-theory-game
 npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 ```
 
-可同时 push Gitee 作代码备份：
 
 ```powershell
 git add -A
@@ -89,7 +87,6 @@ git push origin master
 |------|------|
 | 国内朋友 | `https://music-theory-game.pages.dev/` |
 | 海外 / 备用 | `https://music-theory-game.vercel.app/` |
-| 代码仓库 | `https://gitee.com/chunny/music-theory-game` |
 
 公众号 / 分享卡片会使用 `AppUrls.domestic`（Cloudflare 链接）。
 

@@ -15,7 +15,6 @@
 | 本地目录 | `C:\Users\23017\music-theory-game`                                                       |
 | 国内镜像 | [https://music-theory-game-br5.pages.dev/](https://music-theory-game-br5.pages.dev/)     |
 | 海外备用 | [https://music-theory-game.vercel.app/](https://music-theory-game.vercel.app/)           |
-| 代码备份 | [https://gitee.com/chunny/music-theory-game](https://gitee.com/chunny/music-theory-game) |
 | 版本号  | `core/features.js` → `APP_VERSION`                                                       |
 
 
@@ -125,7 +124,6 @@
 | 练习中心 **不锁**              | 自由刷题与系统学习并行                            |
 | 借鉴多邻国 **模式** 不抄 **视觉**   | 技能树/ streak / 小单元；自有 Fredoka 紫橙 + 灵气星图 |
 | 识谱课内嵌 `LessonEngine` 未全迁 | Canvas 点击逻辑仍独立，仅进度存储共用                 |
-| Gitee Pages 不可用          | 国内以 Cloudflare 为主                      |
 
 
 ---
