@@ -54,7 +54,6 @@
 | 7/23 | P0 | git `checkpoint/v1.7.14` | **已消化** |
 | 7/23–24 | P0 | 飞轮卫生 + 远征密封 + 问卷/STAR/吉他闪 | **已消化·v1.7.15** |
 | 7/23–24 | P0 | 中期 48h 双核触控 + STAR/开源 | **已消化·v1.7.16** |
-| 7/23 | P0 | 简历对齐 + 分享话术 + 首区/整备 tip | **已消化·v1.7.17** |
 | 7/25–26 | P0 | 发问卷 8–15 人 + Top3 回审校表 | **仅你**（A2A §6 已拍板：证据闭环优先） |
 | 7/23 | P0 | A2A §6 落地：决策日志真源 + AGENT-LOG + 双核/STAR 对齐 | **已消化·文档**（无版本 bump） |
 
@@ -387,12 +386,11 @@
 | v1.7.31 | **I74 分享前薄切片**：玩门副标「星图战役 · 演奏 · 翻卡 · 节奏闯关」· 密度钮「大字体」；Codex 通过·四门壳 deferred 至问卷≥8 |
 | v1.7.30 | **I71 P0 手机合成钮**：touchMOBA 顶栏「合成」邻「切弹」→ `tryCraftSuper`（同 T）；HUD 写按钮不写 T；**I74 壳·IA 积压占位**（学\|练\|玩\|复习 · 待拍板） |
 | v1.7.29 | **I71 实机反馈**：死后重开透明（清 invulnUntil·PC/手机）· 摇杆 116+inset · touchMOBA 去键位文案 · ENTITY_SCALE 短边缩 Boss/怪 |
-| v1.7.26 | **I71 撞击精调 + 分享话术对齐**：SHARE/WECHAT/README → v1.7.26 + 横屏/摇杆/开火簇 5 分钟测法 · 问卷中\|EN 双链保留 |
+| v1.7.26 | **I71 撞击精调 + 分享话术对齐**：SHARE/对外发布/README → v1.7.26 + 横屏/摇杆/开火簇 5 分钟测法 · 问卷中\|EN 双链保留 |
 | v1.7.24 | **EN 腾讯问卷接线**：`SURVEY_URL_EN` → https://wj.qq.com/s2/27402528/b2ad/ · SHARE/推文/README/HANDOFF 对齐 |
 | v1.7.23 | **问卷薄片（原 I72，现 I73-双语）**：`survey.html` 中\|EN 网关 · `SURVEY_URL_ZH/EN` · `survey-en.html` · EN 腾讯粘贴稿 · 页脚中\|EN · SHARE/推文/README |
 | v1.7.18+docs | **A2A §6 拍板落地**：DECISION-LOG 真源 + AGENT-LOG + 双核一句话/STAR 对齐；通讯测试约定 | 
 | v1.7.18 | **I68 文件型 A2A**：PROTOCOL + 模板 A–D + DECISION-LOG；ALIGNMENT/Skill 口令「A2A/双顾问」 |
-| v1.7.17 | **中期续推**：简历对齐 CAREER/resume-snippet · SHARE-SCRIPT 微信话术 · 双核 hint · 首星区 tip · 整备「点此/Enter」 |
 | v1.7.16 | **中期 48h**：双核窄屏热区 · 吉他触控续扫 · STAR/CAREER-ALIGN · Issue 模板 · 分享话术 · SPRINT 72h DoD |
 | v1.7.15 | **7/26 冲刺**：问卷页 CTA · STAR 草稿 · 远征密封（tip/结束确认/清剿轮次）· 吉他节奏↓↑闪 · SPRINT-0726 |
 | v1.7.14 | **Boss telegraph 统一**（弹幕前摇锥+重砸预警圈+击杀顿帧）；**进化池加厚**（六选抽三：弹药/刚盾/流光步伐等）；**地形挂钩**（晶石/碎柱给弹 + 开波目标 toast） |
