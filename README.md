@@ -1,100 +1,43 @@
 # 乐理小达人
 
-面向音乐初学者的浏览器端乐理学练小游戏，无需安装，打开即玩。**学习路径 + 灵气星图** 双核：课练闭环与全屏探险战斗一体，灵气进度贯通两者。
+**v1.7.36** · 浏览器端学练一体乐理产品：打开即用，先学会再能玩。
 
-**协作者 / 新对话**：请先读 [docs/HANDOFF-AND-ROADMAP.md](docs/HANDOFF-AND-ROADMAP.md)（现状、路线图、开场模板）。
+## 在线试玩
+
+https://music-theory-game-br5.pages.dev/
+
+## 功能概览
+
+- **学路径** — 音名 / 音程 / 和弦 / 调号 / 拍号 → 识谱与节奏；零基础三屏引导，完课攒灵气
+- **玩** — 练习中心随时刷：综合题、听音识名、符号翻翻乐、错题本、每日挑战
+- **星图** — 全屏灵气世界：移动探索、捡音符听唱名、小怪与 Boss；识谱通关后解锁
+- **演奏** — 钢琴 / 吉他 / 架子鼓交互练习（Web Audio）
+
+## 反馈
+
+试玩后欢迎填问卷（约 2 分钟）：
+
+- 中文：https://wj.qq.com/s2/27402422/a11b/
+- English：https://wj.qq.com/s2/27402528/b2ad/
+
+也可从站内页脚「试玩反馈」或 [survey.html](survey.html) 进入（中 | EN）。
+
+## 技术栈
+
+Vanilla JS · 零构建链 · 静态站部署于 Cloudflare Pages
 
 ## 本地运行
 
-**Windows 最简单：** 双击项目根目录的 `start-local.bat`，浏览器打开 **http://localhost:8080**（不要用 `file://` 直接打开 html）。
+**Windows：** 双击根目录 `start-local.bat`，浏览器打开 http://localhost:8080（勿用 `file://`）。
 
-PowerShell 注意：旧版不支持 `&&`，请用分号：
+或手动：
 
 ```powershell
-Set-Location C:\Users\23017\music-theory-game
 python -m http.server 8080
 ```
 
-若 `python` 不可用，可试 `py -m http.server 8080`。
+（若无 `python`，可试 `py -m http.server 8080`。）页脚显示当前 `APP_VERSION`（见 `core/features.js`）。开发调试可加 `?dev=1` 解锁整条学习路径。
 
-浏览器访问 `http://localhost:8080`，页脚应显示当前 **APP_VERSION**（见 `core/features.js`），首页有「学 ‖ 玩」双核入口与学习路径。
+## 许可
 
-## 功能
-
-### 📘 学习中心
-- **学习路径** — 8 主节点 + 巩固/快练/节奏支线 + **灵气星图**（识谱 7 课完成后解锁）
-- **乐理入门** — **5** 个单元（音名、音程、和弦、调号、拍号）
-- **识谱教学** — **7** 课 · **⚡ 识谱快练**（见谱点音，无限刷题）
-- **钢琴 / 吉他入门** — 交互引导课
-- **灵气进度** — 完课/闯关/星图捡音符获得灵气，路径顶栏显示 ✨
-
-### 🎯 练习中心
-- **综合练习** — **约 126** 道选择题（`core/quiz-bank.js`，含专题题）
-- **听音识名** — Web Audio 合成音高，三档难度
-- **符号翻翻乐** — 乐理符号配对记忆
-- **演奏练习** — 钢琴（WebAudioFont 采样）/ 吉他 / 架子鼓；白键扩至 **K**（高八度 C）
-- **节奏闯关** — 跟拍 **7** 关，关前「本关学什么」引导
-- **错题本** — 间隔复习（SRS），巩固薄弱题
-- **每日挑战** — 每天 10 题打卡，连续 streak
-
-### 其他
-- **灵气星图** — WASD/方向键移动 · 捡 C/D/E 听唱名 · 简单敌人 · 与 `SpiritProgressStore` 同步（页脚入口亦受识谱解锁约束）
-- **分享卡片** — 练习完成后生成 PNG 分享图
-
-## 开发工具（默认关闭）
-
-| 工具 | 启用方式 |
-|------|----------|
-| 路径全解锁（测试） | `?dev=1` |
-| UX 模拟测评 | `?sim=1` 或 `AppFeatures.uxSimulator = true` |
-| 人设模拟 | `?persona=1` 或 `AppFeatures.personaSimulator = true` |
-
-人设模拟支持三种用户类型（小白 / 乐感型 / 乐理大师），可预估错题本增长与薄弱题型。
-
-## 部署
-
-### 国内镜像 · Cloudflare Pages（推荐）
-
-Gitee Pages 目前多数账号已暂停，请用 Cloudflare：
-
-```powershell
-Set-Location C:\Users\23017\music-theory-game
-npx wrangler login
-npx wrangler pages deploy . --project-name=music-theory-game --branch=master
-```
-
-成功后可访问：**https://music-theory-game-br5.pages.dev/**（以终端输出为准）
-
-### 海外 · Vercel
-
-项目已含 `vercel.json`，使用个人 `VERCEL_TOKEN` 自行部署即可。
-
-### Gitee（代码备份）
-
-代码已推送至 https://gitee.com/chunny/music-theory-game ；Pages 静态托管暂不可用，仅作版本备份。
-
-## 反馈与分享
-
-试玩后请填 [survey.html](survey.html)（约 2 分钟；页内选 **中文 / English** → 腾讯问卷提交即入库）。  
-中文：https://wj.qq.com/s2/27402422/a11b/ · English：https://wj.qq.com/s2/27402528/b2ad/  
-一页话术：[docs/SHARE-SCRIPT.md](docs/SHARE-SCRIPT.md) · 推文草稿：[docs/WECHAT-ARTICLE-DRAFT.md](docs/WECHAT-ARTICLE-DRAFT.md)
-
-**复制即发：**
-
-```
-【乐理小达人 · 试玩邀请】v1.7.26
-试玩（已解除关卡锁定）：https://music-theory-game-br5.pages.dev/?dev=1
-问卷（约2分钟·可选中文/English）：https://music-theory-game-br5.pages.dev/survey.html
-中文直达：https://wj.qq.com/s2/27402422/a11b/
-English：https://wj.qq.com/s2/27402528/b2ad/
-
-5 分钟：首页点「学」或「玩」→ 星图练习房（手机横屏：左摇杆+右开火/闪/撞）→ 清场可点整备条跳过 → 填问卷「最想改」
-```
-
-求职 STAR：[docs/STAR-CASE-DRAFT.md](docs/STAR-CASE-DRAFT.md) · 简历粘贴稿：[docs/resume-snippet.md](docs/resume-snippet.md) · 叙事对齐：[docs/CAREER-ALIGN.md](docs/CAREER-ALIGN.md) · 48–72h DoD：[docs/SPRINT-0726.md](docs/SPRINT-0726.md)
-
-贡献见 [CONTRIBUTING.md](CONTRIBUTING.md)；许可 [LICENSE](LICENSE)（MIT）。GitHub Issues 模板已备；mirror 到 GitHub 须仓库主人点名。
-
----
-
-*乐理小达人 · demo · 仅供学习娱乐 · 以 `APP_VERSION` 为准*
+[MIT](LICENSE)
