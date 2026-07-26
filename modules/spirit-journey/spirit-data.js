@@ -187,6 +187,8 @@
     BOSS_HP_PER_WAVE: 2.35,
     BOSS_SPEED_MUL: 0.95,
     BOSS_R_MUL: 2.05,
+    /** I71 短边实体缩放（runtime 由 spirit-journey refreshEntityScale 写入） */
+    ENTITY_SCALE: 1,
     BOSS_DEVOUR_R: 150,
     BOSS_DEVOUR_HEAL: 0.35,
     BOSS_DEVOUR_CD: 3400,

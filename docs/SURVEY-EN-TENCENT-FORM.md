@@ -1,9 +1,16 @@
-# English Tencent Survey — paste-ready (I72 thin slice)
+# English Tencent Survey — paste-ready (I73-双语 thin slice · was I72)
 
 > **Purpose**: Duplicate the Chinese Tencent form in English in ~10 minutes.  
-> **CN live form**: https://wj.qq.com/s2/27402422/a11b/  
-> **EN live form**: https://wj.qq.com/s2/27402528/b2ad/ · wired in `core/features.js` → `SURVEY_URL_EN` (**v1.7.24**).  
-> **Site wiring**: `survey.html` (language pick) → CN or EN Tencent URL; `survey-en.html` auto-jumps when `SURVEY_URL_EN` is set.
+> **CN live form**: https://wj.qq.com/s2/27402422/a11b/ (`27402422`)  
+> **EN live form**: https://wj.qq.com/s2/27402528/b2ad/ (`27402528`) · wired in `core/features.js` → `SURVEY_URL_EN` (**v1.7.24**).  
+> **Site wiring**: `survey.html` (language pick) → CN or EN Tencent URL; `survey-en.html` auto-jumps when `SURVEY_URL_EN` is set.  
+> **ZH paste companion**: [`SURVEY-ZH-TENCENT-FORM.md`](SURVEY-ZH-TENCENT-FORM.md).
+
+> **⚠️ Q11 must be added in 腾讯问卷 admin (no API)**  
+> The site only stores survey URLs — we **cannot** edit `wj.qq` forms via API.  
+> **You** must open both live forms in 腾讯问卷后台 and add **Q11** (same options, ZH / EN wording) to:  
+> - ZH `27402422` · EN `27402528`  
+> Paste from this file (EN) and [`SURVEY-ZH-TENCENT-FORM.md`](SURVEY-ZH-TENCENT-FORM.md) (ZH).
 
 ---
 
@@ -11,7 +18,7 @@
 
 1. Open 腾讯问卷 → **复制** the existing CN form `27402422`, or **新建** a blank form.
 2. Set title / description from the blocks below.
-3. Add questions in the **same order** (field parity with CN).
+3. Add questions in the **same order** (field parity with CN), **including Q11**.
 4. Publish → copy share URL (`https://wj.qq.com/s2/.../.../`).
 5. Tell the agent the URL (or paste into `SURVEY_URL_EN` yourself). Redeploy so `survey-en.html` auto-jumps.
 
@@ -29,7 +36,7 @@ Music Theory Buddy · Playtest Feedback
 
 ```
 Thanks for trying 乐理小达人 (Music Theory Buddy)!
-About 2 minutes · ~7 questions. Submit goes straight to the author’s Tencent Survey inbox (default: author-only).
+About 2 minutes · ~8 questions (incl. progress-on-new-device). Submit goes straight to the author’s Tencent Survey inbox (default: author-only).
 Your “one thing to fix” helps prioritize the next update.
 ```
 
@@ -156,6 +163,20 @@ Your “one thing to fix” helps prioritize the next update.
 
 ---
 
+### Q11 · Progress on a different device *(single choice · recommended)*
+
+> **Admin action**: add this question on **both** live forms (`27402422` ZH + `27402528` EN). Repo cannot push questions into `wj.qq`.
+
+**Title:** If you open this on a different device and your progress is gone — would that bother you?
+
+**Options:**
+
+1. Yes, I would want to keep my progress
+2. Not really, starting over is fine
+3. Doesn't matter
+
+---
+
 ## After publish — wire the site
 
 In `core/features.js`:
@@ -185,3 +206,4 @@ const SURVEY_URL_EN = "https://wj.qq.com/s2/27402528/b2ad/";
 | 8 | 玩到哪 | How far did you play? |
 | 9 | 还会打开吗 + 可选原因 | Would open again? + why |
 | 10 | 可选联系方式 | Optional contact |
+| 11 | 换设备进度丢失会介意吗？（会希望保留 / 不太介意 / 无所谓） | Progress gone on new device? |

@@ -25,6 +25,10 @@ const SpiritJourneyModule = (() => {
         return;
       }
       if (ev.data.type === "mtg-spirit-open" && ev.data.module === "perform") {
+        if (typeof window.AppShell?.openPerformFromSpirit === "function") {
+          window.AppShell.openPerformFromSpirit();
+          return;
+        }
         onBack();
         try {
           document.querySelector('[data-module="perform"]')?.click();

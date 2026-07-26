@@ -6,13 +6,43 @@
   <title>灵气星图</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #050818; }
-    canvas#c { display: block; position: fixed; inset: 0; z-index: 1; touch-action: none; }
-    /* I71 MOBA：横屏略缩画布，给拇指区留边；坐标仍按 resize 的 W/H */
-    body.moba-battle.moba-landscape canvas#c {
-      transform: scale(0.9);
-      transform-origin: center center;
+    /*
+     * Spirit readability system（深色 UI 说明文案）
+     * 禁止深灰/黑字+opacity 直接铺在紫黑底；一律浅墨 + 够不透明底板；字号用 max(rem,px) 地板。
+     */
+    :root {
+      --spirit-ink: #f8f5ff;
+      --spirit-ink-muted: #e8e2fa;
+      --spirit-accent: #ffe8c0;
+      --spirit-panel-bg: rgba(16, 14, 36, 0.98);
+      /* tip/公式等内嵌面：够不透明，避免透出画布变泥 */
+      --spirit-panel-surface: rgba(42, 34, 78, 0.94);
+      --spirit-panel-border: rgba(220, 210, 255, 0.32);
+      --spirit-opt-bg: rgba(48, 38, 88, 0.92);
+      --spirit-opt-border: rgba(230, 210, 255, 0.42);
+      --spirit-panel-scrim: radial-gradient(ellipse at center, rgba(16, 12, 36, 0.9) 0%, rgba(3, 3, 12, 0.97) 100%);
+      --spirit-type-body: max(1.05rem, 17px);
+      --spirit-type-hint: max(0.9rem, 15px);
+      --spirit-type-title: max(1.3rem, 20px);
+      /* legacy aliases — prefer --spirit-* in new CSS */
+      --panel-bg: var(--spirit-panel-bg);
+      --panel-ink: var(--spirit-ink);
+      --panel-ink-muted: var(--spirit-ink-muted);
+      --panel-surface: var(--spirit-panel-surface);
+      --panel-border: var(--spirit-panel-border);
+      --panel-accent: var(--spirit-accent);
+      --panel-fs: var(--spirit-type-body);
+      --panel-fs-sm: var(--spirit-type-hint);
+      --panel-fs-title: var(--spirit-type-title);
+      --panel-mask: var(--spirit-panel-scrim);
     }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden; background: #050818;
+      color: var(--spirit-ink);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    canvas#c { display: block; position: fixed; inset: 0; z-index: 1; touch-action: none; }
+    /* I71：实体缩放走 ENTITY_SCALE（短边）；拇指区用 #mobaPad inset，勿 CSS 缩画布 */
     #ui {
       position: fixed; inset: 0; pointer-events: none; z-index: 10;
       font-family: "Segoe UI", system-ui, sans-serif; color: rgba(255,255,255,0.92);
@@ -22,10 +52,14 @@
       text-shadow: 0 0 18px rgba(160,120,255,0.75);
     }
     #spirit span { font-size: 1.55rem; font-weight: 300; color: #fff; }
-    #lives { position: absolute; top: 58px; left: 24px; font-size: 0.9rem; letter-spacing: 0.08em; opacity: 0.85; }
+    #lives {
+      position: absolute; top: 58px; left: 24px;
+      font-size: var(--spirit-type-hint); letter-spacing: 0.08em; color: var(--spirit-ink);
+    }
     #evo {
-      position: absolute; top: 82px; left: 24px; font-size: 0.68rem; letter-spacing: 0.04em;
-      line-height: 1.45; opacity: 0.72; color: #ffe8c0;
+      position: absolute; top: 82px; left: 24px;
+      font-size: var(--spirit-type-hint); letter-spacing: 0.04em;
+      line-height: 1.45; color: var(--spirit-accent);
       text-shadow: 0 0 10px rgba(255, 180, 100, 0.28);
       max-width: min(420px, 55vw);
     }
@@ -38,20 +72,20 @@
     #ammoHudToggle {
       align-self: flex-start;
       pointer-events: auto; cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.18); border-radius: 8px;
-      background: rgba(12,10,28,0.4); color: rgba(255,255,255,0.7);
-      padding: 3px 8px; font-size: 0.62rem; letter-spacing: 0.04em;
+      border: 1px solid rgba(255,255,255,0.28); border-radius: 8px;
+      background: var(--spirit-panel-bg); color: var(--spirit-ink);
+      padding: 3px 8px; font-size: max(0.75rem, 12px); letter-spacing: 0.04em;
       margin-bottom: 2px;
     }
-    #ammoHudToggle:hover { background: rgba(40,32,72,0.7); color: #fff; }
+    #ammoHudToggle:hover { background: rgba(40,32,72,0.9); color: #fff; }
     .ammo-slot {
       display: flex; align-items: center; justify-content: space-between;
       padding: 5px 9px; border-radius: 10px; cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(12,10,28,0.38); font-size: 0.7rem; letter-spacing: 0.03em;
-      color: rgba(255,255,255,0.72); backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.22);
+      background: var(--spirit-panel-bg); font-size: var(--spirit-type-hint); letter-spacing: 0.03em;
+      color: var(--spirit-ink); backdrop-filter: blur(4px);
     }
-    .ammo-slot .count { font-size: 0.95rem; font-weight: 600; opacity: 0.9; }
+    .ammo-slot .count { font-size: max(0.95rem, 14px); font-weight: 600; color: #fff; }
     .ammo-slot.major { border-color: rgba(255, 210, 120, 0.22); }
     .ammo-slot.minor { border-color: rgba(160, 130, 255, 0.28); }
     .ammo-slot.flat { border-color: rgba(180, 190, 210, 0.22); opacity: 0.85; }
@@ -66,28 +100,29 @@
     .ammo-slot.super.active { background: rgba(70, 30, 70, 0.5); }
     #evoPanel {
       position: fixed; inset: 0; z-index: 19; display: none; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at center, rgba(24,14,40,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      background: var(--panel-mask);
       pointer-events: none;
     }
     #evoPanel.show { display: flex; pointer-events: auto; }
     #mutationPanel {
       position: fixed; inset: 0; z-index: 19; display: none; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at center, rgba(32,10,48,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      background: var(--panel-mask);
       pointer-events: none;
     }
     #mutationPanel.show { display: flex; pointer-events: auto; }
     #mutationChoices { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
     #mutationChoices button {
-      width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px;
+      width: 100%; text-align: left; border-radius: 12px; padding: 14px 16px;
       pointer-events: auto; cursor: pointer;
-      border: 1px solid rgba(200,140,255,0.35); background: rgba(80,40,120,0.12); color: #fff;
-      font-size: 0.82rem; letter-spacing: 0.04em; line-height: 1.45;
+      border: 1px solid var(--spirit-opt-border); background: var(--spirit-opt-bg);
+      color: var(--spirit-ink);
+      font-size: var(--spirit-type-body); letter-spacing: 0.04em; line-height: 1.5;
     }
-    #mutationChoices button:hover { background: rgba(120,70,180,0.22); }
-    #mutationChoices button strong { color: #e8c0ff; }
+    #mutationChoices button:hover { background: rgba(64, 52, 110, 0.96); }
+    #mutationChoices button strong { color: var(--spirit-accent); }
     #sectorPanel, #megaRewardPanel, #practicePanel, #defeatPanel, #nodeSettlePanel {
       position: fixed; inset: 0; z-index: 19; display: none; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at center, rgba(24,14,40,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      background: var(--panel-mask);
       pointer-events: none;
     }
     #sectorPanel.show, #megaRewardPanel.show, #practicePanel.show, #defeatPanel.show, #finalePanel.show, #nodeSettlePanel.show { display: flex; pointer-events: auto; }
@@ -97,8 +132,8 @@
       pointer-events: none;
     }
     #finalePanel .panel-box { max-width: min(520px, 90vw); text-align: center; }
-    #finalePanel .finale-body { margin: 12px 0 18px; line-height: 1.65; font-size: 15px; color: #e8dcff; opacity: 0.95; }
-    #finalePanel .finale-step { font-size: 12px; opacity: 0.55; margin-bottom: 4px; letter-spacing: 1px; }
+    #finalePanel .finale-body { margin: 12px 0 18px; line-height: 1.65; font-size: var(--spirit-type-body); color: var(--spirit-ink); }
+    #finalePanel .finale-step { font-size: var(--spirit-type-hint); color: var(--spirit-ink-muted); margin-bottom: 4px; letter-spacing: 1px; }
     /* z>overlay：同层时 DOM 后写的 #overlay 会盖住星门点击 */
     #campaignPanel {
       position: fixed; inset: 0; z-index: 25; display: none; align-items: center; justify-content: center;
@@ -108,18 +143,19 @@
     #campaignPanel.show { display: flex; pointer-events: auto; }
     .campaign-box {
       width: min(880px, 92vw); max-width: 92vw;
-      background: linear-gradient(160deg, rgba(30,20,54,0.9), rgba(12,10,26,0.92));
-      border: 1px solid rgba(150,120,220,0.35); border-radius: 18px;
+      background: var(--spirit-panel-bg);
+      border: 1px solid var(--spirit-panel-border); border-radius: 18px;
       padding: 22px 24px 18px; box-shadow: 0 18px 60px rgba(0,0,0,0.5);
-      text-align: center;
+      text-align: center; color: var(--spirit-ink);
     }
-    .campaign-box h2 { margin: 0 0 4px; font-size: 22px; letter-spacing: 2px; color: #e8dcff; }
-    .campaign-sub { margin: 0 0 8px; font-size: 13px; opacity: 0.82; }
-    .campaign-sub strong { color: #ffd27a; }
+    .campaign-box h2 { margin: 0 0 4px; font-size: max(1.35rem, 22px); letter-spacing: 2px; color: var(--spirit-ink); }
+    .campaign-sub { margin: 0 0 8px; font-size: var(--spirit-type-hint); color: var(--spirit-ink-muted); line-height: 1.55; }
+    .campaign-sub strong { color: var(--spirit-accent); }
+    .campaign-sub small { color: var(--spirit-ink-muted); opacity: 1; }
     #campaignNav { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 4px 0 2px; }
     .cmap-sector {
-      font-size: 12px; padding: 4px 12px; border-radius: 999px; cursor: pointer;
-      background: rgba(60,50,100,0.4); color: #cdbcff; border: 1px solid rgba(150,120,220,0.3);
+      font-size: var(--spirit-type-hint); padding: 4px 12px; border-radius: 999px; cursor: pointer;
+      background: rgba(60,50,100,0.55); color: var(--spirit-ink); border: 1px solid var(--spirit-panel-border);
     }
     .cmap-sector.active { background: linear-gradient(135deg, #8a6cff, #5a3fb0); color: #fff; border-color: rgba(200,180,255,0.6); }
     .cmap-sector.locked { opacity: 0.45; cursor: not-allowed; }
@@ -147,7 +183,7 @@
       border: 2px solid rgba(255,255,255,0.55);
       box-shadow: 0 0 14px rgba(150,120,255,0.4);
     }
-    .cmap-label { font-size: 11px; color: #d8ccff; white-space: nowrap; text-shadow: 0 1px 3px #000; }
+    .cmap-label { font-size: max(0.75rem, 12px); color: var(--spirit-ink); white-space: nowrap; text-shadow: 0 1px 3px #000; }
     .cmap-node.locked { cursor: not-allowed; }
     .cmap-node.locked .cmap-dot { background: #2a2740; border-color: rgba(255,255,255,0.15); color: #8880a0; box-shadow: none; }
     .cmap-node.locked .cmap-label { opacity: 0.5; }
@@ -167,8 +203,8 @@
     #bossReply.show { display: flex; opacity: 1; transform: translateX(-50%) translateY(0); }
     .br-line {
       max-width: min(560px, 88vw); padding: 6px 16px; border-radius: 999px;
-      background: rgba(30,10,28,0.78); border: 1px solid rgba(255,120,150,0.45);
-      color: #ffc4d4; font-size: 14px; text-shadow: 0 1px 4px #000; text-align: center;
+      background: var(--spirit-panel-bg); border: 1px solid rgba(255,120,150,0.45);
+      color: #ffd0dc; font-size: var(--spirit-type-hint); text-shadow: 0 1px 4px #000; text-align: center;
     }
     .br-opts { display: flex; gap: 10px; pointer-events: auto; }
     .br-opt {
@@ -178,35 +214,47 @@
       border: 1px solid rgba(170,140,230,0.5); box-shadow: 0 6px 18px rgba(0,0,0,0.4);
       touch-action: manipulation;
     }
-    .br-opt small { font-size: 10px; font-weight: 400; opacity: 0.75; margin-top: 2px; }
+    .br-opt small { font-size: max(0.7rem, 11px); font-weight: 400; color: var(--spirit-ink-muted); margin-top: 2px; }
     .br-opt:hover { transform: translateY(-2px); border-color: rgba(210,180,255,0.9); }
     .br-opt[data-reply="provoke"] { border-color: rgba(255,150,120,0.55); }
     .br-opt[data-reply="soothe"] { border-color: rgba(120,220,180,0.55); }
     #sectorChoices, #megaRewardChoices { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
     #sectorChoices button, #megaRewardChoices button {
-      width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px;
+      width: 100%; text-align: left; border-radius: 12px; padding: 14px 16px;
       pointer-events: auto; cursor: pointer;
-      border: 1px solid rgba(255,200,140,0.35); background: rgba(80,50,20,0.12); color: #fff;
-      font-size: 0.82rem; letter-spacing: 0.04em; line-height: 1.45;
+      border: 1px solid var(--spirit-opt-border); background: var(--spirit-opt-bg);
+      color: var(--spirit-ink);
+      font-size: var(--spirit-type-body); letter-spacing: 0.04em; line-height: 1.5;
     }
-    #sectorChoices button:hover, #megaRewardChoices button:hover { background: rgba(120,80,30,0.22); }
-    #sectorStatus { margin-top: 12px; min-height: 1.4em; font-size: 0.85rem; color: #ffe8a0; }
+    #sectorChoices button:hover, #megaRewardChoices button:hover {
+      background: rgba(64, 52, 110, 0.96); border-color: rgba(255, 230, 200, 0.55);
+    }
+    #sectorStatus { margin-top: 12px; min-height: 1.4em; font-size: var(--spirit-type-body); color: var(--spirit-accent); }
+    /* 结算/学堂题干：高于 tip，低于选项 */
+    #sectorPrompt, #tsPrompt, #bossTeachPrompt, #recruitPrompt, #megaRewardHint, #nodeSettleBody, #defeatSummary {
+      color: var(--spirit-ink) !important;
+      font-size: var(--spirit-type-body);
+      font-weight: 500;
+      line-height: 1.55;
+      opacity: 1;
+    }
     #recruitPanel {
       position: fixed; inset: 0; z-index: 19; display: none; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at center, rgba(12,28,40,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      background: var(--panel-mask);
       pointer-events: none;
     }
     #recruitPanel.show { display: flex; pointer-events: auto; }
-    #recruitStatus { margin-top: 12px; min-height: 1.4em; font-size: 0.85rem; color: #b8ffe8; }
+    #recruitStatus { margin-top: 12px; min-height: 1.4em; font-size: var(--spirit-type-body); color: #b8ffe8; }
     #evoChoices { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
     #evoChoices button {
-      width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px;
+      width: 100%; text-align: left; border-radius: 12px; padding: 14px 16px;
       pointer-events: auto; cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.28); background: rgba(255,255,255,0.08); color: #fff;
-      font-size: 0.82rem; letter-spacing: 0.04em; line-height: 1.45;
+      border: 1px solid var(--spirit-opt-border); background: var(--spirit-opt-bg);
+      color: var(--spirit-ink);
+      font-size: var(--spirit-type-body); letter-spacing: 0.04em; line-height: 1.5;
     }
-    #evoChoices button:hover { background: rgba(255,255,255,0.16); }
-    #evoChoices button strong { color: #ffe8c0; }
+    #evoChoices button:hover { background: rgba(64, 52, 110, 0.96); }
+    #evoChoices button strong { color: var(--spirit-accent); }
     #pack {
       position: absolute; bottom: 88px; left: 50%; transform: translateX(-50%);
       display: flex; gap: 8px; align-items: center; pointer-events: none;
@@ -221,19 +269,21 @@
     #pack .chip.empty { opacity: 0.35; font-weight: 400; font-size: 0.7rem; }
     #hint {
       position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
-      font-size: 0.78rem; letter-spacing: 0.08em; opacity: 0.78; text-align: center;
+      font-size: var(--spirit-type-hint); letter-spacing: 0.08em; color: var(--spirit-ink);
+      text-align: center;
       max-width: min(460px, 70vw);
-      text-shadow: 0 1px 8px rgba(0,0,0,0.65);
+      text-shadow: 0 1px 8px rgba(0,0,0,0.75);
     }
     #toast {
       position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
-      font-size: 1.05rem; letter-spacing: 0.12em; opacity: 0; transition: opacity 0.25s;
-      text-shadow: 0 0 16px rgba(255,210,140,0.55); color: #ffe8c0;
+      font-size: var(--spirit-type-body); letter-spacing: 0.12em; opacity: 0; transition: opacity 0.25s;
+      text-shadow: 0 0 16px rgba(255,210,140,0.55); color: var(--spirit-accent);
       max-width: 90vw; text-align: center;
     }
     #toast.show { opacity: 1; }
     #keys {
-      position: absolute; bottom: 18px; left: 18px; font-size: 0.62rem; opacity: 0.28; line-height: 1.55;
+      position: absolute; bottom: 18px; left: 18px;
+      font-size: max(0.75rem, 12px); color: var(--spirit-ink-muted); line-height: 1.55;
       letter-spacing: 0.04em; max-width: 220px; pointer-events: none;
     }
     #hurtFlash {
@@ -249,123 +299,183 @@
       position: absolute; top: 52px; left: 50%; transform: translateX(-50%);
       display: none; align-items: center; gap: 10px;
       padding: 7px 14px; border-radius: 999px;
-      background: rgba(20, 40, 70, 0.55); border: 1px solid rgba(140, 200, 255, 0.35);
-      font-size: 0.78rem; letter-spacing: 0.06em; color: #c8e8ff;
+      background: var(--spirit-panel-bg); border: 1px solid rgba(140, 200, 255, 0.4);
+      font-size: var(--spirit-type-hint); letter-spacing: 0.06em; color: #d8f0ff;
       pointer-events: auto; cursor: pointer; backdrop-filter: blur(6px);
       box-shadow: 0 0 20px rgba(80, 140, 220, 0.2);
       z-index: 11;
     }
     #breathBanner.show { display: flex; }
     #breathBanner kbd {
-      font-size: 0.68rem; padding: 2px 7px; border-radius: 6px;
+      font-size: max(0.75rem, 12px); padding: 2px 7px; border-radius: 6px;
       border: 1px solid rgba(180,220,255,0.4); background: rgba(255,255,255,0.08);
+      color: var(--spirit-ink);
     }
     #stageBanner {
       position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%);
       display: none; flex-direction: column; align-items: center; gap: 8px;
       padding: 16px 28px; border-radius: 16px; text-align: center;
-      background: rgba(16, 12, 40, 0.55); border: 1px solid rgba(200, 180, 255, 0.3);
-      backdrop-filter: blur(8px); pointer-events: none; z-index: 12;
+      background: var(--spirit-panel-bg); border: 1px solid var(--spirit-panel-border);
+      backdrop-filter: blur(10px); pointer-events: none; z-index: 12;
       opacity: 0; transition: opacity 0.35s;
+      color: var(--spirit-ink);
     }
     #stageBanner.show { display: flex; opacity: 1; }
     #stageBanner .stage-title {
-      font-size: 1.15rem; letter-spacing: 0.18em; font-weight: 300; color: #ffe8c0;
+      font-size: var(--spirit-type-title); letter-spacing: 0.18em; font-weight: 300; color: var(--spirit-accent);
     }
     #stageBanner .stage-lesson {
-      font-size: 0.82rem; letter-spacing: 0.06em; opacity: 0.88; max-width: min(360px, 80vw); line-height: 1.55;
+      font-size: var(--spirit-type-body); letter-spacing: 0.06em; color: var(--spirit-ink-muted);
+      max-width: min(360px, 80vw); line-height: 1.55;
     }
     #overlay {
       position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at center, rgba(12,10,36,0.55) 0%, rgba(5,5,20,0.94) 100%);
+      background: var(--spirit-panel-scrim);
       transition: opacity 0.7s; cursor: pointer;
+      color: var(--spirit-ink);
     }
     /* visibility 防止透明层仍参与命中/焦点（战役星门被底栏按钮「假挡」） */
     #overlay.hidden {
       opacity: 0; pointer-events: none; visibility: hidden;
       transition: opacity 0.7s, visibility 0s linear 0.7s;
     }
+    #overlay .overlay-card {
+      max-width: min(560px, 92vw);
+      padding: 8px 12px 4px;
+      text-align: center;
+    }
     #overlay h1 {
-      font-weight: 200; font-size: 2rem; letter-spacing: 0.35em;
-      color: rgba(255,255,255,0.88); text-shadow: 0 0 40px rgba(140,100,255,0.55);
+      font-weight: 200; font-size: max(1.75rem, 28px); letter-spacing: 0.35em;
+      color: #ffffff; text-shadow: 0 0 40px rgba(140,100,255,0.55);
       text-align: center; line-height: 1.9;
     }
+    /* 模式选择说明：旧规则默认黑字+opacity:0.6 → 泥灰；强制浅墨+底板 */
+    #overlay .overlay-blurb,
     #overlay p {
-      font-size: 0.84rem; opacity: 0.6; letter-spacing: 0.1em; margin-top: 1rem;
-      text-align: center; line-height: 1.85;
+      font-size: var(--spirit-type-body);
+      font-weight: 400;
+      color: var(--spirit-ink);
+      opacity: 1;
+      letter-spacing: 0.06em;
+      margin: 1rem auto 0;
+      max-width: min(520px, 90vw);
+      text-align: center;
+      line-height: 1.85;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: var(--spirit-panel-bg);
+      border: 1px solid var(--spirit-panel-border);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+    }
+    #overlay .overlay-blurb strong,
+    #overlay p strong {
+      color: var(--spirit-accent);
+      font-weight: 650;
+    }
+    #overlay #modePick button small {
+      opacity: 1;
+      color: var(--spirit-ink);
+      font-size: var(--spirit-type-hint);
     }
     #victory, #timestop {
       position: fixed; inset: 0; z-index: 15; display: none; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at center, rgba(20,12,48,0.45) 0%, rgba(5,5,18,0.82) 100%);
+      background: var(--panel-mask);
       pointer-events: none;
     }
     #victory.show, #timestop.show { display: flex; pointer-events: auto; }
     #timestop {
       z-index: 18;
-      background: radial-gradient(ellipse at center, rgba(8,16,40,0.55) 0%, rgba(2,4,16,0.92) 100%);
+      background: var(--panel-mask);
     }
     .panel-box {
-      text-align: center; padding: 28px 32px; max-width: min(440px, 92vw);
-      border: 1px solid rgba(255,255,255,0.2); border-radius: 16px;
-      background: rgba(20,16,48,0.78); backdrop-filter: blur(10px);
+      text-align: center; padding: 28px 32px; max-width: min(460px, 92vw);
+      border: 1px solid var(--spirit-panel-border); border-radius: 16px;
+      background: var(--spirit-panel-bg); backdrop-filter: blur(12px);
+      color: var(--spirit-ink);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
     }
     .panel-box h2 {
-      font-weight: 300; letter-spacing: 0.22em; font-size: 1.25rem;
-      text-shadow: 0 0 24px rgba(180,140,255,0.5);
+      font-weight: 400; letter-spacing: 0.18em; font-size: var(--spirit-type-title);
+      color: var(--spirit-accent);
+      text-shadow: 0 0 24px rgba(180,140,255,0.45);
+      margin-bottom: 4px;
     }
     .panel-box .reward {
       margin-top: 14px; padding: 12px 14px; border-radius: 10px;
-      background: rgba(255, 184, 77, 0.12); border: 1px solid rgba(255, 200, 120, 0.35);
-      font-size: 0.88rem; letter-spacing: 0.06em; line-height: 1.65; color: #ffe8c0;
+      background: rgba(255, 184, 77, 0.18); border: 1px solid rgba(255, 200, 120, 0.45);
+      font-size: var(--spirit-type-body); letter-spacing: 0.06em; line-height: 1.65; color: var(--spirit-accent);
     }
-    .panel-box p { margin-top: 12px; font-size: 0.85rem; opacity: 0.78; letter-spacing: 0.06em; line-height: 1.7; }
+    .panel-box p {
+      margin-top: 14px; font-size: var(--spirit-type-body); color: var(--spirit-ink);
+      letter-spacing: 0.04em; line-height: 1.55; opacity: 1;
+    }
+    /* tip / 教案：不透明底板 + 清晰层级 */
     .panel-box .teach {
-      margin-top: 14px; text-align: left; font-size: 0.84rem; line-height: 1.75; opacity: 0.88;
-      padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,0.05);
+      margin-top: 14px; text-align: left;
+      font-size: var(--spirit-type-body); line-height: 1.55;
+      color: var(--spirit-ink);
+      padding: 14px 16px; border-radius: 12px;
+      background: var(--spirit-panel-surface);
+      border: 1px solid var(--spirit-panel-border);
     }
+    .panel-box .teach strong { color: var(--spirit-accent); }
     .actions {
       margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
     }
     .actions button, #tsChoices button {
       pointer-events: auto; cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.28); border-radius: 999px;
-      background: rgba(255,255,255,0.08); color: #fff;
-      padding: 10px 18px; font-size: 0.82rem; letter-spacing: 0.06em;
+      border: 1px solid var(--spirit-opt-border); border-radius: 999px;
+      background: var(--spirit-opt-bg); color: var(--spirit-ink);
+      padding: 10px 18px; font-size: var(--spirit-type-hint); letter-spacing: 0.06em;
     }
-    .actions button.primary { background: rgba(124, 92, 255, 0.45); border-color: rgba(180,160,255,0.55); }
-    .actions button:hover, #tsChoices button:hover { background: rgba(255,255,255,0.16); }
+    .actions button.primary {
+      background: rgba(124, 92, 255, 0.55); border-color: rgba(180,160,255,0.6); color: var(--spirit-ink);
+    }
+    .actions button:hover, #tsChoices button:hover { background: rgba(64, 52, 110, 0.96); }
     #tsChoices { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
-    #tsChoices button { width: 100%; border-radius: 12px; padding: 12px 16px; }
-    #tsStatus { margin-top: 12px; min-height: 1.4em; font-size: 0.85rem; color: #ffe8a0; }
+    #tsChoices button {
+      width: 100%; border-radius: 12px; padding: 14px 16px;
+      font-size: var(--spirit-type-body); line-height: 1.5; text-align: left;
+    }
+    #tsStatus { margin-top: 12px; min-height: 1.4em; font-size: var(--spirit-type-body); color: var(--spirit-accent); }
     #whyChord {
       position: fixed; inset: 0; z-index: 16; display: none; align-items: center; justify-content: center;
-      background: rgba(4, 6, 18, 0.72); pointer-events: none;
+      background: var(--spirit-panel-scrim); pointer-events: none;
+      color: var(--spirit-ink);
     }
     #whyChord.show { display: flex; pointer-events: auto; }
     #whyChord .why-box {
       max-width: min(420px, 92vw); padding: 22px 24px; border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.22); background: rgba(22,18,52,0.92);
-      text-align: center;
+      border: 1px solid var(--spirit-panel-border); background: var(--spirit-panel-bg);
+      text-align: center; color: var(--spirit-ink);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
     }
     #whyChord h3 {
-      font-weight: 400; letter-spacing: 0.18em; font-size: 1.05rem; margin-bottom: 12px;
+      font-weight: 400; letter-spacing: 0.18em; font-size: var(--spirit-type-title);
+      margin-bottom: 12px; color: var(--spirit-accent);
     }
     #whyChord .why-notes {
       display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 14px 0;
     }
     #whyChord .why-note {
       min-width: 72px; padding: 10px 8px; border-radius: 12px;
-      border: 1.5px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.06);
+      border: 1.5px solid var(--spirit-panel-border); background: var(--spirit-panel-surface);
+      color: var(--spirit-ink);
     }
-    #whyChord .why-note strong { display: block; font-size: 1.25rem; margin-bottom: 4px; }
-    #whyChord .why-note span { font-size: 0.72rem; opacity: 0.75; letter-spacing: 0.04em; }
+    #whyChord .why-note strong {
+      display: block; font-size: max(1.2rem, 18px); margin-bottom: 4px; color: var(--spirit-ink);
+    }
+    #whyChord .why-note span {
+      font-size: var(--spirit-type-hint); color: var(--spirit-ink-muted); letter-spacing: 0.04em;
+    }
     #whyChord .why-formula {
-      font-size: 0.88rem; line-height: 1.7; opacity: 0.9; letter-spacing: 0.04em;
-      text-align: left; padding: 12px 14px; border-radius: 10px;
-      background: rgba(255,255,255,0.05); margin-top: 4px;
+      font-size: var(--spirit-type-body); line-height: 1.55; color: var(--spirit-ink);
+      letter-spacing: 0.04em;
+      text-align: left; padding: 14px 16px; border-radius: 12px;
+      background: var(--spirit-panel-surface); border: 1px solid var(--spirit-panel-border); margin-top: 4px;
     }
     #whyChord .why-ammo {
-      margin-top: 12px; color: #ffe8a0; font-size: 0.9rem; letter-spacing: 0.06em;
+      margin-top: 12px; color: var(--spirit-accent); font-size: var(--spirit-type-body); letter-spacing: 0.06em;
     }
     #pauseBtn {
       position: absolute; top: 18px; right: 18px;
@@ -375,17 +485,21 @@
       padding: 8px 14px; font-size: 0.78rem; letter-spacing: 0.08em;
     }
     #pauseBtn:hover { background: rgba(40,32,72,0.9); }
-    /* I71：切弹独立顶栏右上（不进开火簇）；暂停旁 */
-    #mobaAmmoBtn {
-      display: none; position: absolute; top: 18px; right: 96px;
+    /* I71：切弹/合成独立顶栏右上（低频弹药操作；不进开火簇）；暂停旁 */
+    #mobaAmmoBtn, #mobaCraftBtn {
+      display: none; position: absolute; top: 18px;
       pointer-events: auto; cursor: pointer; touch-action: manipulation;
       border: 1px solid rgba(255,255,255,0.28); border-radius: 999px;
       background: rgba(18,14,40,0.7); color: rgba(255,255,255,0.9);
       padding: 7px 12px; font-size: 0.72rem; letter-spacing: 0.06em;
       opacity: 0.6; transition: opacity 0.12s;
     }
-    body.moba-battle #mobaAmmoBtn { display: inline-block; }
-    #mobaAmmoBtn.pressed, #mobaAmmoBtn:active { opacity: 0.9; }
+    #mobaAmmoBtn { right: 96px; }
+    #mobaCraftBtn { right: 168px; }
+    body.moba-battle #mobaAmmoBtn,
+    body.moba-battle #mobaCraftBtn { display: inline-block; }
+    #mobaAmmoBtn.pressed, #mobaAmmoBtn:active,
+    #mobaCraftBtn.pressed, #mobaCraftBtn:active { opacity: 0.9; }
     /* I71 王者式分区：中 60% 无钮；左摇杆；右开火大+闪避中 */
     #mobaPad {
       display: none; position: fixed; inset: 0; z-index: 14; pointer-events: none;
@@ -393,9 +507,9 @@
     body.moba-battle.moba-landscape #mobaPad { display: block; }
     .moba-stick {
       position: absolute;
-      left: max(12px, env(safe-area-inset-left, 0px));
-      bottom: max(16px, env(safe-area-inset-bottom, 0px));
-      width: 80px; height: 80px; border-radius: 50%;
+      left: max(44px, calc(env(safe-area-inset-left, 0px) + 36px));
+      bottom: max(40px, calc(env(safe-area-inset-bottom, 0px) + 36px));
+      width: 116px; height: 116px; border-radius: 50%;
       background: rgba(255,255,255,0.16);
       border: 1.5px solid rgba(255,255,255,0.38);
       pointer-events: auto; touch-action: none;
@@ -404,7 +518,7 @@
     .moba-stick.pressed { opacity: 0.9; }
     .moba-stick-knob {
       position: absolute; left: 50%; top: 50%;
-      width: 34px; height: 34px; border-radius: 50%;
+      width: 40px; height: 40px; border-radius: 50%;
       background: rgba(255,255,255,0.5);
       border: 1px solid rgba(255,255,255,0.55);
       transform: translate(-50%, -50%);
@@ -419,19 +533,19 @@
       -webkit-user-select: none; user-select: none;
     }
     .moba-btn.pressed, .moba-btn:active { opacity: 0.9; }
-    /* 右簇（Codex）：开火 72 → 闪避 56 → 撞击 36；切弹仍在顶栏 */
+    /* 右簇：王者式离边 inset；开火 84 → 闪避 56 → 撞击 36；切弹仍在顶栏 */
     .moba-fire {
       position: absolute;
-      right: max(14px, env(safe-area-inset-right, 0px));
-      bottom: max(122px, calc(env(safe-area-inset-bottom, 0px) + 106px));
-      width: 72px; height: 72px;
+      right: max(36px, calc(env(safe-area-inset-right, 0px) + 28px));
+      bottom: max(132px, calc(env(safe-area-inset-bottom, 0px) + 118px));
+      width: 84px; height: 84px;
       background: rgba(120, 70, 200, 0.35);
       border-color: rgba(200, 170, 255, 0.5);
     }
     .moba-dodge {
       position: absolute;
-      right: max(22px, env(safe-area-inset-right, 0px));
-      bottom: max(58px, calc(env(safe-area-inset-bottom, 0px) + 50px));
+      right: max(44px, calc(env(safe-area-inset-right, 0px) + 32px));
+      bottom: max(68px, calc(env(safe-area-inset-bottom, 0px) + 56px));
       width: 56px; height: 56px;
       background: rgba(40, 120, 110, 0.35);
       border-color: rgba(120, 230, 200, 0.45);
@@ -439,8 +553,8 @@
     }
     .moba-ram {
       position: absolute;
-      right: max(32px, calc(env(safe-area-inset-right, 0px) + 10px));
-      bottom: max(14px, env(safe-area-inset-bottom, 0px));
+      right: max(52px, calc(env(safe-area-inset-right, 0px) + 36px));
+      bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 20px));
       width: 36px; height: 36px;
       background: rgba(160, 90, 40, 0.4);
       border-color: rgba(255, 200, 120, 0.5);
@@ -458,14 +572,14 @@
     #rotateHint .rotate-box {
       text-align: center; padding: 28px 26px; max-width: min(360px, 88vw);
       border-radius: 16px; border: 1px solid rgba(180,150,255,0.35);
-      background: rgba(22,16,48,0.92);
+      background: rgba(255,255,255,0.92);
     }
     #rotateHint .rotate-box p {
-      font-size: 0.95rem; letter-spacing: 0.08em; line-height: 1.7;
-      color: rgba(255,255,255,0.9); margin-bottom: 16px;
+      font-size: 1.1rem; letter-spacing: 0.08em; line-height: 1.7;
+      color: #1c1917; margin-bottom: 16px;
     }
     #rotateHint .rotate-box .rotate-sub {
-      font-size: 0.75rem; opacity: 0.65; margin: -8px 0 16px; letter-spacing: 0.04em;
+      font-size: var(--spirit-type-hint); color: #44403c; margin: -8px 0 16px; letter-spacing: 0.04em;
     }
     #enterLandscapeBtn {
       pointer-events: auto; cursor: pointer; touch-action: manipulation;
@@ -479,26 +593,39 @@
     }
     #pausePanel {
       position: fixed; inset: 0; z-index: 17; display: none; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at center, rgba(10,14,36,0.5) 0%, rgba(4,6,16,0.88) 100%);
+      background: var(--panel-mask);
       pointer-events: none;
     }
     #pausePanel.show { display: flex; pointer-events: auto; }
-    #pausePanel .teach strong { color: #ffe8c0; }
+    #pausePanel .teach strong { color: var(--panel-accent); }
     #teachTip, #bossTeach {
       position: fixed; inset: 0; z-index: 17; display: none; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at center, rgba(20,12,48,0.55) 0%, rgba(4,4,14,0.9) 100%);
+      background: var(--panel-mask);
       pointer-events: none;
     }
     #teachTip.show, #bossTeach.show { display: flex; pointer-events: auto; }
     #bossTeachChoices { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
     #bossTeachChoices button {
-      width: 100%; text-align: left; border-radius: 12px; padding: 12px 16px;
+      width: 100%; text-align: left; border-radius: 12px; padding: 14px 16px;
       pointer-events: auto; cursor: pointer;
-      border: 1px solid rgba(255, 180, 120, 0.35); background: rgba(80, 45, 20, 0.15); color: #fff;
-      font-size: 0.82rem; letter-spacing: 0.04em; line-height: 1.45;
+      border: 1px solid var(--spirit-opt-border); background: var(--spirit-opt-bg);
+      color: var(--spirit-ink);
+      font-size: var(--spirit-type-body); letter-spacing: 0.04em; line-height: 1.5;
     }
-    #bossTeachChoices button:hover { background: rgba(120, 70, 40, 0.28); }
-    #bossTeachStatus { margin-top: 12px; min-height: 1.4em; font-size: 0.85rem; color: #ffe8a0; }
+    #bossTeachChoices button:hover { background: rgba(64, 52, 110, 0.96); }
+    #bossTeachStatus { margin-top: 12px; min-height: 1.4em; font-size: var(--spirit-type-body); color: var(--spirit-accent); }
+    /* 手机横屏矮屏：保字号地板，略收 padding 防裁切 */
+    @media (orientation: landscape) and (max-height: 480px) {
+      .panel-box, #whyChord .why-box {
+        padding: 16px 18px;
+        max-height: min(92vh, 420px);
+        overflow-y: auto;
+      }
+      .panel-box h2, #whyChord h3 { font-size: max(1.05rem, 16px); letter-spacing: 0.12em; }
+      .panel-box .teach, .panel-box p, #whyChord .why-formula {
+        font-size: max(0.9rem, 14px); line-height: 1.55;
+      }
+    }
   </style>
 </head>
 <body>
@@ -531,14 +658,15 @@
       <div class="stage-title" id="stageTitle">关卡</div>
       <div class="stage-lesson" id="stageLesson">本关学什么</div>
     </div>
-    <button type="button" id="mobaAmmoBtn" aria-label="切弹" title="切弹 R">切弹</button>
-    <button type="button" id="pauseBtn" aria-label="暂停">暂停 P</button>
+    <button type="button" id="mobaCraftBtn" aria-label="合成" title="合成超级弹">合成</button>
+    <button type="button" id="mobaAmmoBtn" aria-label="切弹" title="切弹">切弹</button>
+    <button type="button" id="pauseBtn" aria-label="暂停">暂停</button>
     <div id="pack" aria-label="音符背包"></div>
     <div id="toast"></div>
-    <div id="keys">操作说明见暂停 P</div>
+    <div id="keys">操作说明见暂停</div>
   </div>
 
-  <!-- I71 触屏 MOBA：左摇杆 · 右开火/闪避/撞击 · 切弹顶栏 -->
+  <!-- I71 触屏 MOBA：左摇杆 · 右开火/闪避/撞击 · 顶栏切弹/合成 -->
   <div id="mobaPad" aria-hidden="true">
     <div id="mobaStick" class="moba-stick" aria-label="移动摇杆">
       <div id="mobaStickKnob" class="moba-stick-knob"></div>
@@ -732,7 +860,7 @@
   <div id="campaignPanel" aria-hidden="true">
     <div class="campaign-box">
       <h2 id="campaignTitle">首星区 · 战役星图</h2>
-      <p class="campaign-sub">选择星门进入。远征局内<strong>养成会保留</strong>；清场可选继续清剿或回星图升级。已通关可反复刷。<br><small id="campaignRunHint" style="opacity:.85">「结束远征局」才会清空本局弹药/进化/僚机。</small></p>
+      <p class="campaign-sub">选择星门进入。远征局内<strong>养成会保留</strong>；清场可选继续清剿或回星图升级。已通关可反复刷。<br><small id="campaignRunHint">「结束远征局」才会清空本局弹药/进化/僚机。</small></p>
       <div id="campaignNav"></div>
       <div id="campaignMap"></div>
       <div class="actions">
@@ -751,15 +879,15 @@
   </div>
 
   <div id="overlay">
-    <div>
+    <div class="overlay-card">
       <h1>灵 气 星 图</h1>
-      <p>全屏探险世界 · <strong>坑</strong>坠落 · <strong>雾</strong>减速 · <strong>晶石</strong>灵气 · <strong>柱</strong>挡路（E 可撞碎）<br>
+      <p class="overlay-blurb">全屏探险世界 · <strong>坑</strong>坠落 · <strong>雾</strong>减速 · <strong>晶石</strong>灵气 · <strong>柱</strong>挡路（E 可撞碎）<br>
         捡音入背包 → 凑<strong>大三/小三</strong>自动装入弹药包（+6）· 两音<strong>纯五</strong>得刚盾稳固<br>
         <strong>点画面 / 空格</strong> 开火 · <strong>点弹药钮 / 1–4</strong> 切弹 · <strong>T</strong> 合成 · <strong>Shift</strong> 闪避<br>
         清场整备可<strong>点顶部横幅</strong>跳过 · Boss「聚能」亮起时 Shift/E 躲激光 · 一关一主题怪 · 节奏偏慢好学</p>
       <div class="actions" id="modePick" style="margin-top:20px">
-        <button type="button" class="primary" id="modePractice" data-mode="practice">练习房<br><small style="opacity:.85;font-weight:400">首星区 1–6 · 可反复刷</small></button>
-        <button type="button" id="modeExpedition" data-mode="expedition">远征<br><small style="opacity:.85;font-weight:400">星区推进 · 局内养成保留</small></button>
+        <button type="button" class="primary" id="modePractice" data-mode="practice">练习房<br><small style="font-weight:400">首星区 1–6 · 可反复刷</small></button>
+        <button type="button" id="modeExpedition" data-mode="expedition">远征<br><small style="font-weight:400">星区推进 · 局内养成保留</small></button>
       </div>
     </div>
   </div>
@@ -770,11 +898,11 @@
   <script src="spirit-loot.js"></script>
   <script src="spirit-evo.js?v=1.7.14"></script>
   <script src="spirit-mutation.js"></script>
-  <script src="spirit-sectors.js"></script>
+  <script src="spirit-sectors.js?v=1.7.35"></script>
   <script src="spirit-hazards.js?v=1.7.14"></script>
   <script src="spirit-boss.js?v=1.7.14"></script>
   <script src="spirit-campaign.js?v=1.7.14"></script>
-  <script src="spirit-input-adapter.js?v=1.7.25"></script>
+  <script src="spirit-input-adapter.js?v=1.7.28"></script>
   <script>
     const canvas = document.getElementById("c");
     const ctx = canvas.getContext("2d");
@@ -826,6 +954,7 @@
     const whyFormula = document.getElementById("whyFormula");
     const whyAmmo = document.getElementById("whyAmmo");
     const pauseBtn = document.getElementById("pauseBtn");
+    const mobaCraftBtn = document.getElementById("mobaCraftBtn");
     const mobaAmmoBtn = document.getElementById("mobaAmmoBtn");
     const mobaPadEl = document.getElementById("mobaPad");
     const mobaStickEl = document.getElementById("mobaStick");
@@ -840,6 +969,22 @@
     let rotateGateOpen = false;
 
     /** I71：同步触屏 MOBA HUD / 旋转门 / 画布点按开火开关 */
+    function isTouchMoba() {
+      return !!(window.SpiritInputAdapter && SpiritInputAdapter.getMode() === "touchMOBA");
+    }
+    function pauseBtnLabel(isPaused) {
+      if (isTouchMoba()) return isPaused ? "继续" : "暂停";
+      return isPaused ? "继续 P" : "暂停 P";
+    }
+    function syncHudChrome() {
+      if (pauseBtn) pauseBtn.textContent = pauseBtnLabel(!!paused);
+      const keysEl = document.getElementById("keys");
+      if (keysEl) {
+        keysEl.textContent = isTouchMoba()
+          ? "左摇杆移动 · 右开火/闪避 · 顶栏切弹/合成 · 暂停"
+          : "操作说明见暂停 P";
+      }
+    }
     function syncMobaUi() {
       const IA = window.SpiritInputAdapter;
       if (!IA) return;
@@ -859,6 +1004,7 @@
       IA.setBattleActive(touchMoba && inBattle && land);
       if (mobaPadEl) mobaPadEl.setAttribute("aria-hidden", (touchMoba && inBattle && land) ? "false" : "true");
       if (touchMoba) IA.canvasTouchEnabled = false;
+      syncHudChrome();
     }
     const evoPanelEl = document.getElementById("evoPanel");
     const evoTierLabel = document.getElementById("evoTierLabel");
@@ -1095,7 +1241,9 @@
         : kind === "minor" ? "小三·阴郁冰冻"
         : kind === "super" ? "超级合弦" : "平击";
       if (started && !timeStopped && !whyOpen && !paused && !evoChoosing && !mutationChoosing && !recruitOpen && !teachOpen && !bossTeachOpen && !megaRewardOpen && !sectorFlowOpen) {
-        hintEl.textContent = `当前弹药：${label} · R 切弹 · T 合成超级弹`;
+        hintEl.textContent = isTouchMoba()
+          ? `当前弹药：${label} · 顶栏「切弹」切换 · 「合成」超级弹`
+          : `当前弹药：${label} · R 切弹 · T 合成超级弹`;
       }
     }
 
@@ -1133,7 +1281,9 @@
       if (!started || victoryOpen || timeStopped || whyOpen || paused || evoChoosing || mutationChoosing || recruitOpen || teachOpen || bossTeachOpen || megaRewardOpen || sectorFlowOpen) return;
       const cost = 1;
       if (ammoMajor < cost || ammoMinor < cost) {
-        showToast("合成需要：大三 + 小三 各至少 1 · 键位 T");
+        showToast(isTouchMoba()
+          ? "合成需要：大三 + 小三 各至少 1 · 顶栏「合成」"
+          : "合成需要：大三 + 小三 各至少 1 · 键位 T");
         return;
       }
       const yieldN = (window.SpiritEvo && SpiritEvo.craftYield)
@@ -1160,9 +1310,13 @@
       pauseTeach.innerHTML =
         `<strong>明快大三</strong>：根音 + 大三度(+4) + 纯五度 → 穿透，克刚石<br>` +
         `<strong>阴郁小三</strong>：根音 + 小三度(+3) + 纯五度 → 冰冻，克雾灵<br>` +
-        `<strong>超级合弦</strong>：T 合成（大+小）→ 高伤兼控 · R 切弹<br>` +
+        (isTouchMoba()
+          ? `<strong>超级合弦</strong>：大+小各 1 → 顶栏「合成」→ 高伤兼控 · 「切弹」切换<br>`
+          : `<strong>超级合弦</strong>：T 合成（大+小）→ 高伤兼控 · R 切弹<br>`) +
         `当前背包：<strong>${pack}</strong><br>${ammoLine}<br>` +
-        `Boss 波看清抗性；想不清楚就按 P。`;
+        (isTouchMoba()
+          ? `Boss 波看清抗性；想不清楚就点「暂停」。`
+          : `Boss 波看清抗性；想不清楚就按 P。`);
     }
 
     function setPaused(on) {
@@ -1170,13 +1324,15 @@
       paused = !!on;
       pausePanelEl.classList.toggle("show", paused);
       pausePanelEl.setAttribute("aria-hidden", paused ? "false" : "true");
-      pauseBtn.textContent = paused ? "继续 P" : "暂停 P";
+      pauseBtn.textContent = pauseBtnLabel(paused);
       if (paused) {
         refreshPauseTeach();
         hintEl.textContent = "已暂停 · 对照背包与抗性再行动";
         showToast("暂停 · 想清楚再继续");
       } else {
-        hintEl.textContent = "继续 · 1/2/3/4 切弹 · R 合成 · P 暂停";
+        hintEl.textContent = isTouchMoba()
+          ? "继续 · 顶栏切弹/合成 · 右开火/闪避 · 暂停"
+          : "继续 · 1/2/3/4 切弹 · R 合成 · P 暂停";
         showToast("时间恢复");
       }
     }
@@ -1417,7 +1573,8 @@
           { id: "wait", label: "站着不动等它吞完" }
         ],
         answer: "super",
-        wrong: "吞音会壮大领主 · 超级弹（T 合成）伤害更稳，也可先拉开距离。"
+        wrong: "吞音会壮大领主 · 超级弹伤害更稳，也可先拉开距离。",
+        wrongTouch: "吞音会壮大领主 · 顶栏「合成」超级弹更稳，也可先拉开距离。"
       },
       {
         prompt: "超级弹怎么获得？",
@@ -1426,8 +1583,14 @@
           { id: "flat", label: "平击连开三次" },
           { id: "same", label: "背包里三枚相同音" }
         ],
+        choicesTouch: [
+          { id: "t", label: "顶栏「合成」：大三 + 小三 各至少 1" },
+          { id: "flat", label: "平击连开三次" },
+          { id: "same", label: "背包里三枚相同音" }
+        ],
         answer: "t",
-        wrong: "超级弹 = 明快大三 + 阴郁小三各 1 发，按 T 合成。"
+        wrong: "超级弹 = 明快大三 + 阴郁小三各 1 发，按 T 合成。",
+        wrongTouch: "超级弹 = 明快大三 + 阴郁小三各 1 发，点顶栏「合成」。"
       }
     ];
 
@@ -1479,16 +1642,19 @@
       bossTeachOpen = true;
       bossTeachAnswered = false;
       const quiz = BOSS_TEACH_QUIZZES[Math.floor(Math.random() * BOSS_TEACH_QUIZZES.length)];
+      const touch = isTouchMoba();
+      const choices = (touch && quiz.choicesTouch) ? quiz.choicesTouch : quiz.choices;
       bossTeachTitle.textContent = `${bossName} · 战术速记`;
-      bossTeachBody.innerHTML =
-        "领主会<strong>吞附近音符</strong>并释放技能。<br>合弦<strong>超级弹（T）</strong>更稳、伤害更高。";
+      bossTeachBody.innerHTML = touch
+        ? "领主会<strong>吞附近音符</strong>并释放技能。<br>合弦<strong>超级弹</strong>（顶栏「合成」）更稳、伤害更高。"
+        : "领主会<strong>吞附近音符</strong>并释放技能。<br>合弦<strong>超级弹（T）</strong>更稳、伤害更高。";
       bossTeachPrompt.textContent = quiz.prompt;
       bossTeachStatus.textContent = "";
-      bossTeachChoices.innerHTML = quiz.choices.map(c =>
+      bossTeachChoices.innerHTML = choices.map(c =>
         `<button type="button" data-boss-choice="${c.id}">${c.label}</button>`
       ).join("");
       bossTeachEl.dataset.quizAnswer = quiz.answer;
-      bossTeachEl.dataset.quizWrong = quiz.wrong;
+      bossTeachEl.dataset.quizWrong = (touch && quiz.wrongTouch) ? quiz.wrongTouch : quiz.wrong;
       bossTeachEl.classList.add("show");
       bossTeachEl.setAttribute("aria-hidden", "false");
     }
@@ -1734,6 +1900,7 @@
       defeatOpen = false;
       finaleOpen = false;
       nodeSettleOpen = false;
+      invulnUntil = 0;
       pendingAfterEvo = null;
       timeStopped = false;
       victoryOpen = false;
@@ -1762,7 +1929,7 @@
       hide(timestopEl);
       hide(pausePanelEl);
       if (!keepCampaign) hide(campaignPanelEl);
-      if (pauseBtn) pauseBtn.textContent = "暂停 P";
+      if (pauseBtn) pauseBtn.textContent = pauseBtnLabel(false);
       syncMobaUi();
     }
 
@@ -1900,7 +2067,8 @@
       const stats = (window.SpiritEvo && SpiritEvo.baseStats)
         ? SpiritEvo.baseStats(tier)
         : (tier === 0 ? { baseR: 14, maxLives: 3 } : tier === 1 ? { baseR: 18, maxLives: 4 } : { baseR: 22, maxLives: 5 });
-      player.baseR = stats.baseR;
+      const es = entityScale();
+      player.baseR = stats.baseR * es;
       player.maxLives = stats.maxLives;
       player.r = player.baseR;
       if (lives > player.maxLives) lives = player.maxLives;
@@ -2099,7 +2267,7 @@
           eye: type.eye,
           mult: type.mult,
           x: p.x, y: p.y,
-          r: type.r * 1.75,
+          r: type.r * 1.75 * entityScale(),
           hp: 5.5 + w * 0.85,
           maxHp: 5.5 + w * 0.85,
           speed: (38 + Math.min(24, w * 2)) * type.speedMul,
@@ -2351,10 +2519,26 @@
     function resize() {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
+      refreshEntityScale();
       if (!started) {
         player.x = W / 2;
         player.y = H / 2;
       }
+    }
+
+    /** I71：短边越小实体越大占屏 → 按短边缩放半径，贴近 PC 生存空间 */
+    function entityScale() {
+      const short = Math.min(W || 0, H || 0);
+      if (short <= 0) return 1;
+      if (short >= 700) return 1;
+      return Math.max(0.72, Math.min(1, short / 540));
+    }
+    function refreshEntityScale() {
+      const es = entityScale();
+      try {
+        if (window.SpiritData) SpiritData.ENTITY_SCALE = es;
+      } catch { /* */ }
+      return es;
     }
 
     function randEdge() {
@@ -2385,7 +2569,7 @@
         tries < 40
       );
       notes.push({
-        x, y, r: 15, def, midi,
+        x, y, r: 15 * entityScale(), def, midi,
         pulse: Math.random() * Math.PI * 2,
         drift: Math.random() * Math.PI * 2
       });
@@ -2410,6 +2594,7 @@
       if (!pool.length) return;
       const type = pool[Math.floor(Math.random() * pool.length)];
       const speed = (48 + Math.random() * 28 + Math.min(28, sessionPicks * 0.9)) * type.speedMul * PACE_ENEMY;
+      const es = entityScale();
       enemies.push({
         id: `${type.id}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
         typeId: type.id,
@@ -2419,7 +2604,7 @@
         color: type.color,
         eye: type.eye,
         mult: type.mult,
-        x: p.x, y: p.y, r: type.r,
+        x: p.x, y: p.y, r: type.r * es,
         hp: type.hp,
         maxHp: type.hp,
         speed, baseSpeed: speed,
@@ -3053,7 +3238,7 @@
       const lines = [
         `败北小结 · 波次 ${wave}`,
         `本局叠层击杀 ${correctKills} · 拾音 ${sessionPicks}`,
-        `倒下 ${sessionDeaths} 次 · 可 P 暂停对照抗性`
+        `倒下 ${sessionDeaths} 次 · 可暂停对照抗性`
       ];
       showToast(lines[0]);
       floatTexts.push({
@@ -3130,7 +3315,7 @@
       bossSpawnDeferred = null;
       waveLive = false;
       breathUntil = 0;
-      invulnUntil = Date.now() + 999999;
+      invulnUntil = 0;
       if (breathBannerEl) breathBannerEl.classList.remove("show");
       if (bossTeachEl) { bossTeachEl.classList.remove("show"); bossTeachEl.setAttribute("aria-hidden", "true"); }
       if (defeatSummaryEl) {
@@ -3150,6 +3335,7 @@
 
     function closeDefeat() {
       defeatOpen = false;
+      invulnUntil = 0;
       if (defeatPanelEl) {
         defeatPanelEl.classList.remove("show");
         defeatPanelEl.setAttribute("aria-hidden", "true");
@@ -3688,6 +3874,12 @@
         // 进关前清干净所有模态（灵气达标/进化/收编等叠层会导致世界假死）
         forceCloseAllPanels();
         started = true;
+        // P0：败北曾把 invulnUntil 推到极远未来；重开必须最先清掉，否则玩家永久闪烁透明
+        invulnUntil = 0;
+        ramUntil = 0;
+        dodgeUntil = 0;
+        swiftUntil = 0;
+        refreshEntityScale();
         syncSpiritFromStore();
         pendingVictory = false;
         loadSkills();
@@ -3783,13 +3975,11 @@
         paused = false;
         pausePanelEl.classList.remove("show");
         pausePanelEl.setAttribute("aria-hidden", "true");
-        pauseBtn.textContent = "暂停 P";
+        pauseBtn.textContent = pauseBtnLabel(false);
         bullets = [];
         loot = [];
         if (!preserveRun) {
-          player.baseR = 14;
           player.maxLives = 3;
-          player.r = 14;
           applyEvolutionStats();
           // I55 血量阶梯：战役越深，生命上限越高
           if (campaignMode && currentSectorIdx > 0) {
@@ -3814,12 +4004,19 @@
         if (window.SpiritBoss) SpiritBoss.reset();
         bossAnnouncePending = null;
         overlay.classList.add("hidden");
+        invulnUntil = 0;
         if (!victoryOpen) {
           let focus = runMode === "practice"
-            ? `练习房 · 首星区 1–${practiceCap()} · 可反复刷 · P 暂停`
+            ? (isTouchMoba()
+              ? `练习房 · 首星区 1–${practiceCap()} · 可反复刷 · 点暂停`
+              : `练习房 · 首星区 1–${practiceCap()} · 可反复刷 · P 暂停`)
             : (preserveRun
-              ? "远征局 · 养成已保留 · P 暂停 · 击杀可收编"
-              : "远征 · 坑雾柱晶 · P 暂停 · E 撞柱 · 击杀可收编僚机");
+              ? (isTouchMoba()
+                ? "远征局 · 养成已保留 · 点暂停 · 击杀可收编"
+                : "远征局 · 养成已保留 · P 暂停 · 击杀可收编")
+              : (isTouchMoba()
+                ? "远征 · 坑雾柱晶 · 点暂停 · 撞击柱 · 击杀可收编僚机"
+                : "远征 · 坑雾柱晶 · P 暂停 · E 撞柱 · 击杀可收编僚机"));
           try {
             const stored = sessionStorage.getItem("mtg-spirit-focus");
             if (stored) focus = `星图焦点：${stored} · 探险坑雾柱晶`;
@@ -4410,9 +4607,12 @@
         ctx.globalAlpha = 1;
       });
 
-      const blink = Date.now() < invulnUntil && Math.floor(Date.now() / 80) % 2 === 0;
+      const blink = lives > 0 && !defeatOpen && Date.now() < invulnUntil
+        && Math.floor(Date.now() / 80) % 2 === 0;
       const ramming = Date.now() < ramUntil;
-      if (!blink) {
+      if (defeatOpen || lives <= 0) {
+        /* 败北面板期间不画玩家，避免卡在无敌闪烁 */
+      } else if (!blink) {
         const body = getEvoTier() >= 2 ? "#ffd08a" : getEvoTier() >= 1 ? "#c8e0ff" : "#a8d0ff";
         const swifting = Date.now() < swiftUntil;
         drawGlow(player.x, player.y, player.r, ramming ? "#ffe08a" : swifting ? "#70f0d8" : body, 0.95);
@@ -4746,6 +4946,7 @@
       resize();
       syncMobaUi();
     });
+    window.addEventListener("orientationchange", () => syncMobaUi());
 
     // ---- I71 InputAdapter 接线 ----
     if (window.SpiritInputAdapter) {
@@ -4760,6 +4961,9 @@
       if (mobaAmmoBtn) {
         SpiritInputAdapter.bindPressButton(mobaAmmoBtn, () => { cycleAmmoCf(); }, { always: true });
       }
+      if (mobaCraftBtn) {
+        SpiritInputAdapter.bindPressButton(mobaCraftBtn, () => { tryCraftSuper(); }, { always: true });
+      }
       SpiritInputAdapter.onModeChange(() => { syncMobaUi(); });
       if (enterLandscapeBtn) {
         enterLandscapeBtn.addEventListener("click", async (e) => {
@@ -4771,9 +4975,9 @@
           }
         });
       }
-      // 触屏模式提示键位文案
+      // 触屏模式提示（无键位字母）
       if (SpiritInputAdapter.getMode() === "touchMOBA" && hintEl) {
-        hintEl.textContent = "横屏游玩 · 左摇杆移动 · 右开火/闪避/撞击 · 顶栏切弹";
+        hintEl.textContent = "横屏游玩 · 左摇杆移动 · 右开火/闪避/撞击 · 顶栏切弹/合成";
       }
     }
     syncMobaUi();

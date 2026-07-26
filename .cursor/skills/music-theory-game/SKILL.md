@@ -7,7 +7,7 @@ description: >-
   flywheel/skill crystallization with this user.
 ---
 
-# 启动必读：每次操作前检查本节禁止项
+# 启动必读：每次收到操作类指令时，先匹配授权句式「我授权你 + 动作」。无匹配 → 回复「需明确授权：请说"我授权你 + 动作"」。匹配后 → 只执行已授权动作，不连带其他。
 
 - 禁止覆盖用户传入的引用文件
 - 禁止重写已交付系统
@@ -15,6 +15,13 @@ description: >-
 - 禁止 deploy（必须用户说「我授权你部署 Pages」）
 - 禁止 commit（必须用户说「我授权你 commit」）
 - 禁止建 remote（必须用户说「我授权你建 GitHub remote」）
+
+## 协作经验（从决策日志提炼）
+
+- 授权粒度：一次授权 = 一个动作。push ≠ deploy。commit ≠ push。
+- 模糊指令拦截：单字「部署」、口语「上线吧」不构成授权。
+- 新 Agent 接入：读 ONBOARDING + [A2A-PROTOCOL.md](http://A2A-PROTOCOL.md) + [A2A-ROUTING.md](http://A2A-ROUTING.md) → 不越界。
+- 文件互踩防范：用户传入引用文件只读；写入只限自己约定的文件名前缀。
 
 # 乐理小达人 · 项目 Skill（含成长飞轮）
 
@@ -196,7 +203,7 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 - **探险层**：全屏世界；坑/雾/晶石/遗迹柱；听辨收编；Boss 来袭  
 - **mewo（I38）**：待用户提供工具
 
-检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.26**）。
+检查点：`f199142`（v1.7.14）+ v1.7.15 可分享章节。中期 48–72h 见 `docs/SPRINT-0726.md`。版本见 `APP_VERSION`（以 `core/features.js` 为准，当前 **v1.7.34**）。
 **死亡交互（v1.7.3）**：死亡→`openDefeat()` 清战场/计时/Boss 面板→「灵光消散」面板（重新开始/返回菜单）；勿再用 `startBreath` 静默复活（会在刷怪计时未清时卡死）。
 **Boss 层级（v1.7.3）**：激光仅 `isMega`（终局君主）；领主是附庸，刚石=蓄力重装·重砸（`pendingSlamAt` 预警后重砸），雾灵=弹幕。命名/tip 按元素。
 **Boss 台词（v1.7.2 · I54-B）**：`spirit-data.js` `BOSS_LINES{entrance/mega/laser/enrage}`；`spirit-boss.js` `pickLine()`；出场画面渲染 taunt，狂暴/聚能经回调在 Boss 头顶浮字。纯氛围，与捡音/伤害解耦。
@@ -216,8 +223,9 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 **中期续推（v1.7.17）**：简历对齐 + `resume-snippet`；`SHARE-SCRIPT`；双核 hint；首星区 tip；整备横幅点跳过文案。
 **A2A 文件协议（v1.7.18·I68）**：`docs/A2A-PROTOCOL.md` + 模板 + 决策日志；口令「A2A / 让 Codex 看 / 双顾问」。
 **问卷中|EN（v1.7.23 薄片 · v1.7.24 接线）**：`SURVEY_URL_ZH`/`SURVEY_URL_EN`（`core/features.js`）；`survey.html` 语言网关；EN→[https://wj.qq.com/s2/27402528/b2ad/](https://wj.qq.com/s2/27402528/b2ad/) ；粘贴稿 `docs/SURVEY-EN-TENCENT-FORM.md`。非整站 i18n。
-**I71 手机 MOBA（v1.7.25–26）**：`spirit-input-adapter.js`（`keyboardtouchMOBA`）；左摇杆→`vx/vy`；右开火/闪避/撞击；顶栏切弹；开战旋转提示+Fullscreen；MOBA 禁画布点按开火。战役地图可竖屏。
-**当前下一刀**：发问卷收 Top3→IDEA。I71 实机验收后标已消化。功能大刀等问卷；开源等回收+点名。部署须「我授权你 push」。
+**I71 手机 MOBA（v1.7.25–30）**：`spirit-input-adapter.js`（`keyboard|touchMOBA`）；左摇杆→`vx/vy`；右开火/闪避/撞击；顶栏切弹+**合成**（`#mobaCraftBtn`→`tryCraftSuper`，同 T；低频弹药操作顶右，不进开火簇）；开战旋转提示+Fullscreen settle 后再 `orientation.lock`；MOBA 禁画布点按开火。战役地图可竖屏。**v1.7.29**：死后重开须清 `invulnUntil`；摇杆 116+大 inset；touch 文案去键位；`ENTITY_SCALE` 短边缩实体。**v1.7.30**：补手机合成钮 + HUD 写「合成」不写 T。
+**星图可读性（v1.7.34）**：`spirit-journey.html` `--spirit-ink`/`--spirit-panel-bg`/`--spirit-type-body|hint`；深色说明文案禁深灰+opacity；见 `UX-LAZY-USER` §7。
+**当前下一刀**：发问卷收 Top3→IDEA。I71 实机再验合成钮+横屏后标已消化。**I74** 玩内大卡枢纽已落 **v1.7.33**；四门壳大改待问卷≥8，勿抢刀。功能大刀等问卷；开源等回收+点名。部署须「我授权你 push」。
 
 ## 两天冲刺 + 终局愿景（2026-07-23）
 

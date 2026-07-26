@@ -5,8 +5,8 @@
 (function (global) {
   "use strict";
 
-  const STICK_SIZE = 80;
-  const DEAD_ZONE = 18;
+  const STICK_SIZE = 116;
+  const DEAD_ZONE = 24;
 
   let mode = "keyboard";
   let canvasTouchEnabled = true;
@@ -158,20 +158,58 @@
     el.addEventListener("lostpointercapture", up);
   }
 
+  function isDocumentFullscreen() {
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.webkitFullScreenElement
+    );
+  }
+
+  /**
+   * Wait until document is fullscreen, or timeout.
+   * Race is common on mobile browsers (Chrome/Android): orientation.lock often
+   * needs a settled fullscreen document first — not device-specific. If lock
+   * still fails, orientationchange → syncMobaUi remains the portable UI fallback.
+   */
+  function waitForFullscreenSettle(maxMs) {
+    if (isDocumentFullscreen()) return Promise.resolve(true);
+    const limit = typeof maxMs === "number" ? maxMs : 700;
+    return new Promise((resolve) => {
+      let done = false;
+      const finish = (ok) => {
+        if (done) return;
+        done = true;
+        document.removeEventListener("fullscreenchange", onFs);
+        document.removeEventListener("webkitfullscreenchange", onFs);
+        resolve(!!ok);
+      };
+      const onFs = () => {
+        if (isDocumentFullscreen()) finish(true);
+      };
+      document.addEventListener("fullscreenchange", onFs);
+      document.addEventListener("webkitfullscreenchange", onFs);
+      setTimeout(() => finish(isDocumentFullscreen()), limit);
+    });
+  }
+
   async function enterLandscapePlay() {
     const root = document.documentElement;
     try {
-      if (!document.fullscreenElement) {
+      if (!isDocumentFullscreen()) {
         if (root.requestFullscreen) await root.requestFullscreen.call(root);
         else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen();
         else if (root.webkitRequestFullScreen) root.webkitRequestFullScreen();
       }
     } catch { /* iOS / iframe 可能拒；手势按钮仍算尝试 */ }
+    await waitForFullscreenSettle(700);
     try {
       if (screen.orientation && typeof screen.orientation.lock === "function") {
         await screen.orientation.lock("landscape");
       }
-    } catch { /* Safari 常失败；靠旋转提示 + CSS */ }
+    } catch (e) {
+      console.warn("orientation.lock failed", e);
+    }
     return isLandscape();
   }
 

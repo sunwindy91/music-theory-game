@@ -34,16 +34,13 @@
     return { start, end: start + n - 1 };
   }
 
-  /** 区末回顾：从本星区 WAVE_STAGES 抽一句教案 + 一题 */
+  /** 区末回顾：只取本星区末关 tip（勿拼接多关 lesson）+ 一题 */
   function reviewForSector(idx) {
-    const { start, end } = waveRangeForSector(idx);
+    const { end } = waveRangeForSector(idx);
     const stages = SD().WAVE_STAGES || {};
-    const lessons = [];
-    for (let w = start; w <= end; w++) {
-      const st = stages[w] || stages[((w - 1) % 12) + 1];
-      if (st && (st.lesson || st.focus)) lessons.push(st.lesson || st.focus);
-    }
-    const summary = lessons.slice(0, 3).join(" · ") || "复习：大三明快、小三阴郁、看抗性换弹";
+    const endStage = stages[end] || stages[((end - 1) % 12) + 1] || null;
+    const summary = (endStage && (endStage.lesson || endStage.focus))
+      || "复习：大三明快、小三阴郁、看抗性换弹";
     const quizzes = [
       {
         prompt: "大三听感更接近？",

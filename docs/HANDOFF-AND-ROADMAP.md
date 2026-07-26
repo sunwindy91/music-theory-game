@@ -1,7 +1,7 @@
 # 乐理小达人 · 交接与路线图
 
 > **用途**：新 Cursor 对话 / 新协作者快速接手。用户会基于实际上线情况把关，本文档为「计划 + 现状」参考，非硬性合同。  
-> **最后更新**：2026-07-25 · 代码版本 **v1.7.24**（EN 腾讯问卷已接线）
+> **最后更新**：2026-07-26 · 代码版本 **v1.7.36**（I75 学路径零基础三屏 onboarding）
 
 ---
 
@@ -312,16 +312,23 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 **哲学**：学路径与星图世界是**两个功能模块、不是两个产品**——分模块交付是为每侧体验做到极致（有意双核）。开源/问卷/求职展示/Agent 飞轮见 Skill 与 `IDEA-BACKLOG`。
 
-**当前代码**：v1.7.24 —
-- **EN 腾讯问卷接线**：`SURVEY_URL_EN` = https://wj.qq.com/s2/27402528/b2ad/ （标题 Music Theory Explorer · Playtest Feedback）；`survey.html` / `survey-en.html` 选 EN 直达腾讯；ZH 仍为 https://wj.qq.com/s2/27402422/a11b/ 。SHARE / 推文 / README / SURVEY-EN-TENCENT-FORM 已对齐。
+**当前代码**：v1.7.35 —
+- **结算/教学可读性加厚**：tip 不透明 `--spirit-panel-surface`、选项 `--spirit-opt-*`、标题> tip >题干>选项层级；区末 tip **只取末关 lesson**（修暗涌+刚石拼接）。
+- **前作 v1.7.34**：星图可读性系统 `--spirit-ink` / `--spirit-panel-bg` / `--spirit-type-*`；入口 overlay-blurb、teach/why/tip/弹药栏/战役说明统一浅墨+底板。
+- **前作 v1.7.33**：I74 玩内大卡枢纽 `#playHub`；四门壳仍 deferred。
+- **前作 v1.7.32**：教学面板可读性初刀（现并入 `--spirit-*`）。
+- **前作 v1.7.31**：玩门副标 +「大字体」。
+
+**前作**：v1.7.24 —
+- **EN 腾讯问卷接线**：`SURVEY_URL_EN` = https://wj.qq.com/s2/27402528/b2ad/ （标题 Music Theory Explorer · Playtest Feedback）；`survey.html` / `survey-en.html` 选 EN 直达腾讯；ZH 仍为 https://wj.qq.com/s2/27402422/a11b/ 。
 
 **前作**：v1.7.23 —
-- **I72 问卷薄片**：`survey.html` 中|EN 语言网关；`SURVEY_URL_ZH` / `SURVEY_URL_EN` 集中在 `core/features.js`；CN→腾讯 https://wj.qq.com/s2/27402422/a11b/ ；EN 空则 `survey-en.html` pending + 题预览；粘贴稿 `docs/SURVEY-EN-TENCENT-FORM.md`。页脚「试玩反馈」旁 **中|EN**。SHARE / 推文 / README 已对齐本更新点。
+- **问卷薄片（原记 I72，现编号 I73-双语）**：`survey.html` 中|EN 语言网关；`SURVEY_URL_ZH` / `SURVEY_URL_EN` 集中在 `core/features.js`；CN→腾讯 https://wj.qq.com/s2/27402422/a11b/ ；EN 空则 `survey-en.html` pending + 题预览；粘贴稿 `docs/SURVEY-EN-TENCENT-FORM.md`。页脚「试玩反馈」旁 **中|EN**。SHARE / 推文 / README 已对齐本更新点。
 - **整站 i18n 仍愿景**：学+玩全文案字典未开；本刀仅问卷入口分流。
 
 **前作**：v1.7.22 —
 - **问卷自动归集**：`survey.html` → 腾讯问卷 https://wj.qq.com/s2/27402422/a11b/ ；答卷在腾讯后台（默认仅作者可见）。SHARE 话术已改「提交即入库」。
-- **I72 记入积压**：整站中英一体可切换（学+玩+问卷）；与双核正交；本轮不抢刀。
+- **双语愿景记入积压**（当时号 I72，现 **I73**）：整站中英一体可切换（学+玩+问卷）；与双核正交；本轮不抢刀。
 
 **前作**：v1.7.21 —
 - **I69 三门入口**：首页「学 ‖ 玩 ‖ 复习」对等大类；点开后再露对应面板（首屏不铺路径墙）。
@@ -396,15 +403,18 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 
 **两天冲刺** Day1 手感 + Day2 名场面/台词/死亡修复/Boss 层级校正 + I63 命名 + I64 君主多阶段 + I62 战役星图 MVP 已落地。
 
-**当前断点（v1.7.26）**：
-- **I71 撞击钮精调已落**：右簇竖排 开火72 → 闪避56 → 撞击36（叠层未解锁 dim）；接 `tryRam`；切弹仍顶栏；PC `E` 不变。MVP1+2 + 撞击成套。
-- 问卷证据闭环仍进行中；功能大刀等 Top3。
+**当前断点（v1.7.36）**：
+- **I75 零基础三屏 onboarding**：点「学」若无 `onboarding_done` → 五线谱是什么 / 本课学什么 / 学完能做什么；跳过始终可用；「开始第一课」→ `theory-notes`。见 `docs/I75-survey-analysis.md`。
+- **结算/教学可读性已加厚**（v1.7.35）；**I74 玩内大卡枢纽**（v1.7.33）；四门壳大改仍 deferred。
+- **I71**：实机再验横屏后可标已消化。
+- 问卷证据闭环进行中（I75 已吃第一刀零基础信号）。
 
 **下一刀（可照抄配方 · 详见 SKILL「Auto 续航手册」）**：
 1. ~~复盘章节～A2A~~ 已落地；问卷证据闭环仍进行中
-2. ~~I69/I70~~ **v1.7.21**；~~I71 MVP1+2~~ **v1.7.25**；~~撞击钮精调~~ **v1.7.26**（实机验收后可标已消化）
-3. **I72 中英一体**（愿景·P2）：问卷中|EN 双链已落 **v1.7.24**；整站 `core/i18n` 仍确认后再开
-4. 功能大刀仍等问卷 Top3；GitHub remote 须点名；**Pages 部署 v1.7.26 须点名**（口令：`我授权你 push`）
+2. ~~I69/I70~~ **v1.7.21**；~~I71 MVP~~ **v1.7.25–30**；~~死后透明~~ **v1.7.29**
+3. ~~I74 分享前 / 玩内大卡~~ **v1.7.31–33**；~~星图/结算可读性~~ **v1.7.34–35**；~~**I75 onboarding**~~ **v1.7.36**；**四门壳大改** 待问卷≥8
+4. **I73 中英一体**（愿景·P2）；**I72 跨设备进度** 占位待 Q11
+5. 功能大刀仍等问卷 Top3；GitHub remote 须点名；**Pages 部署须「我授权你部署 Pages」**
 
 **Auto 续航**：切 Auto 后每刀独立可验收；避坑见 SKILL「Auto 模式续航手册」。
 

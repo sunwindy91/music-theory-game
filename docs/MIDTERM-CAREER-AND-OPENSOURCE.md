@@ -1,7 +1,7 @@
 # 中期备忘：问卷 · GitHub 开源 · 求职叙事
 
 > **性质**：白天阅读用；48–72h 执行清单见 `docs/SPRINT-0726.md`。  
-> **写入日**：2026-07-21 · **修订**：2026-07-23  
+> **写入日**：2026-07-21 · **修订**：2026-07-25（Q11）  
 > **关联**：Skill 三层时间尺度；IDEA I12 / I15 / I16；`docs/CAREER-ALIGN.md`  
 > **多 Agent**：先读 [`docs/ALIGNMENT-BRIEF-FOR-CODEX.md`](ALIGNMENT-BRIEF-FOR-CODEX.md)；A2A 见 [`docs/A2A-PROTOCOL.md`](A2A-PROTOCOL.md)（I68）
 
@@ -13,7 +13,9 @@
 
 **现状**：静态页 `survey.html` 已上线（Pages + 页脚 CTA）；Tally 外链可后换，不必上后端。
 
-**题型**：入口 / 会选不懂 / 和弦为什么 / 更想要什么 / 最想改一点。
+**题型**：入口 / 会选不懂 / 和弦为什么 / 更想要什么 / 最想改一点 / **换设备进度会介意吗（Q11）**。
+
+**腾讯补题**：Q11 须在后台写入 ZH `27402422` 与 EN `27402528`（无 API）；粘贴稿 `docs/SURVEY-ZH-TENCENT-FORM.md` / `SURVEY-EN-TENCENT-FORM.md`。
 
 **你要做的**：发 8–15 人 → Top3 回 IDEA 审校表。
 

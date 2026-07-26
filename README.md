@@ -82,13 +82,13 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 **复制即发：**
 
 ```
-【乐理小达人 · 试玩邀请】v1.7.24
+【乐理小达人 · 试玩邀请】v1.7.26
 试玩（已解除关卡锁定）：https://music-theory-game-br5.pages.dev/?dev=1
 问卷（约2分钟·可选中文/English）：https://music-theory-game-br5.pages.dev/survey.html
 中文直达：https://wj.qq.com/s2/27402422/a11b/
 English：https://wj.qq.com/s2/27402528/b2ad/
 
-5 分钟：首页点「学」或「玩」→ 星图练习房捡音开火 → 清场可点整备条跳过 → 填问卷「最想改」
+5 分钟：首页点「学」或「玩」→ 星图练习房（手机横屏：左摇杆+右开火/闪/撞）→ 清场可点整备条跳过 → 填问卷「最想改」
 ```
 
 求职 STAR：[docs/STAR-CASE-DRAFT.md](docs/STAR-CASE-DRAFT.md) · 简历粘贴稿：[docs/resume-snippet.md](docs/resume-snippet.md) · 叙事对齐：[docs/CAREER-ALIGN.md](docs/CAREER-ALIGN.md) · 48–72h DoD：[docs/SPRINT-0726.md](docs/SPRINT-0726.md)

@@ -90,3 +90,20 @@
 | 直接改 `spirit-journey.html` | 不必；Cursor 领地更熟 |
 
 口令示例：「按 UX-LAZY-USER 审 C 刀操控方案，只出分区与风险，不写代码」。
+
+---
+
+## 7. 星图深色 UI · 说明文案可读性（v1.7.34 → v1.7.35）
+
+**失败模式**：默认黑字 / 深灰 + `opacity: 0.4–0.7` 铺在紫黑底 → 泥灰，几乎不可读（模式选择 `#overlay` 说明即此例）；结算 tip 半透明面 + 多关 lesson 拼接 → 更泥。
+
+**规则**：深色 UI 说明文案一律走 `spirit-journey.html` 的 **`--spirit-*` 可读性 token**，禁止深灰字直接铺在紫黑底。
+
+| Token | 用途 |
+|-------|------|
+| `--spirit-ink` / `--spirit-ink-muted` | 正文 / 次要说明（浅墨，≥4.5:1） |
+| `--spirit-panel-bg` / `--spirit-panel-surface` / `--spirit-panel-scrim` | 面板底板 / tip 不透明内嵌面 / 全屏遮罩 |
+| `--spirit-opt-bg` / `--spirit-opt-border` | 结算/学堂选项钮 |
+| `--spirit-type-body` / `--spirit-type-hint` / `--spirit-type-title` | 字号地板（≥17/15/20px） |
+
+层级：标题（accent）→ tip 盒（surface）→ 题干（ink）→ 选项钮（opt）。区末 tip **只取末关 lesson**，勿 `join` 多关。新文案：**不要**用文字 `opacity` 降对比。

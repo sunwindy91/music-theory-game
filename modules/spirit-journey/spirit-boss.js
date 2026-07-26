@@ -91,7 +91,7 @@
         : type.mult,
       x: pos.x,
       y: pos.y,
-      r: type.r * cfg("BOSS_R_MUL", 2.05) * (mega ? 1.35 : 1),
+      r: type.r * cfg("BOSS_R_MUL", 2.05) * (mega ? 1.35 : 1) * cfg("ENTITY_SCALE", 1),
       hp,
       maxHp: hp,
       speed,
@@ -119,7 +119,7 @@
   }
 
   function devourNear(boss, notes, opts) {
-    const radius = opts.radius || cfg("BOSS_DEVOUR_R", 150);
+    const radius = (opts.radius || cfg("BOSS_DEVOUR_R", 150)) * cfg("ENTITY_SCALE", 1);
     const heal = opts.healPerNote != null ? opts.healPerNote : cfg("BOSS_DEVOUR_HEAL", 0.35);
     let eaten = 0;
     for (let i = notes.length - 1; i >= 0; i--) {
@@ -149,7 +149,7 @@
   function doSlam(boss, player, ang, onHurt, opts) {
     opts = opts || {};
     addRipple(boss.x, boss.y, boss.isMega ? "#ff4060" : "#e09050", opts.heavy ? 1.15 : 0.9);
-    const slamR = (boss.phase >= 2 ? 165 : 125) * (boss.isMega ? 1.25 : 1) * (opts.rMul || 1);
+    const slamR = (boss.phase >= 2 ? 165 : 125) * (boss.isMega ? 1.25 : 1) * (opts.rMul || 1) * cfg("ENTITY_SCALE", 1);
     if (Math.hypot(player.x - boss.x, player.y - boss.y) < slamR) {
       const push = opts.push != null ? opts.push : (boss.isMega ? 96 : 78);
       player.x += Math.cos(ang) * push;

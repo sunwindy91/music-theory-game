@@ -21,7 +21,7 @@ const AppFeatures = {
   midiInput: false
 };
 
-const APP_VERSION = "v1.7.26";
+const APP_VERSION = "v1.7.36";
 
 /** 试玩问卷 · 腾讯问卷（中/英分表；EN 空则 survey-en.html 显示 pending） */
 const SURVEY_URL_ZH = "https://wj.qq.com/s2/27402422/a11b/";
