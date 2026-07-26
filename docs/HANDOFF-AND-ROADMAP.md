@@ -310,7 +310,7 @@ npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 > **多 Agent 对齐入口**：[`docs/ALIGNMENT-BRIEF-FOR-CODEX.md`](ALIGNMENT-BRIEF-FOR-CODEX.md)（可整份粘贴给 Codex）  
 > **A2A 协议**：[`docs/A2A-PROTOCOL.md`](A2A-PROTOCOL.md) · 模板 [`A2A-HANDOFF-TEMPLATE.md`](A2A-HANDOFF-TEMPLATE.md) · 决策 [`A2A-DECISION-LOG.md`](A2A-DECISION-LOG.md) · 切换 [`AGENT-LOG.md`](AGENT-LOG.md)
 
-**哲学**：学路径与星图世界是**两个功能模块、不是两个产品**——分模块交付是为每侧体验做到极致（有意双核）。开源/问卷/求职展示/Agent 飞轮见 Skill 与 `IDEA-BACKLOG`。
+**哲学**：学路径与星图世界是**两个功能模块、不是两个产品**——分模块交付是为每侧体验做到极致（有意双核）。开源/问卷/项目展示/Agent 飞轮见 Skill 与 `IDEA-BACKLOG`。
 
 **当前代码**：v1.7.35 —
 - **结算/教学可读性加厚**：tip 不透明 `--spirit-panel-surface`、选项 `--spirit-opt-*`、标题> tip >题干>选项层级；区末 tip **只取末关 lesson**（修暗涌+刚石拼接）。
