@@ -30,7 +30,7 @@ description: >-
 
 | 项          | 路径                                                                                   |
 | ---------- | ------------------------------------------------------------------------------------ |
-| **根目录**    | `C:\Users\23017\music-theory-game`                                                   |
+| **根目录**    | `{{PROJECT_ROOT}}`（仓库克隆位置）                                                   |
 | **交接与路线图** | `docs/HANDOFF-AND-ROADMAP.md`                                                        |
 | **想法积压**   | `docs/IDEA-BACKLOG.md`                                                               |
 | **部署**     | `docs/DEPLOY-CLOUDFLARE.md`                                                          |
@@ -307,7 +307,7 @@ Agent 不要用「别做成两个游戏」劝退；应帮用户 **分期交付�
 
 
 ```powershell
-Set-Location C:\Users\23017\music-theory-game
+Set-Location {{PROJECT_ROOT}}
 npx wrangler pages deploy . --project-name=music-theory-game --branch=master
 ```
 
